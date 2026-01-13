@@ -1,63 +1,16 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { getTheme, setTheme as saveTheme, type Theme } from '@/lib/storage';
+import { createContext, useContext, type ReactNode } from 'react';
 
 interface ThemeContextType {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-  resolvedTheme: 'light' | 'dark';
+  theme: 'light';
+  resolvedTheme: 'light';
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('system');
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
-
-  useEffect(() => {
-    // Load saved theme
-    getTheme().then(savedTheme => {
-      setThemeState(savedTheme);
-    });
-  }, []);
-
-  useEffect(() => {
-    const root = window.document.documentElement;
-    
-    const updateTheme = () => {
-      let resolved: 'light' | 'dark';
-      
-      if (theme === 'system') {
-        resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      } else {
-        resolved = theme;
-      }
-      
-      root.classList.remove('light', 'dark');
-      root.classList.add(resolved);
-      setResolvedTheme(resolved);
-    };
-
-    updateTheme();
-
-    // Listen for system theme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = () => {
-      if (theme === 'system') {
-        updateTheme();
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme]);
-
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-    saveTheme(newTheme);
-  };
-
+  // Openmation always uses light theme (white, clean like Google Antigravity)
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
+    <ThemeContext.Provider value={{ theme: 'light', resolvedTheme: 'light' }}>
       {children}
     </ThemeContext.Provider>
   );

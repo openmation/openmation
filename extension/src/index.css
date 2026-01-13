@@ -6,98 +6,59 @@
 
 @layer base {
   :root {
-    /* Light Theme - Deep navy/indigo from logo */
-    --background: 230 25% 98%;
-    --foreground: 230 50% 10%;
+    /* Openmation Light Theme - Clean white inspired by Google Antigravity */
+    --background: 0 0% 100%;
+    --foreground: 220 20% 10%;
     
     --card: 0 0% 100%;
-    --card-foreground: 230 50% 10%;
+    --card-foreground: 220 20% 10%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 230 50% 10%;
+    --popover-foreground: 220 20% 10%;
     
-    /* Primary - Deep indigo blue from logo */
-    --primary: 230 70% 50%;
+    /* Primary - Openmation Blue (from logo) */
+    --primary: 200 85% 50%;
     --primary-foreground: 0 0% 100%;
     
-    /* Secondary */
-    --secondary: 230 30% 94%;
-    --secondary-foreground: 230 50% 15%;
+    /* Secondary - Light gray background */
+    --secondary: 220 15% 96%;
+    --secondary-foreground: 220 20% 15%;
     
-    --muted: 230 20% 95%;
-    --muted-foreground: 230 15% 45%;
+    --muted: 220 15% 96%;
+    --muted-foreground: 220 10% 45%;
     
-    /* Accent - Bright blue highlights from robot joints */
-    --accent: 217 91% 60%;
+    /* Accent - Deep blue from logo */
+    --accent: 215 70% 45%;
     --accent-foreground: 0 0% 100%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    --success: 142 71% 45%;
+    --success: 152 70% 45%;
     --success-foreground: 0 0% 100%;
     
-    --border: 230 20% 90%;
-    --input: 230 20% 90%;
-    --ring: 230 70% 50%;
+    --border: 220 15% 92%;
+    --input: 220 15% 92%;
+    --ring: 200 85% 50%;
     
-    --radius: 10px;
+    --radius: 12px;
     
-    /* Logo colors - Deep navy palette */
-    --logo-navy-dark: #0D1321;
-    --logo-navy: #1D2D44;
-    --logo-navy-light: #3E5C76;
-    --logo-blue: #4A90D9;
-    --logo-blue-bright: #5BA4E6;
-    --logo-highlight: #7CB9F1;
+    /* Openmation Logo Colors - Blue swirl palette */
+    --logo-blue-deep: #2563EB;
+    --logo-blue: #3B82F6;
+    --logo-cyan: #06B6D4;
+    --logo-cyan-light: #22D3EE;
+    --logo-sky: #38BDF8;
+    --logo-highlight: #7DD3FC;
     
-    /* Subtle shadows for depth */
-    --shadow-sm: 0 1px 2px 0 rgb(13 19 33 / 0.04);
-    --shadow: 0 1px 3px 0 rgb(13 19 33 / 0.06), 0 1px 2px -1px rgb(13 19 33 / 0.06);
-    --shadow-md: 0 4px 6px -1px rgb(13 19 33 / 0.08), 0 2px 4px -2px rgb(13 19 33 / 0.08);
-    --shadow-lg: 0 10px 15px -3px rgb(13 19 33 / 0.08), 0 4px 6px -4px rgb(13 19 33 / 0.08);
+    /* Subtle shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.06), 0 4px 6px -4px rgb(0 0 0 / 0.06);
   }
 
-  .dark {
-    /* Dark Theme - Matches logo exactly */
-    --background: 230 45% 8%;
-    --foreground: 220 20% 95%;
-    
-    --card: 230 45% 11%;
-    --card-foreground: 220 20% 95%;
-    
-    --popover: 230 45% 12%;
-    --popover-foreground: 220 20% 95%;
-    
-    /* Primary - Bright blue from robot joints */
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-    
-    --secondary: 230 40% 15%;
-    --secondary-foreground: 220 20% 95%;
-    
-    --muted: 230 40% 15%;
-    --muted-foreground: 220 15% 55%;
-    
-    /* Accent - Lighter blue highlight */
-    --accent: 210 100% 70%;
-    --accent-foreground: 230 45% 8%;
-    
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-    
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
-    
-    --border: 230 40% 18%;
-    --input: 230 40% 18%;
-    --ring: 217 91% 60%;
-    
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.5);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.5);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
-  }
+  /* Remove dark mode - always white */
 }
 
 @layer base {
@@ -120,8 +81,8 @@
   
   /* Premium scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
   
   ::-webkit-scrollbar-track {
@@ -129,16 +90,12 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted-foreground) / 0.15);
+    background: hsl(var(--muted-foreground) / 0.12);
     border-radius: 100px;
-    border: 2px solid transparent;
-    background-clip: content-box;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.25);
-    border: 2px solid transparent;
-    background-clip: content-box;
+    background: hsl(var(--muted-foreground) / 0.2);
   }
 }
 
@@ -180,24 +137,41 @@
   
   /* Glass effect */
   .glass {
-    @apply bg-background/80 backdrop-blur-xl;
+    @apply bg-background/90 backdrop-blur-xl;
   }
   
-  /* Logo gradient - Navy to Blue */
+  /* Openmation Logo gradient - Cyan to Blue */
   .logo-gradient {
-    background: linear-gradient(135deg, #1D2D44 0%, #3E5C76 50%, #4A90D9 100%);
+    background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 50%, #2563EB 100%);
   }
   
   .logo-gradient-text {
-    background: linear-gradient(135deg, #3E5C76 0%, #4A90D9 50%, #7CB9F1 100%);
+    background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 50%, #2563EB 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   
-  /* Gradient text */
-  .gradient-text {
-    @apply bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent;
+  /* Antigravity-style gradient text - more subtle */
+  .gradient-text-subtle {
+    background: linear-gradient(90deg, #06B6D4 0%, #3B82F6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Primary button - Dark style like Antigravity */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium 
+           text-white bg-foreground rounded-full transition-all duration-200
+           hover:bg-foreground/90 active:scale-[0.98];
+  }
+  
+  /* Secondary button - Outlined like Antigravity */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium 
+           text-foreground bg-transparent border border-border rounded-full transition-all duration-200
+           hover:bg-secondary active:scale-[0.98];
   }
   
   /* Subtle border glow on hover */
@@ -217,7 +191,7 @@
   
   /* Logo shadow glow - blue tint */
   .logo-shadow {
-    box-shadow: 0 4px 20px rgba(74, 144, 217, 0.25), 0 0 40px rgba(29, 45, 68, 0.2);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2), 0 0 40px rgba(6, 182, 212, 0.15);
   }
 }
 

@@ -18,25 +18,25 @@ const steps = [
     icon: MousePointerClick,
     title: 'Record Your Actions',
     description: 'Click "Start Recording" and perform any actions on a webpage. We capture clicks, typing, scrolling, and navigation.',
-    color: 'from-slate-700 to-slate-600',
+    color: 'from-cyan-500 to-blue-600',
   },
   {
     icon: Play,
     title: 'Replay Anytime',
     description: 'Run your saved automations with a single click. Watch them execute with a visual cursor showing each step.',
-    color: 'from-slate-600 to-blue-700',
+    color: 'from-blue-500 to-blue-700',
   },
   {
     icon: Share2,
     title: 'Share With Anyone',
     description: 'Generate a shareable link for any automation. Anyone with the link can run it instantly.',
-    color: 'from-blue-700 to-blue-500',
+    color: 'from-blue-600 to-indigo-600',
   },
   {
     icon: Sparkles,
     title: 'You\'re All Set!',
     description: 'Start automating your repetitive browser tasks. Save time and share workflows with your team.',
-    color: 'from-blue-500 to-sky-400',
+    color: 'from-cyan-400 to-blue-500',
   },
 ];
 
@@ -65,13 +65,13 @@ export function Onboarding({ onComplete }: OnboardingProps) {
       <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
         <div className="flex items-center gap-3">
           <img 
-            src="/icons/icon48.png" 
-            alt="Simplest" 
-            className="w-8 h-8 rounded-lg logo-shadow"
+            src="/icons/icon128.png" 
+            alt="Openmation" 
+            className="w-9 h-9 rounded-lg"
           />
           <div>
-            <h1 className="text-[15px] font-semibold tracking-tight logo-gradient-text">Simplest</h1>
-            <p className="text-[11px] text-muted-foreground font-medium">Automation</p>
+            <h1 className="text-[15px] font-semibold tracking-tight logo-gradient-text">Openmation</h1>
+            <p className="text-[11px] text-muted-foreground font-medium">Browser Automation</p>
           </div>
         </div>
         {!isLastStep && (
@@ -112,12 +112,12 @@ export function Onboarding({ onComplete }: OnboardingProps) {
             <button
               key={index}
               onClick={() => setCurrentStep(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-200 ${
+              className={`h-2 rounded-full transition-all duration-200 ${
                 index === currentStep 
-                  ? 'bg-primary w-6' 
+                  ? 'bg-foreground w-6' 
                   : index < currentStep
-                  ? 'bg-primary/50'
-                  : 'bg-muted-foreground/20'
+                  ? 'bg-foreground/40 w-2'
+                  : 'bg-muted-foreground/20 w-2'
               }`}
             />
           ))}
@@ -126,7 +126,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
         {/* Button */}
         <Button 
           onClick={handleNext} 
-          className="w-full h-11 gap-2"
+          className="w-full h-11 gap-2 rounded-full bg-foreground hover:bg-foreground/90 text-background"
         >
           {isLastStep ? (
             <>

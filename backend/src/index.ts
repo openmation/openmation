@@ -65,11 +65,11 @@ app.get('/health', (_req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Simplest Automation API running at http://localhost:${PORT}`);
+  console.log(`🚀 Openmation API running at http://localhost:${PORT}`);
   console.log(`📋 Share links will be: http://localhost:${PORT}/run/{id}`);
 });
 
-// Landing page HTML
+// Landing page HTML - Openmation white theme
 function getRunPage(name: string, eventCount: number, startUrl: string, id: string): string {
   const escapedName = escapeHtml(name);
   const escapedUrl = escapeHtml(startUrl);
@@ -79,7 +79,7 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapedName} - Simplest Automation</title>
+  <title>${escapedName} - Openmation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -92,47 +92,58 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
     
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+      background: #ffffff;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
-      color: #fff;
+      color: #1a1a1a;
       -webkit-font-smoothing: antialiased;
     }
     
+    /* Subtle gradient mesh background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse 80% 80% at 30% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 60% at 70% 30%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 50% at 50% 70%, rgba(37, 99, 235, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
     .container {
-      max-width: 480px;
+      max-width: 420px;
       width: 100%;
+      position: relative;
+      z-index: 1;
     }
     
     .card {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 20px;
-      padding: 40px;
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 24px;
+      padding: 48px 40px;
       text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      box-shadow: 
+        0 0 0 1px rgba(0, 0, 0, 0.02),
+        0 20px 50px -12px rgba(0, 0, 0, 0.08),
+        0 8px 20px -8px rgba(0, 0, 0, 0.04);
     }
     
     .logo {
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, #5E5CE6 0%, #BF5AF2 100%);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 24px;
-      box-shadow: 0 8px 32px rgba(94, 92, 230, 0.3);
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 28px;
     }
     
-    .logo svg {
-      width: 32px;
-      height: 32px;
-      color: white;
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
     
     h1 {
@@ -140,10 +151,11 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
       font-weight: 600;
       margin-bottom: 8px;
       letter-spacing: -0.02em;
+      color: #1a1a1a;
     }
     
     .meta {
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(0, 0, 0, 0.5);
       font-size: 14px;
       margin-bottom: 32px;
     }
@@ -157,18 +169,18 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
     .meta .dot {
       width: 4px;
       height: 4px;
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(0, 0, 0, 0.2);
       border-radius: 50%;
       margin: 0 10px;
     }
     
     .url-preview {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 12px;
+      padding: 14px 18px;
       font-size: 13px;
-      color: rgba(255, 255, 255, 0.6);
+      color: rgba(0, 0, 0, 0.6);
       margin-bottom: 32px;
       word-break: break-all;
       text-align: left;
@@ -178,16 +190,17 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: rgba(255, 255, 255, 0.4);
+      color: rgba(0, 0, 0, 0.4);
       margin-bottom: 6px;
+      font-weight: 500;
     }
     
     .run-btn {
       width: 100%;
       height: 52px;
-      background: linear-gradient(135deg, #5E5CE6 0%, #7B6CF6 100%);
+      background: #1a1a1a;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       color: white;
       font-size: 15px;
       font-weight: 600;
@@ -197,12 +210,13 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
       justify-content: center;
       gap: 10px;
       transition: all 0.2s ease;
-      box-shadow: 0 4px 20px rgba(94, 92, 230, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     }
     
     .run-btn:hover {
+      background: #2a2a2a;
       transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(94, 92, 230, 0.4);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
     }
     
     .run-btn:active {
@@ -215,18 +229,18 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
     }
     
     .run-btn svg {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
     }
     
     .install-note {
       margin-top: 20px;
       padding: 16px;
-      background: rgba(255, 193, 7, 0.1);
-      border: 1px solid rgba(255, 193, 7, 0.2);
-      border-radius: 10px;
+      background: rgba(59, 130, 246, 0.05);
+      border: 1px solid rgba(59, 130, 246, 0.1);
+      border-radius: 12px;
       font-size: 13px;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(0, 0, 0, 0.7);
       display: none;
     }
     
@@ -235,7 +249,7 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
     }
     
     .install-note a {
-      color: #FFD60A;
+      color: #3B82F6;
       text-decoration: none;
       font-weight: 500;
     }
@@ -247,12 +261,13 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
     .success-msg {
       margin-top: 20px;
       padding: 16px;
-      background: rgba(48, 209, 88, 0.1);
-      border: 1px solid rgba(48, 209, 88, 0.2);
-      border-radius: 10px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      border-radius: 12px;
       font-size: 14px;
-      color: #30D158;
+      color: #059669;
       display: none;
+      font-weight: 500;
     }
     
     .success-msg.visible {
@@ -260,18 +275,22 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
     }
     
     .footer {
-      margin-top: 24px;
+      margin-top: 28px;
       font-size: 12px;
-      color: rgba(255, 255, 255, 0.3);
+      color: rgba(0, 0, 0, 0.4);
     }
     
     .footer a {
-      color: rgba(255, 255, 255, 0.5);
+      background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 50%, #2563EB 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       text-decoration: none;
+      font-weight: 500;
     }
     
     .footer a:hover {
-      color: rgba(255, 255, 255, 0.8);
+      opacity: 0.8;
     }
     
     @keyframes pulse {
@@ -288,9 +307,22 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
   <div class="container">
     <div class="card">
       <div class="logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <circle cx="12" cy="12" r="3"/>
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#06B6D4"/>
+              <stop offset="50%" style="stop-color:#3B82F6"/>
+              <stop offset="100%" style="stop-color:#2563EB"/>
+            </linearGradient>
+          </defs>
+          <!-- Outer spiral ring -->
+          <path d="M50 5 C75 5, 95 25, 95 50 C95 75, 75 95, 50 95 C25 95, 5 75, 5 50 C5 30, 20 15, 35 12" stroke="url(#gradient)" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <!-- Middle spiral -->
+          <path d="M50 18 C68 18, 82 32, 82 50 C82 68, 68 82, 50 82 C32 82, 18 68, 18 50 C18 38, 28 28, 42 25" stroke="url(#gradient)" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <!-- Inner spiral -->
+          <path d="M50 32 C60 32, 68 40, 68 50 C68 60, 60 68, 50 68 C40 68, 32 60, 32 50 C32 44, 38 38, 48 36" stroke="url(#gradient)" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <!-- Center dot -->
+          <circle cx="50" cy="50" r="8" fill="url(#gradient)"/>
         </svg>
       </div>
       
@@ -315,7 +347,7 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
       </button>
       
       <div class="install-note" id="installNote">
-        <strong>Note:</strong> Make sure the Simplest Automation extension is installed on the target page.
+        <strong>Note:</strong> Make sure the Openmation extension is installed on the target page.
       </div>
       
       <div class="success-msg" id="successMsg">
@@ -323,7 +355,7 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
       </div>
       
       <div class="footer">
-        Powered by <a href="#">Simplest Automation</a>
+        Powered by <a href="https://openmation.com">Openmation</a>
       </div>
     </div>
   </div>
@@ -345,7 +377,7 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
       // Redirect to start URL with automation ID in hash
       // The extension on the target page will detect and run it
       const targetUrl = new URL('${escapedUrl}');
-      targetUrl.hash = 'simplest_run=' + AUTOMATION_ID;
+      targetUrl.hash = 'openmation_run=' + AUTOMATION_ID;
       
       setTimeout(() => {
         window.location.href = targetUrl.toString();
@@ -362,30 +394,44 @@ function getNotFoundPage(): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Not Found - Simplest Automation</title>
+  <title>Not Found - Openmation</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+      background: #ffffff;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
+      color: #1a1a1a;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse 80% 80% at 30% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 60% at 70% 30%, rgba(59, 130, 246, 0.06) 0%, transparent 50%);
+      pointer-events: none;
     }
     .container {
       text-align: center;
       padding: 40px;
+      position: relative;
     }
-    h1 { font-size: 72px; opacity: 0.3; margin-bottom: 16px; }
-    p { color: rgba(255,255,255,0.6); margin-bottom: 24px; }
+    h1 { font-size: 72px; opacity: 0.15; margin-bottom: 16px; font-weight: 700; }
+    p { color: rgba(0,0,0,0.5); margin-bottom: 24px; }
     a {
-      color: #5E5CE6;
+      background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 50%, #2563EB 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       text-decoration: none;
+      font-weight: 500;
     }
-    a:hover { text-decoration: underline; }
+    a:hover { opacity: 0.8; }
   </style>
 </head>
 <body>

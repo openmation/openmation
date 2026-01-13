@@ -38,8 +38,8 @@ export function HowItWorks() {
     <section id="how-it-works" className="section-padding bg-secondary/30 relative">
       <div className="container-custom">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-6">
             Four steps to
             <br />
             <span className="logo-gradient-text">automation bliss</span>
@@ -51,32 +51,32 @@ export function HowItWorks() {
         </div>
 
         {/* Steps */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
               <div key={step.number} className="relative group">
                 {/* Connector line */}
                 {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-10 left-full w-full h-px z-0">
+                  <div className="hidden lg:block absolute top-12 left-full w-full h-px z-0">
                     <div className="w-full h-px bg-border" />
                     <ArrowRight className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/30" />
                   </div>
                 )}
 
-                <div className="relative z-10 p-5 rounded-xl border border-border/50 bg-card hover:shadow-lg hover:border-border transition-all duration-300">
+                <div className="relative z-10 p-6 rounded-2xl border border-border/50 bg-card hover:shadow-lg hover:border-border transition-all duration-300">
                   {/* Step number */}
-                  <span className="text-xs font-bold text-muted-foreground/40 mb-3 block">
+                  <span className="text-xs font-bold text-muted-foreground/40 mb-4 block">
                     {step.number}
                   </span>
 
                   {/* Icon */}
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
-                    <Icon className="w-6 h-6 text-primary" />
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-50 to-blue-50 flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110">
+                    <Icon className="w-7 h-7 text-blue-500" />
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-lg font-semibold mb-2">{step.title}</h3>
+                  <h3 className="text-lg font-semibold mb-3">{step.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {step.description}
                   </p>

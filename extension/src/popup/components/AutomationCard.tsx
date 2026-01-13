@@ -88,7 +88,7 @@ export function AutomationCard({
         group relative rounded-xl border bg-card p-4 
         transition-all duration-200 ease-out
         hover:shadow-md hover:border-border/80
-        ${isRunning ? 'border-primary/30 shadow-md shadow-primary/5' : ''}
+        ${isRunning ? 'border-blue-200 shadow-md shadow-blue-500/5' : ''}
       `}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -99,14 +99,14 @@ export function AutomationCard({
           w-9 h-9 rounded-lg flex items-center justify-center shrink-0
           transition-all duration-200
           ${isRunning 
-            ? 'bg-primary/10' 
-            : 'bg-muted group-hover:bg-primary/10'
+            ? 'bg-blue-50' 
+            : 'bg-gray-100 group-hover:bg-blue-50'
           }
         `}>
           {isRunning ? (
-            <Loader2 className="w-4 h-4 text-primary animate-spin" />
+            <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />
           ) : (
-            <Zap className={`w-4 h-4 transition-colors duration-200 ${isHovered ? 'text-primary' : 'text-muted-foreground'}`} />
+            <Zap className={`w-4 h-4 transition-colors duration-200 ${isHovered ? 'text-blue-500' : 'text-muted-foreground'}`} />
           )}
         </div>
         
@@ -148,10 +148,10 @@ export function AutomationCard({
                 disabled={isSharing}
                 className={`w-8 h-8 rounded-lg transition-colors ${
                   shareSuccess 
-                    ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20' 
+                    ? 'bg-emerald-50 text-emerald-500 hover:bg-emerald-100' 
                     : shareError
-                    ? 'bg-destructive/10 text-destructive'
-                    : 'hover:bg-primary/10 hover:text-primary'
+                    ? 'bg-red-50 text-red-500'
+                    : 'hover:bg-blue-50 hover:text-blue-500'
                 }`}
                 title={shareSuccess ? 'Link copied!' : shareError || 'Share'}
               >
@@ -169,7 +169,7 @@ export function AutomationCard({
                 size="icon"
                 onClick={() => onRun(automation)}
                 disabled={isRunning}
-                className="w-8 h-8 rounded-lg hover:bg-primary/10 hover:text-primary"
+                className="w-8 h-8 rounded-lg hover:bg-blue-50 hover:text-blue-500"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
               </Button>
@@ -216,7 +216,7 @@ export function AutomationCard({
       {/* Share success toast */}
       {shareSuccess && (
         <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 -translate-y-full 
-          bg-green-500 text-white text-xs font-medium px-3 py-1.5 rounded-full
+          bg-emerald-500 text-white text-xs font-medium px-3 py-1.5 rounded-full
           shadow-lg animate-fade-up">
           Link copied to clipboard!
         </div>
@@ -239,9 +239,9 @@ export function AutomationCard({
       
       {/* Running indicator */}
       {isRunning && (
-        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary/20 rounded-b-xl overflow-hidden">
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-100 rounded-b-xl overflow-hidden">
           <div 
-            className="h-full w-1/3 bg-primary rounded-full"
+            className="h-full w-1/3 bg-blue-500 rounded-full"
             style={{
               animation: 'shimmer 1.5s ease-in-out infinite',
             }}

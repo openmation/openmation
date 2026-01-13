@@ -42,30 +42,31 @@ var __TURBOPACK__imported__module__$5b$next$5d2f$internal$2f$font$2f$google$2f$i
 ;
 ;
 const metadata = {
-    title: "Simplest - Browser Automation Made Beautiful",
+    title: "Openmation - Browser Automation Made Beautiful",
     description: "Record, replay, and share browser automations with pixel-perfect accuracy. The most elegant way to automate your repetitive browser tasks.",
     keywords: [
         "browser automation",
         "chrome extension",
         "workflow automation",
         "web automation",
-        "task automation"
+        "task automation",
+        "openmation"
     ],
     authors: [
         {
-            name: "Simplest Team"
+            name: "Openmation Team"
         }
     ],
     openGraph: {
-        title: "Simplest - Browser Automation Made Beautiful",
+        title: "Openmation - Browser Automation Made Beautiful",
         description: "Record, replay, and share browser automations with pixel-perfect accuracy.",
         type: "website",
         locale: "en_US",
-        siteName: "Simplest"
+        siteName: "Openmation"
     },
     twitter: {
         card: "summary_large_image",
-        title: "Simplest - Browser Automation Made Beautiful",
+        title: "Openmation - Browser Automation Made Beautiful",
         description: "Record, replay, and share browser automations with pixel-perfect accuracy."
     }
 };

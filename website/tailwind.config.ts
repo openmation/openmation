@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -43,14 +42,14 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Logo colors - Deep navy palette (matching extension exactly)
+        // Openmation Logo colors - Blue swirl palette
         logo: {
-          'navy-dark': "#0D1321",
-          'navy': "#1D2D44",
-          'navy-light': "#3E5C76",
-          'blue': "#4A90D9",
-          'blue-bright': "#5BA4E6",
-          'highlight': "#7CB9F1",
+          'blue-deep': "#2563EB",
+          'blue': "#3B82F6",
+          'cyan': "#06B6D4",
+          'cyan-light': "#22D3EE",
+          'sky': "#38BDF8",
+          'highlight': "#7DD3FC",
         },
       },
       borderRadius: {

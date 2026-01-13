@@ -1,8 +1,8 @@
 // Floating Recording Panel - Premium PostHog/Linear inspired design
 // Beautiful, minimal, functional
 
-const PANEL_ID = 'simplest-automation-panel';
-const CURSOR_ID = 'simplest-automation-cursor';
+const PANEL_ID = 'openmation-panel';
+const CURSOR_ID = 'openmation-cursor';
 
 type PanelMode = 'ready' | 'recording' | 'paused' | 'saving';
 
@@ -275,16 +275,152 @@ async function handleSave(): Promise<void> {
     saveBtn.textContent = 'Saving...';
   }
   
-  // Send stop with name
+  // Send stop with name and wait for the share URL response
   chrome.runtime.sendMessage({ 
     type: 'STOP_RECORDING_WITH_NAME',
     name,
+  }, (response) => {
+    if (response?.shareUrl) {
+      // Copy to clipboard
+      navigator.clipboard.writeText(response.shareUrl).then(() => {
+        showSuccessToast(response.shareUrl);
+      }).catch(() => {
+        showSuccessToast(response.shareUrl, false);
+      });
+    }
+    
+    // Remove panel after showing success
+    setTimeout(() => {
+      removePanel();
+    }, 3000);
   });
+}
+
+function showSuccessToast(shareUrl: string, copied = true): void {
+  // Remove any existing toast
+  const existingToast = document.getElementById('openmation-success-toast');
+  if (existingToast) existingToast.remove();
   
-  // Small delay for visual feedback then remove
+  const toast = document.createElement('div');
+  toast.id = 'openmation-success-toast';
+  toast.innerHTML = `
+    <div class="om-toast-content">
+      <div class="om-toast-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </div>
+      <div class="om-toast-text">
+        <div class="om-toast-title">Automation saved! ${copied ? '✓ Link copied' : ''}</div>
+        <div class="om-toast-url">${shareUrl}</div>
+      </div>
+      <button class="om-toast-copy" onclick="navigator.clipboard.writeText('${shareUrl}')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+      </button>
+    </div>
+  `;
+  
+  const style = document.createElement('style');
+  style.id = 'openmation-success-toast-styles';
+  style.textContent = `
+    #openmation-success-toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2147483647;
+      animation: om-toast-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    @keyframes om-toast-enter {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+    
+    .om-toast-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 14px;
+      padding: 14px 18px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    .om-toast-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.1);
+      color: #10B981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .om-toast-text {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .om-toast-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 2px;
+    }
+    
+    .om-toast-url {
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.5);
+      font-family: monospace;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 300px;
+    }
+    
+    .om-toast-copy {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(0, 0, 0, 0.05);
+      color: rgba(0, 0, 0, 0.6);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    
+    .om-toast-copy:hover {
+      background: rgba(0, 0, 0, 0.08);
+      color: rgba(0, 0, 0, 0.8);
+    }
+  `;
+  
+  document.head.appendChild(style);
+  document.body.appendChild(toast);
+  
+  // Auto-remove after 5 seconds
   setTimeout(() => {
-    removePanel();
-  }, 300);
+    toast.remove();
+    style.remove();
+  }, 5000);
 }
 
 function handleDiscard(): void {
@@ -383,7 +519,7 @@ export function createReplayCursor(): HTMLElement {
   cursor.id = CURSOR_ID;
   cursor.innerHTML = `
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-      <path d="M5.5 3.5L20 11.5L12 14L9 21L5.5 3.5Z" fill="#5E5CE6" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M5.5 3.5L20 11.5L12 14L9 21L5.5 3.5Z" fill="#3B82F6" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
     </svg>
     <div class="sa-cursor-ripple"></div>
   `;
@@ -397,7 +533,7 @@ export function createReplayCursor(): HTMLElement {
       z-index: 2147483646;
       transform: translate(-3px, -3px);
       transition: left 16ms linear, top 16ms linear;
-      filter: drop-shadow(0 2px 8px rgba(94, 92, 230, 0.3));
+      filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.3));
     }
     .sa-cursor-ripple {
       position: absolute;
@@ -406,7 +542,7 @@ export function createReplayCursor(): HTMLElement {
       width: 24px;
       height: 24px;
       border-radius: 50%;
-      background: rgba(94, 92, 230, 0.4);
+      background: rgba(59, 130, 246, 0.4);
       transform: translate(-50%, -50%) scale(0);
       opacity: 0;
     }
@@ -469,12 +605,9 @@ function getPanelHTML(): string {
       <div class="sa-panel-header">
         <div class="sa-brand">
           <div class="sa-logo">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <circle cx="12" cy="12" r="3"/>
-            </svg>
+            <img src="${chrome.runtime.getURL('icons/icon48.png')}" alt="Openmation" width="24" height="24" style="object-fit: contain;" />
           </div>
-          <span class="sa-title">Simplest</span>
+          <span class="sa-title">Openmation</span>
         </div>
         <button class="sa-close-btn" title="Close">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
@@ -580,18 +713,16 @@ function getPanelStyles(): string {
     }
     
     .sa-panel-inner {
-      background: rgba(30, 30, 32, 0.95);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 16px;
       box-shadow: 
-        0 0 0 1px rgba(0, 0, 0, 0.3),
-        0 8px 40px rgba(0, 0, 0, 0.35),
-        0 2px 8px rgba(0, 0, 0, 0.2);
+        0 0 0 1px rgba(0, 0, 0, 0.04),
+        0 8px 40px rgba(0, 0, 0, 0.12),
+        0 2px 8px rgba(0, 0, 0, 0.06);
       overflow: hidden;
-      min-width: 240px;
-      color: #fff;
+      min-width: 260px;
+      color: #1a1a1a;
     }
     
     /* Header */
@@ -599,8 +730,8 @@ function getPanelStyles(): string {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
       cursor: grab;
       user-select: none;
     }
@@ -608,34 +739,40 @@ function getPanelStyles(): string {
     .sa-brand {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
     
     .sa-logo {
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      background: linear-gradient(135deg, #5E5CE6 0%, #BF5AF2 100%);
+      width: 28px;
+      height: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
+    }
+    
+    .sa-logo img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
     }
     
     .sa-title {
       font-weight: 600;
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.9);
-      letter-spacing: -0.01em;
+      font-size: 14px;
+      background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 50%, #2563EB 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
     }
     
     .sa-close-btn {
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
       border: none;
       background: transparent;
-      color: rgba(255, 255, 255, 0.4);
+      color: rgba(0, 0, 0, 0.4);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -644,13 +781,13 @@ function getPanelStyles(): string {
     }
     
     .sa-close-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: rgba(255, 255, 255, 0.8);
+      background: rgba(0, 0, 0, 0.05);
+      color: rgba(0, 0, 0, 0.7);
     }
     
     /* Panel Body */
     .sa-panel-body {
-      padding: 12px;
+      padding: 14px;
     }
     
     /* Start View */
@@ -660,11 +797,11 @@ function getPanelStyles(): string {
     
     .sa-start-btn {
       width: 100%;
-      height: 44px;
-      border-radius: 10px;
-      border: 1.5px dashed rgba(255, 255, 255, 0.15);
-      background: transparent;
-      color: rgba(255, 255, 255, 0.9);
+      height: 48px;
+      border-radius: 12px;
+      border: 1.5px solid rgba(0, 0, 0, 0.1);
+      background: #ffffff;
+      color: #1a1a1a;
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
@@ -676,18 +813,18 @@ function getPanelStyles(): string {
     }
     
     .sa-start-btn:hover {
-      border-color: rgba(94, 92, 230, 0.5);
-      background: rgba(94, 92, 230, 0.08);
+      border-color: rgba(59, 130, 246, 0.3);
+      background: rgba(59, 130, 246, 0.04);
     }
     
     .sa-start-icon {
-      color: #FF3B30;
+      color: #EF4444;
     }
     
     .sa-hint {
-      margin: 10px 0 0 0;
+      margin: 12px 0 0 0;
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.35);
+      color: rgba(0, 0, 0, 0.45);
     }
     
     /* Recording View */
@@ -708,33 +845,33 @@ function getPanelStyles(): string {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(0, 0, 0, 0.2);
     }
     
     .sa-status-dot.sa-recording {
-      background: #FF3B30;
+      background: #EF4444;
       animation: sa-pulse 1.2s ease-in-out infinite;
     }
     
     .sa-status-dot.sa-paused {
-      background: #FFD60A;
+      background: #F59E0B;
     }
     
     @keyframes sa-pulse {
       0%, 100% { 
         opacity: 1;
-        box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
       }
       50% { 
         opacity: 0.8;
-        box-shadow: 0 0 0 5px rgba(255, 59, 48, 0);
+        box-shadow: 0 0 0 5px rgba(239, 68, 68, 0);
       }
     }
     
     .sa-status-text {
       font-size: 12px;
       font-weight: 500;
-      color: rgba(255, 255, 255, 0.9);
+      color: #1a1a1a;
     }
     
     .sa-stats {
@@ -742,12 +879,12 @@ function getPanelStyles(): string {
       align-items: center;
       gap: 6px;
       font-size: 12px;
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(0, 0, 0, 0.5);
       font-variant-numeric: tabular-nums;
     }
     
     .sa-divider {
-      color: rgba(255, 255, 255, 0.2);
+      color: rgba(0, 0, 0, 0.2);
     }
     
     .sa-event-count {
@@ -761,12 +898,12 @@ function getPanelStyles(): string {
     }
     
     .sa-pause-btn {
-      width: 40px;
-      height: 36px;
-      border-radius: 8px;
+      width: 44px;
+      height: 40px;
+      border-radius: 10px;
       border: none;
-      background: rgba(255, 255, 255, 0.08);
-      color: rgba(255, 255, 255, 0.8);
+      background: rgba(0, 0, 0, 0.05);
+      color: rgba(0, 0, 0, 0.7);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -775,17 +912,17 @@ function getPanelStyles(): string {
     }
     
     .sa-pause-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.08);
     }
     
     .sa-stop-btn {
       flex: 1;
-      height: 36px;
-      border-radius: 8px;
+      height: 40px;
+      border-radius: 10px;
       border: none;
-      background: #5E5CE6;
+      background: #1a1a1a;
       color: #fff;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
       display: flex;
@@ -796,7 +933,7 @@ function getPanelStyles(): string {
     }
     
     .sa-stop-btn:hover {
-      background: #6B69E8;
+      background: #2a2a2a;
     }
     
     /* Save View */
@@ -817,11 +954,11 @@ function getPanelStyles(): string {
     }
     
     .sa-save-icon {
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      background: rgba(48, 209, 88, 0.15);
-      color: #30D158;
+      background: rgba(16, 185, 129, 0.1);
+      color: #10B981;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -832,17 +969,17 @@ function getPanelStyles(): string {
       align-items: center;
       gap: 6px;
       font-size: 12px;
-      color: rgba(255, 255, 255, 0.6);
+      color: rgba(0, 0, 0, 0.5);
     }
     
     .sa-name-input {
       width: 100%;
-      height: 40px;
-      padding: 0 12px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.05);
-      color: #fff;
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background: #ffffff;
+      color: #1a1a1a;
       font-size: 13px;
       font-family: inherit;
       outline: none;
@@ -851,12 +988,12 @@ function getPanelStyles(): string {
     }
     
     .sa-name-input::placeholder {
-      color: rgba(255, 255, 255, 0.3);
+      color: rgba(0, 0, 0, 0.35);
     }
     
     .sa-name-input:focus {
-      border-color: rgba(94, 92, 230, 0.5);
-      background: rgba(94, 92, 230, 0.08);
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
     
     .sa-save-actions {
@@ -867,37 +1004,37 @@ function getPanelStyles(): string {
     
     .sa-discard-btn {
       flex: 1;
-      height: 36px;
-      border-radius: 8px;
+      height: 40px;
+      border-radius: 10px;
       border: none;
-      background: rgba(255, 255, 255, 0.08);
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 12px;
+      background: rgba(0, 0, 0, 0.05);
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.15s ease;
     }
     
     .sa-discard-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: rgba(255, 255, 255, 0.9);
+      background: rgba(0, 0, 0, 0.08);
+      color: rgba(0, 0, 0, 0.8);
     }
     
     .sa-save-btn {
       flex: 1;
-      height: 36px;
-      border-radius: 8px;
+      height: 40px;
+      border-radius: 10px;
       border: none;
-      background: #5E5CE6;
+      background: #1a1a1a;
       color: #fff;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.15s ease;
     }
     
     .sa-save-btn:hover {
-      background: #6B69E8;
+      background: #2a2a2a;
     }
     
     .sa-save-btn:disabled {

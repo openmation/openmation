@@ -71,11 +71,11 @@ export function RecordingPanel({ onRecordingChange }: RecordingPanelProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Circle className="w-3 h-3 fill-destructive text-destructive animate-pulse" />
-              <div className="absolute inset-0 rounded-full bg-destructive/30 animate-ping" />
+              <Circle className="w-3 h-3 fill-red-500 text-red-500 animate-pulse" />
+              <div className="absolute inset-0 rounded-full bg-red-500/30 animate-ping" />
             </div>
             <div>
-              <p className="text-sm font-medium">Recording in progress</p>
+              <p className="text-sm font-medium text-foreground">Recording in progress</p>
               <p className="text-xs text-muted-foreground">Use the panel on the webpage</p>
             </div>
           </div>
@@ -83,7 +83,7 @@ export function RecordingPanel({ onRecordingChange }: RecordingPanelProps) {
             variant="outline" 
             size="sm"
             onClick={() => window.close()}
-            className="gap-1.5"
+            className="gap-1.5 rounded-full"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             Go to page
@@ -98,12 +98,10 @@ export function RecordingPanel({ onRecordingChange }: RecordingPanelProps) {
     <div className="p-5 border-b border-border/50">
       <Button
         onClick={startRecording}
-        className="w-full h-12 gap-3 text-sm font-medium"
+        className="w-full h-12 gap-3 text-sm font-medium rounded-xl border border-border bg-background hover:bg-secondary text-foreground"
         variant="outline"
       >
-        <div className="relative">
-          <Circle className="w-4 h-4 fill-destructive text-destructive" />
-        </div>
+        <Circle className="w-4 h-4 fill-red-500 text-red-500" />
         Start New Recording
       </Button>
       <p className="mt-3 text-xs text-center text-muted-foreground">

@@ -6,97 +6,56 @@
 
 @layer base {
   :root {
-    /* Light Theme - Matching Extension Exactly */
-    --background: 230 25% 98%;
-    --foreground: 230 50% 10%;
+    /* Openmation Theme - Clean white inspired by Google Antigravity */
+    --background: 0 0% 100%;
+    --foreground: 220 20% 10%;
     
     --card: 0 0% 100%;
-    --card-foreground: 230 50% 10%;
+    --card-foreground: 220 20% 10%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 230 50% 10%;
+    --popover-foreground: 220 20% 10%;
     
-    /* Primary - Deep indigo blue from logo */
-    --primary: 230 70% 50%;
+    /* Primary - Openmation Cyan/Blue from logo */
+    --primary: 200 85% 50%;
     --primary-foreground: 0 0% 100%;
     
-    /* Secondary */
-    --secondary: 230 30% 94%;
-    --secondary-foreground: 230 50% 15%;
+    /* Secondary - Light gray */
+    --secondary: 220 15% 96%;
+    --secondary-foreground: 220 20% 15%;
     
-    --muted: 230 20% 95%;
-    --muted-foreground: 230 15% 45%;
+    --muted: 220 15% 96%;
+    --muted-foreground: 220 10% 45%;
     
-    /* Accent - Bright blue highlights from robot joints */
-    --accent: 217 91% 60%;
+    /* Accent - Deep blue from logo */
+    --accent: 215 70% 45%;
     --accent-foreground: 0 0% 100%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    --success: 142 71% 45%;
+    --success: 152 70% 45%;
     --success-foreground: 0 0% 100%;
     
-    --border: 230 20% 90%;
-    --input: 230 20% 90%;
-    --ring: 230 70% 50%;
+    --border: 220 15% 92%;
+    --input: 220 15% 92%;
+    --ring: 200 85% 50%;
     
-    --radius: 10px;
+    --radius: 12px;
     
-    /* Logo colors - Deep navy palette */
-    --logo-navy-dark: #0D1321;
-    --logo-navy: #1D2D44;
-    --logo-navy-light: #3E5C76;
-    --logo-blue: #4A90D9;
-    --logo-blue-bright: #5BA4E6;
-    --logo-highlight: #7CB9F1;
+    /* Openmation Logo Colors - Blue swirl palette */
+    --logo-blue-deep: #2563EB;
+    --logo-blue: #3B82F6;
+    --logo-cyan: #06B6D4;
+    --logo-cyan-light: #22D3EE;
+    --logo-sky: #38BDF8;
+    --logo-highlight: #7DD3FC;
     
-    /* Subtle shadows for depth */
-    --shadow-sm: 0 1px 2px 0 rgb(13 19 33 / 0.04);
-    --shadow: 0 1px 3px 0 rgb(13 19 33 / 0.06), 0 1px 2px -1px rgb(13 19 33 / 0.06);
-    --shadow-md: 0 4px 6px -1px rgb(13 19 33 / 0.08), 0 2px 4px -2px rgb(13 19 33 / 0.08);
-    --shadow-lg: 0 10px 15px -3px rgb(13 19 33 / 0.08), 0 4px 6px -4px rgb(13 19 33 / 0.08);
-  }
-
-  .dark {
-    /* Dark Theme - Matches logo exactly */
-    --background: 230 45% 8%;
-    --foreground: 220 20% 95%;
-    
-    --card: 230 45% 11%;
-    --card-foreground: 220 20% 95%;
-    
-    --popover: 230 45% 12%;
-    --popover-foreground: 220 20% 95%;
-    
-    /* Primary - Bright blue from robot joints */
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-    
-    --secondary: 230 40% 15%;
-    --secondary-foreground: 220 20% 95%;
-    
-    --muted: 230 40% 15%;
-    --muted-foreground: 220 15% 55%;
-    
-    /* Accent - Lighter blue highlight */
-    --accent: 210 100% 70%;
-    --accent-foreground: 230 45% 8%;
-    
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-    
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
-    
-    --border: 230 40% 18%;
-    --input: 230 40% 18%;
-    --ring: 217 91% 60%;
-    
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.5);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.5);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+    /* Subtle shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.06), 0 4px 6px -4px rgb(0 0 0 / 0.06);
   }
 }
 
@@ -130,32 +89,32 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted-foreground) / 0.15);
+    background: hsl(var(--muted-foreground) / 0.12);
     border-radius: 100px;
     border: 2px solid transparent;
     background-clip: content-box;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.25);
+    background: hsl(var(--muted-foreground) / 0.2);
     border: 2px solid transparent;
     background-clip: content-box;
   }
 
   ::selection {
-    background: hsl(var(--primary) / 0.15);
+    background: hsl(var(--primary) / 0.12);
     color: hsl(var(--foreground));
   }
 }
 
 @layer utilities {
-  /* Logo gradients from extension */
+  /* Openmation Logo gradient - Cyan to Blue */
   .logo-gradient {
-    background: linear-gradient(135deg, #1D2D44 0%, #3E5C76 50%, #4A90D9 100%);
+    background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 50%, #2563EB 100%);
   }
   
   .logo-gradient-text {
-    background: linear-gradient(135deg, #3E5C76 0%, #4A90D9 50%, #7CB9F1 100%);
+    background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 50%, #2563EB 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -163,7 +122,7 @@
   
   /* Primary gradient text */
   .text-gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+    background: linear-gradient(90deg, #06B6D4 0%, #3B82F6 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -179,37 +138,45 @@
 
   /* Glass morphism effect */
   .glass {
-    @apply bg-background/80 backdrop-blur-xl;
+    @apply bg-background/90 backdrop-blur-xl;
     border: 1px solid hsl(var(--border) / 0.5);
   }
 
-  /* Card styles matching extension */
+  /* Card styles - Clean minimal */
   .card-elevated {
-    @apply bg-card rounded-xl border border-border/50;
+    @apply bg-card rounded-2xl border border-border/50;
     box-shadow: var(--shadow-md);
   }
 
   .card-elevated-lg {
-    @apply bg-card rounded-2xl border border-border/50;
+    @apply bg-card rounded-3xl border border-border/50;
     box-shadow: var(--shadow-lg);
   }
 
-  /* Button styles */
+  /* Dark card for contrast sections (like Antigravity) */
+  .card-dark {
+    @apply rounded-3xl;
+    background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
+    color: white;
+  }
+
+  /* Antigravity-style button - Dark primary */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold 
-           text-primary-foreground bg-primary rounded-lg transition-all duration-200
-           hover:bg-primary/90 active:scale-[0.98];
-    box-shadow: 0 1px 3px rgba(74, 144, 217, 0.3), 0 4px 12px rgba(74, 144, 217, 0.15);
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium 
+           text-white bg-foreground rounded-full transition-all duration-200
+           hover:bg-foreground/90 active:scale-[0.98];
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   .btn-primary:hover {
-    box-shadow: 0 2px 8px rgba(74, 144, 217, 0.4), 0 8px 24px rgba(74, 144, 217, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
+  /* Secondary button - Outlined like Antigravity */
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold 
-           text-foreground bg-card border border-border rounded-lg transition-all duration-200
-           hover:bg-secondary hover:border-border/80 active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium 
+           text-foreground bg-transparent border border-border rounded-full transition-all duration-200
+           hover:bg-secondary active:scale-[0.98];
   }
 
   /* Thinking animation */
@@ -319,11 +286,25 @@
     50% { width: 100%; }
     100% { width: 0%; }
   }
+  
+  /* Particle/star animation for Antigravity effect */
+  .particle {
+    @apply absolute w-1 h-1 rounded-full;
+    background: linear-gradient(135deg, #06B6D4, #3B82F6);
+    animation: particle-float 20s linear infinite;
+  }
+  
+  @keyframes particle-float {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+  }
 }
 
 /* Section spacing */
 .section-padding {
-  @apply py-20 md:py-28 lg:py-32;
+  @apply py-24 md:py-32 lg:py-40;
 }
 
 /* Container */
@@ -340,20 +321,21 @@
   scrollbar-width: none;
 }
 
-/* Extension preview frame styles */
+/* Extension preview frame styles - White clean */
 .extension-frame {
-  @apply rounded-xl overflow-hidden;
+  @apply rounded-2xl overflow-hidden bg-white;
   box-shadow: 
     0 0 0 1px hsl(var(--border)),
-    0 4px 12px -2px rgba(13, 19, 33, 0.12),
-    0 12px 32px -4px rgba(13, 19, 33, 0.1);
+    0 4px 12px -2px rgba(0, 0, 0, 0.08),
+    0 12px 32px -4px rgba(0, 0, 0, 0.06);
 }
 
+/* Dark extension frame for contrast sections */
 .extension-frame-dark {
-  @apply rounded-xl overflow-hidden;
-  background: hsl(230 45% 8%);
+  @apply rounded-2xl overflow-hidden;
+  background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
   box-shadow: 
-    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.06),
     0 8px 40px rgba(0, 0, 0, 0.35),
     0 2px 8px rgba(0, 0, 0, 0.2);
 }
@@ -373,6 +355,6 @@
 }
 
 .demo-scrollbar::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.2);
+  background: hsl(var(--muted-foreground) / 0.15);
   border-radius: 100px;
 }

@@ -13,8 +13,6 @@ import {
   Pause,
   Square,
   MousePointer2,
-  Copy,
-  Calendar,
   Loader2,
 } from "lucide-react";
 import Image from "next/image";
@@ -149,7 +147,7 @@ export function AutomationDemo() {
     if (phase !== "sharing") return;
     
     const timer = setTimeout(() => {
-      setShareUrl("simplest.app/run/xK9mL2");
+      setShareUrl("openmation.com/run/xK9mL2");
       setPhase("shared");
     }, 1000);
 
@@ -240,21 +238,21 @@ export function AutomationDemo() {
   }, [phase]);
 
   return (
-    <div className="card-elevated-lg overflow-hidden">
+    <div className="card-dark overflow-hidden">
       {/* Header with phase indicators */}
-      <div className="flex items-center justify-between px-4 py-3 bg-secondary/30 border-b border-border/50">
-        <div className="flex items-center gap-1">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
+        <div className="flex items-center gap-2">
           {["Record", "Share", "Schedule", "Auto-Run"].map((label, i) => (
             <div
               key={label}
               className={cn(
-                "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300",
+                "flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-all duration-300",
                 (i === 0 && ["recording", "saving", "saved"].includes(phase)) ||
                 (i === 1 && ["sharing", "shared"].includes(phase)) ||
                 (i === 2 && ["scheduling", "scheduled"].includes(phase)) ||
                 (i === 3 && ["running", "complete"].includes(phase))
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground"
+                  ? "bg-white text-black"
+                  : "text-white/60"
               )}
             >
               {i === 0 && <Circle className="w-3 h-3" />}
@@ -265,7 +263,7 @@ export function AutomationDemo() {
             </div>
           ))}
         </div>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs text-white/50">
           {phase === "idle" && "Starting demo..."}
           {phase === "recording" && "Recording actions..."}
           {phase === "saving" && "Saving automation..."}
@@ -279,33 +277,34 @@ export function AutomationDemo() {
         </div>
       </div>
 
-      <div className="flex min-h-[520px]">
+      {/* Fixed height container to prevent layout shift */}
+      <div className="flex h-[520px]">
         {/* Left side - Website with recording */}
-        <div className="flex-1 p-6 bg-gradient-to-br from-secondary/20 to-secondary/5 relative">
-          <div className="text-xs font-medium text-muted-foreground mb-3 flex items-center gap-2">
-            <div className="w-5 h-5 rounded bg-primary/10 flex items-center justify-center">
-              <span className="text-primary text-[10px] font-bold">1</span>
+        <div className="flex-1 p-6 relative">
+          <div className="text-xs font-medium text-white/60 mb-3 flex items-center gap-2">
+            <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center">
+              <span className="text-white text-[10px] font-bold">1</span>
             </div>
             Recording Session
           </div>
           
           {/* Browser mockup */}
-          <div className="extension-frame overflow-hidden bg-card">
-            <div className="browser-chrome flex items-center gap-2 px-3 py-2">
+          <div className="extension-frame overflow-hidden bg-white">
+            <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
               <div className="flex gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
-                <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
-                <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
+                <div className="w-3 h-3 rounded-full bg-red-400" />
+                <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                <div className="w-3 h-3 rounded-full bg-green-400" />
               </div>
               <div className="flex-1 flex justify-center">
-                <div className="px-3 py-1 rounded-md bg-background text-[10px] text-muted-foreground font-mono">
+                <div className="px-4 py-1.5 rounded-full bg-gray-100 text-[11px] text-gray-500 font-mono">
                   app.example.com/signup
                 </div>
               </div>
             </div>
 
             {/* Website content - Signup form */}
-            <div className="p-6 bg-card relative min-h-[380px]">
+            <div className="p-6 bg-white relative min-h-[380px]">
               <SignupForm 
                 email={currentStep > 1 ? "john@company.com" : ""} 
                 password={currentStep > 3 ? "••••••••" : ""}
@@ -334,17 +333,18 @@ export function AutomationDemo() {
                   >
                     <MousePointer2 
                       className={cn(
-                        "w-5 h-5 text-primary drop-shadow-lg transition-transform",
+                        "w-5 h-5 drop-shadow-lg transition-transform",
                         showCursorClick && "scale-90"
                       )} 
-                      fill="currentColor"
+                      fill="#3B82F6"
+                      stroke="#3B82F6"
                     />
                     {showCursorClick && (
                       <motion.div
                         initial={{ scale: 0, opacity: 1 }}
                         animate={{ scale: 2, opacity: 0 }}
                         transition={{ duration: 0.4 }}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-primary/40"
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-blue-500/40"
                       />
                     )}
                   </motion.div>
@@ -353,7 +353,7 @@ export function AutomationDemo() {
             </div>
           </div>
 
-          {/* Floating Recording Panel */}
+          {/* Floating Recording Panel - White theme */}
           <AnimatePresence>
             {(phase === "recording" || phase === "saving" || phase === "saved") && (
               <motion.div
@@ -373,66 +373,17 @@ export function AutomationDemo() {
           </AnimatePresence>
         </div>
 
-        {/* Right side - Extension popup with automation */}
-        <div className="w-[380px] border-l border-border flex flex-col bg-card">
+        {/* Right side - Extension popup with automation - fixed layout */}
+        <div className="w-[380px] border-l border-white/[0.06] flex flex-col overflow-hidden">
           <ExtensionPopup 
             phase={phase}
             shareUrl={shareUrl}
             isRunning={isRunningOnRight}
             runningStep={rightSideStep}
             totalSteps={demoSteps.length}
+            rightFormState={rightFormState}
+            rightCursorPosition={rightCursorPosition}
           />
-          
-          {/* Right side browser preview for running automation */}
-          {isRunningOnRight && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              className="border-t border-border p-4 bg-secondary/30"
-            >
-              <div className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-2">
-                <div className="w-5 h-5 rounded bg-success/10 flex items-center justify-center">
-                  <Play className="w-3 h-3 text-success" />
-                </div>
-                Auto-running on recipient&apos;s browser
-              </div>
-              <div className="extension-frame overflow-hidden bg-card scale-90 origin-top-left">
-                <div className="browser-chrome flex items-center gap-2 px-2 py-1.5">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 rounded-full bg-red-400/80" />
-                    <div className="w-2 h-2 rounded-full bg-yellow-400/80" />
-                    <div className="w-2 h-2 rounded-full bg-green-400/80" />
-                  </div>
-                </div>
-                <div className="p-3 bg-card relative min-h-[160px]">
-                  <SignupFormMini 
-                    email={rightFormState.email}
-                    password={rightFormState.password}
-                  />
-                  {/* Right side cursor */}
-                  <AnimatePresence>
-                    {rightSideStep < demoSteps.length && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ 
-                          opacity: 1,
-                          x: rightCursorPosition.x * 0.5,
-                          y: rightCursorPosition.y * 0.4,
-                        }}
-                        className="absolute pointer-events-none z-20"
-                        style={{ top: 0, left: 0 }}
-                      >
-                        <MousePointer2 
-                          className="w-4 h-4 text-success drop-shadow-lg" 
-                          fill="currentColor"
-                        />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </div>
-            </motion.div>
-          )}
         </div>
       </div>
     </div>
@@ -448,43 +399,43 @@ function SignupForm({ email, password, activeField }: {
   return (
     <div className="max-w-[280px] mx-auto space-y-5">
       <div className="text-center mb-6">
-        <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center mx-auto mb-3">
-          <Zap className="w-5 h-5 text-primary-foreground" />
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center mx-auto mb-3">
+          <Zap className="w-5 h-5 text-white" />
         </div>
-        <h3 className="text-base font-semibold">Create Account</h3>
-        <p className="text-xs text-muted-foreground mt-1">Start your free trial today</p>
+        <h3 className="text-base font-semibold text-gray-900">Create Account</h3>
+        <p className="text-xs text-gray-500 mt-1">Start your free trial today</p>
       </div>
 
       <div className="space-y-4">
         <div>
-          <label className="text-xs font-medium mb-1.5 block text-muted-foreground">Email</label>
+          <label className="text-xs font-medium mb-1.5 block text-gray-500">Email</label>
           <div className={cn(
-            "px-3 py-2.5 rounded-lg border bg-background text-sm transition-all",
+            "px-3 py-2.5 rounded-lg border bg-white text-sm transition-all text-gray-900",
             activeField === "email" 
-              ? "border-primary ring-2 ring-primary/20" 
-              : "border-border"
+              ? "border-blue-500 ring-2 ring-blue-500/20" 
+              : "border-gray-200"
           )}>
-            {email || <span className="text-muted-foreground/50">john@company.com</span>}
+            {email || <span className="text-gray-400">john@company.com</span>}
           </div>
         </div>
 
         <div>
-          <label className="text-xs font-medium mb-1.5 block text-muted-foreground">Password</label>
+          <label className="text-xs font-medium mb-1.5 block text-gray-500">Password</label>
           <div className={cn(
-            "px-3 py-2.5 rounded-lg border bg-background text-sm transition-all",
+            "px-3 py-2.5 rounded-lg border bg-white text-sm transition-all text-gray-900",
             activeField === "password" 
-              ? "border-primary ring-2 ring-primary/20" 
-              : "border-border"
+              ? "border-blue-500 ring-2 ring-blue-500/20" 
+              : "border-gray-200"
           )}>
-            {password || <span className="text-muted-foreground/50">••••••••</span>}
+            {password || <span className="text-gray-400">••••••••</span>}
           </div>
         </div>
 
         <button className={cn(
-          "w-full py-2.5 rounded-lg font-medium text-sm text-primary-foreground transition-all",
+          "w-full py-2.5 rounded-lg font-medium text-sm text-white transition-all",
           activeField === "button"
-            ? "bg-primary ring-2 ring-primary/30"
-            : "bg-primary"
+            ? "bg-blue-600 ring-2 ring-blue-500/30"
+            : "bg-gray-900"
         )}>
           Sign Up
         </button>
@@ -498,44 +449,48 @@ function SignupFormMini({ email, password }: { email: string; password: string }
   return (
     <div className="max-w-[160px] mx-auto space-y-2">
       <div className="text-center mb-2">
-        <div className="w-6 h-6 rounded-lg bg-primary flex items-center justify-center mx-auto mb-1">
-          <Zap className="w-3 h-3 text-primary-foreground" />
+        <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center mx-auto mb-1">
+          <Zap className="w-3 h-3 text-white" />
         </div>
-        <p className="text-[10px] font-medium">Create Account</p>
+        <p className="text-[10px] font-medium text-gray-900">Create Account</p>
       </div>
-      <div className="px-2 py-1.5 rounded border border-border bg-background text-[10px]">
-        {email || <span className="text-muted-foreground/50">Email</span>}
+      <div className="px-2 py-1.5 rounded border border-gray-200 bg-white text-[10px] text-gray-900">
+        {email || <span className="text-gray-400">Email</span>}
       </div>
-      <div className="px-2 py-1.5 rounded border border-border bg-background text-[10px]">
-        {password || <span className="text-muted-foreground/50">Password</span>}
+      <div className="px-2 py-1.5 rounded border border-gray-200 bg-white text-[10px] text-gray-900">
+        {password || <span className="text-gray-400">Password</span>}
       </div>
-      <button className="w-full py-1.5 rounded bg-primary text-primary-foreground text-[10px] font-medium">
+      <button className="w-full py-1.5 rounded bg-gray-900 text-white text-[10px] font-medium">
         Sign Up
       </button>
     </div>
   );
 }
 
-// Recording Panel Component - matches extension exactly
+// Recording Panel Component - White theme like extension
 function RecordingPanel({ phase, steps, name }: { 
   phase: DemoPhase;
   steps: RecordedStep[];
   name: string;
 }) {
   return (
-    <div className="extension-frame-dark w-[260px] text-white">
+    <div className="extension-frame w-[260px] bg-white">
       {/* Header */}
-      <div className="flex items-center justify-between px-3 py-2.5 border-b border-white/[0.06]">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#5E5CE6] to-[#BF5AF2] flex items-center justify-center">
-            <Circle className="w-3 h-3" strokeWidth={2.5} />
-          </div>
-          <span className="text-[13px] font-semibold text-white/90">Simplest</span>
+          <Image
+            src="/openmation.png"
+            alt="Openmation"
+            width={24}
+            height={24}
+            className="w-6 h-6 object-contain"
+          />
+          <span className="text-[13px] font-semibold text-gray-900">Openmation</span>
         </div>
       </div>
 
       {/* Body */}
-      <div className="p-3">
+      <div className="p-4">
         {phase === "saving" || phase === "saved" ? (
           // Save view
           <motion.div
@@ -544,10 +499,10 @@ function RecordingPanel({ phase, steps, name }: {
             className="space-y-3"
           >
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-green-500/15 flex items-center justify-center">
-                <Check className="w-4 h-4 text-green-400" />
+              <div className="w-7 h-7 rounded-full bg-emerald-50 flex items-center justify-center">
+                <Check className="w-4 h-4 text-emerald-500" />
               </div>
-              <div className="text-xs text-white/60">
+              <div className="text-xs text-gray-500">
                 {steps.length} actions · 00:12
               </div>
             </div>
@@ -556,15 +511,15 @@ function RecordingPanel({ phase, steps, name }: {
               value={name}
               readOnly
               placeholder="Name your automation..."
-              className="w-full h-10 px-3 rounded-lg border border-white/10 bg-white/5 text-white text-[13px] outline-none"
+              className="w-full h-10 px-3 rounded-lg border border-gray-200 bg-white text-gray-900 text-[13px] outline-none"
             />
             <div className="flex gap-2">
-              <button className="flex-1 h-9 rounded-lg bg-white/[0.08] text-white/70 text-xs font-medium">
+              <button className="flex-1 h-9 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">
                 Discard
               </button>
               <button className={cn(
                 "flex-1 h-9 rounded-lg text-white text-xs font-medium transition-colors",
-                phase === "saved" ? "bg-green-500" : "bg-[#5E5CE6]"
+                phase === "saved" ? "bg-emerald-500" : "bg-gray-900"
               )}>
                 {phase === "saved" ? "Saved ✓" : "Save"}
               </button>
@@ -576,11 +531,11 @@ function RecordingPanel({ phase, steps, name }: {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-red-500 recording-pulse" />
-                <span className="text-xs font-medium text-white/90">Recording</span>
+                <span className="text-xs font-medium text-gray-900">Recording</span>
               </div>
-              <div className="flex items-center gap-1.5 text-xs text-white/50">
+              <div className="flex items-center gap-1.5 text-xs text-gray-500">
                 <span>{steps.length} actions</span>
-                <span className="text-white/20">·</span>
+                <span className="text-gray-300">·</span>
                 <span className="font-mono">00:{String(steps.length * 2).padStart(2, '0')}</span>
               </div>
             </div>
@@ -593,10 +548,10 @@ function RecordingPanel({ phase, steps, name }: {
                     key={i}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-green-500/10 border border-green-500/20"
+                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-emerald-50 border border-emerald-100"
                   >
-                    <Check className="w-3 h-3 text-green-400" />
-                    <span className="text-[11px] text-green-300">
+                    <Check className="w-3 h-3 text-emerald-500" />
+                    <span className="text-[11px] text-emerald-700">
                       {step.action === "click" ? `Click ${step.element}` : `Type "${step.value}"`}
                     </span>
                   </motion.div>
@@ -606,10 +561,10 @@ function RecordingPanel({ phase, steps, name }: {
 
             {/* Controls */}
             <div className="flex gap-2">
-              <button className="w-10 h-9 rounded-lg bg-white/[0.08] flex items-center justify-center text-white/80">
+              <button className="w-10 h-9 rounded-lg bg-gray-100 flex items-center justify-center text-gray-600">
                 <Pause className="w-3 h-3" />
               </button>
-              <button className="flex-1 h-9 rounded-lg bg-[#5E5CE6] text-white text-xs font-medium flex items-center justify-center gap-1.5">
+              <button className="flex-1 h-9 rounded-lg bg-gray-900 text-white text-xs font-medium flex items-center justify-center gap-1.5">
                 <Square className="w-3 h-3" fill="currentColor" />
                 Finish
               </button>
@@ -621,60 +576,60 @@ function RecordingPanel({ phase, steps, name }: {
   );
 }
 
-// Extension Popup Component
-function ExtensionPopup({ phase, shareUrl, isRunning, runningStep, totalSteps }: {
+// Extension Popup Component - White theme with integrated auto-run section
+function ExtensionPopup({ phase, shareUrl, isRunning, runningStep, totalSteps, rightFormState, rightCursorPosition }: {
   phase: DemoPhase;
   shareUrl: string;
   isRunning: boolean;
   runningStep: number;
   totalSteps: number;
+  rightFormState: { email: string; password: string };
+  rightCursorPosition: { x: number; y: number };
 }) {
   return (
-    <div className="flex-1 flex flex-col">
-      {/* Header - matches extension exactly */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
+    <div className="flex-1 flex flex-col bg-white overflow-y-auto">
+      {/* Header - Openmation branding */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
         <div className="flex items-center gap-3">
-          <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 p-1 shadow-md">
-            <Image
-              src="/simplest.png"
-              alt="Simplest"
-              width={44}
-              height={44}
-              className="w-full h-full object-contain rounded-lg"
-            />
-          </div>
+          <Image
+            src="/openmation.png"
+            alt="Openmation"
+            width={44}
+            height={44}
+            className="w-11 h-11 object-contain"
+          />
           <div>
-            <h1 className="text-[16px] font-semibold tracking-tight logo-gradient-text">Simplest</h1>
-            <p className="text-[11px] text-muted-foreground font-medium">Automation</p>
+            <h1 className="text-[16px] font-semibold tracking-tight logo-gradient-text">Openmation</h1>
+            <p className="text-[11px] text-gray-500 font-medium">Browser Automation</p>
           </div>
         </div>
       </div>
 
       {/* Recording Button */}
-      <div className="p-5 border-b border-border/50">
-        <button className="w-full h-12 rounded-lg border border-border bg-background hover:bg-secondary/50 flex items-center justify-center gap-3 text-sm font-medium transition-colors">
-          <Circle className="w-4 h-4 fill-destructive text-destructive" />
+      <div className="p-5 border-b border-gray-100 shrink-0">
+        <button className="w-full h-12 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center gap-3 text-sm font-medium text-gray-900 transition-colors">
+          <Circle className="w-4 h-4 fill-red-500 text-red-500" />
           Start New Recording
         </button>
-        <p className="mt-3 text-xs text-center text-muted-foreground">
+        <p className="mt-3 text-xs text-center text-gray-500">
           Opens a recording panel on the current page
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="px-4 py-3 border-b border-border/50">
-        <div className="flex bg-secondary/50 rounded-lg p-1">
-          <button className="flex-1 px-4 py-2 rounded-md text-sm font-medium bg-card shadow-sm">
+      <div className="px-4 py-3 border-b border-gray-100 shrink-0">
+        <div className="flex bg-gray-100 rounded-lg p-1">
+          <button className="flex-1 px-4 py-2 rounded-md text-sm font-medium bg-white shadow-sm text-gray-900">
             Automations
           </button>
-          <button className="flex-1 px-4 py-2 rounded-md text-sm font-medium text-muted-foreground">
+          <button className="flex-1 px-4 py-2 rounded-md text-sm font-medium text-gray-500">
             History
           </button>
         </div>
       </div>
 
-      {/* Automation List */}
-      <div className="flex-1 overflow-auto p-4">
+      {/* Automation List - Scrollable area */}
+      <div className="flex-1 overflow-y-auto p-4">
         <AnimatePresence mode="wait">
           {phase === "idle" || phase === "recording" ? (
             <motion.div
@@ -682,13 +637,13 @@ function ExtensionPopup({ phase, shareUrl, isRunning, runningStep, totalSteps }:
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex flex-col items-center justify-center py-12 text-center"
+              className="flex flex-col items-center justify-center py-8 text-center"
             >
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/10 to-purple-500/10 flex items-center justify-center mb-4">
-                <Zap className="w-6 h-6 text-primary" />
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-50 to-blue-50 flex items-center justify-center mb-4">
+                <Zap className="w-6 h-6 text-blue-500" />
               </div>
-              <h3 className="text-[15px] font-semibold tracking-tight mb-1.5">No automations yet</h3>
-              <p className="text-[13px] text-muted-foreground max-w-[200px]">
+              <h3 className="text-[15px] font-semibold tracking-tight text-gray-900 mb-1.5">No automations yet</h3>
+              <p className="text-[13px] text-gray-500 max-w-[200px]">
                 Start by recording your first automation
               </p>
             </motion.div>
@@ -701,43 +656,43 @@ function ExtensionPopup({ phase, shareUrl, isRunning, runningStep, totalSteps }:
             >
               {/* Automation Card */}
               <div className={cn(
-                "group rounded-xl border bg-card p-4 transition-all duration-200",
-                isRunning ? "border-primary/30 shadow-md shadow-primary/5" : "hover:shadow-md"
+                "group rounded-xl border bg-white p-4 transition-all duration-200",
+                isRunning ? "border-blue-200 shadow-md shadow-blue-500/5" : "border-gray-100 hover:shadow-md hover:border-gray-200"
               )}>
                 <div className="flex items-start gap-3">
                   <div className={cn(
                     "w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200",
-                    isRunning ? "bg-primary/10" : "bg-muted"
+                    isRunning ? "bg-blue-50" : "bg-gray-100"
                   )}>
                     {isRunning ? (
-                      <Loader2 className="w-4 h-4 text-primary animate-spin" />
+                      <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />
                     ) : (
-                      <Zap className="w-4 h-4 text-primary" />
+                      <Zap className="w-4 h-4 text-blue-500" />
                     )}
                   </div>
                   
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-[14px] font-medium truncate leading-tight">
+                    <h3 className="text-[14px] font-medium text-gray-900 truncate leading-tight">
                       User Signup Flow
                     </h3>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-muted-foreground">5 events</span>
-                      <span className="text-muted-foreground/30">•</span>
-                      <span className="text-xs text-muted-foreground">12s</span>
-                      <span className="text-muted-foreground/30">•</span>
-                      <span className="text-xs text-muted-foreground">Just now</span>
+                      <span className="text-xs text-gray-500">5 events</span>
+                      <span className="text-gray-300">•</span>
+                      <span className="text-xs text-gray-500">12s</span>
+                      <span className="text-gray-300">•</span>
+                      <span className="text-xs text-gray-500">Just now</span>
                     </div>
                   </div>
 
                   {/* Action buttons */}
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="w-8 h-8 rounded-lg hover:bg-primary/10 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors">
+                    <button className="w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center text-gray-400 hover:text-blue-500 transition-colors">
                       <Share2 className="w-3.5 h-3.5" />
                     </button>
-                    <button className="w-8 h-8 rounded-lg hover:bg-primary/10 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors">
+                    <button className="w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center text-gray-400 hover:text-blue-500 transition-colors">
                       <Play className="w-3.5 h-3.5 fill-current" />
                     </button>
-                    <button className="w-8 h-8 rounded-lg hover:bg-secondary flex items-center justify-center text-muted-foreground transition-colors">
+                    <button className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 transition-colors">
                       <MoreHorizontal className="w-4 h-4" />
                     </button>
                   </div>
@@ -745,14 +700,14 @@ function ExtensionPopup({ phase, shareUrl, isRunning, runningStep, totalSteps }:
 
                 {/* Running indicator */}
                 {isRunning && (
-                  <div className="mt-3 pt-3 border-t border-border/50">
+                  <div className="mt-3 pt-3 border-t border-gray-100">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-muted-foreground">Running...</span>
-                      <span className="text-primary font-medium">{runningStep}/{totalSteps}</span>
+                      <span className="text-gray-500">Running...</span>
+                      <span className="text-blue-500 font-medium">{runningStep}/{totalSteps}</span>
                     </div>
-                    <div className="h-1.5 bg-secondary rounded-full mt-2 overflow-hidden">
+                    <div className="h-1.5 bg-gray-100 rounded-full mt-2 overflow-hidden">
                       <motion.div
-                        className="h-full bg-primary rounded-full"
+                        className="h-full bg-blue-500 rounded-full"
                         initial={{ width: 0 }}
                         animate={{ width: `${(runningStep / totalSteps) * 100}%` }}
                         transition={{ duration: 0.3 }}
@@ -768,24 +723,24 @@ function ExtensionPopup({ phase, shareUrl, isRunning, runningStep, totalSteps }:
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="mt-3 pt-3 border-t border-border/50"
+                      className="mt-3 pt-3 border-t border-gray-100"
                     >
                       <div className={cn(
                         "flex items-center gap-2 px-3 py-2 rounded-lg text-xs",
                         phase === "shared" 
-                          ? "bg-green-500/10 border border-green-500/20" 
-                          : "bg-primary/5 border border-primary/10"
+                          ? "bg-emerald-50 border border-emerald-100" 
+                          : "bg-blue-50 border border-blue-100"
                       )}>
                         {phase === "shared" ? (
                           <>
-                            <Check className="w-3.5 h-3.5 text-green-500" />
-                            <span className="text-green-700 font-medium">Link copied!</span>
-                            <span className="text-green-600/70 font-mono ml-auto">{shareUrl}</span>
+                            <Check className="w-3.5 h-3.5 text-emerald-500" />
+                            <span className="text-emerald-700 font-medium">Link copied!</span>
+                            <span className="text-emerald-600/70 font-mono ml-auto text-[10px]">{shareUrl}</span>
                           </>
                         ) : (
                           <>
-                            <Loader2 className="w-3.5 h-3.5 text-primary animate-spin" />
-                            <span className="text-primary">Generating share link...</span>
+                            <Loader2 className="w-3.5 h-3.5 text-blue-500 animate-spin" />
+                            <span className="text-blue-700">Generating share link...</span>
                           </>
                         )}
                       </div>
@@ -800,16 +755,16 @@ function ExtensionPopup({ phase, shareUrl, isRunning, runningStep, totalSteps }:
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="mt-3 pt-3 border-t border-border/50"
+                      className="mt-3 pt-3 border-t border-gray-100"
                     >
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
                           <Clock className="w-3.5 h-3.5" />
                           <span>Scheduled: Daily at 9:00 AM</span>
                         </div>
                         <div className={cn(
                           "w-8 h-5 rounded-full transition-colors relative",
-                          phase === "scheduling" ? "bg-muted" : "bg-primary"
+                          phase === "scheduling" ? "bg-gray-200" : "bg-blue-500"
                         )}>
                           <motion.div
                             className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow"
@@ -819,6 +774,74 @@ function ExtensionPopup({ phase, shareUrl, isRunning, runningStep, totalSteps }:
                         </div>
                       </div>
                     </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Auto-run preview - always visible placeholder that fills with content */}
+              <div className={cn(
+                "rounded-xl border p-3 transition-all duration-300",
+                isRunning 
+                  ? "border-emerald-200 bg-emerald-50/50" 
+                  : "border-transparent"
+              )}>
+                <AnimatePresence mode="wait">
+                  {isRunning ? (
+                    <motion.div
+                      key="running"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <div className="text-xs font-medium text-emerald-700 mb-2 flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                          <Play className="w-2.5 h-2.5 text-emerald-600" />
+                        </div>
+                        Auto-running on recipient&apos;s browser
+                      </div>
+                      <div className="rounded-lg overflow-hidden bg-white border border-emerald-100">
+                        <div className="flex items-center gap-1.5 px-2 py-1.5 bg-gray-50 border-b border-gray-100">
+                          <div className="flex gap-1">
+                            <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-yellow-400" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                          </div>
+                        </div>
+                        <div className="p-2 relative min-h-[100px]">
+                          <SignupFormMini 
+                            email={rightFormState.email}
+                            password={rightFormState.password}
+                          />
+                          {/* Right side cursor */}
+                          {runningStep < totalSteps && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ 
+                                opacity: 1,
+                                x: rightCursorPosition.x * 0.35,
+                                y: rightCursorPosition.y * 0.25,
+                              }}
+                              className="absolute pointer-events-none z-20"
+                              style={{ top: 0, left: 0 }}
+                            >
+                              <MousePointer2 
+                                className="w-3 h-3 drop-shadow-lg" 
+                                fill="#10B981"
+                                stroke="#10B981"
+                              />
+                            </motion.div>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="placeholder"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="h-[140px]"
+                    />
                   )}
                 </AnimatePresence>
               </div>

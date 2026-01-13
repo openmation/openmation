@@ -8,20 +8,20 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Simplest - Browser Automation Made Beautiful",
+  title: "Openmation - Browser Automation Made Beautiful",
   description: "Record, replay, and share browser automations with pixel-perfect accuracy. The most elegant way to automate your repetitive browser tasks.",
-  keywords: ["browser automation", "chrome extension", "workflow automation", "web automation", "task automation"],
-  authors: [{ name: "Simplest Team" }],
+  keywords: ["browser automation", "chrome extension", "workflow automation", "web automation", "task automation", "openmation"],
+  authors: [{ name: "Openmation Team" }],
   openGraph: {
-    title: "Simplest - Browser Automation Made Beautiful",
+    title: "Openmation - Browser Automation Made Beautiful",
     description: "Record, replay, and share browser automations with pixel-perfect accuracy.",
     type: "website",
     locale: "en_US",
-    siteName: "Simplest",
+    siteName: "Openmation",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Simplest - Browser Automation Made Beautiful",
+    title: "Openmation - Browser Automation Made Beautiful",
     description: "Record, replay, and share browser automations with pixel-perfect accuracy.",
   },
 };

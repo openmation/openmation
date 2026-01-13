@@ -10,7 +10,7 @@ import { TooltipProvider } from './components/ui/tooltip';
 import { ThemeProvider } from './components/ThemeProvider';
 import type { Automation } from '@/lib/types';
 
-const ONBOARDING_KEY = 'simplest_onboarding_complete';
+const ONBOARDING_KEY = 'openmation_onboarding_complete';
 
 function AppContent() {
   const [showOnboarding, setShowOnboarding] = useState<boolean | null>(null);

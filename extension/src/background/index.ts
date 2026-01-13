@@ -37,13 +37,13 @@ let activeRecordingSession: {
 
 // Initialize on extension install/update
 chrome.runtime.onInstalled.addListener(async () => {
-  console.log("[Simplest Automation] Extension installed/updated");
+  console.log("[Openmation] Extension installed/updated");
   await initializeScheduler();
 });
 
 // Initialize on browser startup
 chrome.runtime.onStartup.addListener(async () => {
-  console.log("[Simplest Automation] Browser started");
+  console.log("[Openmation] Browser started");
   await initializeScheduler();
 });
 
@@ -57,12 +57,12 @@ chrome.runtime.onMessage.addListener(
     sender,
     sendResponse
   ) => {
-    console.log("[Simplest] Background received:", message.type);
+    console.log("[Openmation] Background received:", message.type);
 
     handleMessage(message, sender)
       .then(sendResponse)
       .catch((error: Error) => {
-        console.error("[Simplest] Error handling message:", error);
+        console.error("[Openmation] Error handling message:", error);
         sendResponse({ success: false, error: error.message });
       });
 
@@ -76,7 +76,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, _tab) => {
     changeInfo.status === "complete" &&
     activeRecordingSession?.tabId === tabId
   ) {
-    console.log("[Simplest] Tab updated during recording, restoring panel");
+    console.log("[Openmation] Tab updated during recording, restoring panel");
 
     try {
       // Wait for content script to be ready
@@ -99,7 +99,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, _tab) => {
       });
     } catch (error) {
       console.error(
-        "[Simplest] Failed to restore panel after navigation:",
+        "[Openmation] Failed to restore panel after navigation:",
         error
       );
     }
@@ -168,7 +168,7 @@ async function handleMessage(
 
         // If content script is not ready, inject it programmatically
         if (!contentScriptReady) {
-          console.log("[Simplest] Content script not ready, injecting...");
+          console.log("[Openmation] Content script not ready, injecting...");
           try {
             // Get the content script files from manifest
             const manifest = chrome.runtime.getManifest();
@@ -184,7 +184,7 @@ async function handleMessage(
             await new Promise((resolve) => setTimeout(resolve, 500));
           } catch (injectError) {
             console.error(
-              "[Simplest] Failed to inject content script:",
+              "[Openmation] Failed to inject content script:",
               injectError
             );
             throw new Error(
@@ -206,7 +206,7 @@ async function handleMessage(
 
         return { success: true, sessionId };
       } catch (error) {
-        console.error("[Simplest] Failed to start recording:", error);
+        console.error("[Openmation] Failed to start recording:", error);
         activeRecordingSession = null;
         await clearRecordingState();
         return {
@@ -363,7 +363,27 @@ async function handleMessage(
       activeRecordingSession = null;
       await clearRecordingState();
 
-      return { success: true, automation };
+      // Automatically share the automation and get the URL
+      let shareUrl: string | undefined;
+      try {
+        const API_BASE_URL = 'http://localhost:3002';
+        const shareResponse = await fetch(`${API_BASE_URL}/api/automations`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ automation }),
+        });
+        
+        const shareData = await shareResponse.json();
+        if (shareData.success && shareData.shareUrl) {
+          shareUrl = shareData.shareUrl;
+        }
+      } catch (error) {
+        console.error('[Openmation] Failed to auto-share automation:', error);
+      }
+
+      return { success: true, automation, shareUrl };
     }
 
     case "EVENT_RECORDED": {
@@ -382,7 +402,7 @@ async function handleMessage(
         eventCount?: number;
       };
       if (activeRecordingSession?.sessionId === resumeMsg.sessionId) {
-        console.log("[Simplest] Recording resumed on new page");
+        console.log("[Openmation] Recording resumed on new page");
       }
       return { success: true };
     }

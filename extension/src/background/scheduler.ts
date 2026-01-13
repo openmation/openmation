@@ -121,7 +121,7 @@ export async function initializeScheduler(): Promise<void> {
     }
   }
   
-  console.log('[Simplest Automation] Scheduler initialized');
+  console.log('[Openmation] Scheduler initialized');
 }
 
 export async function handleAlarm(alarm: chrome.alarms.Alarm): Promise<void> {

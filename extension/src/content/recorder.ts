@@ -349,8 +349,8 @@ function handleBeforeUnload(): void {
 
 function isOurElement(element: Element | null): boolean {
   if (!element) return false;
-  return !!(element.closest('#simplest-automation-panel') || 
-            element.closest('#simplest-automation-cursor'));
+  return !!(element.closest('#openmation-panel') || 
+            element.closest('#openmation-cursor'));
 }
 
 function recordEvent(event: RecordedEvent): void {
@@ -409,7 +409,7 @@ function saveRecordingState(): void {
   };
   
   try {
-    localStorage.setItem('simplest_recording_state', JSON.stringify(state));
+    localStorage.setItem('openmation_recording_state', JSON.stringify(state));
   } catch {
     // Ignore quota errors
   }
@@ -417,7 +417,7 @@ function saveRecordingState(): void {
 
 function loadRecordingState(): boolean {
   try {
-    const stored = localStorage.getItem('simplest_recording_state');
+    const stored = localStorage.getItem('openmation_recording_state');
     if (!stored) return false;
     
     const state = JSON.parse(stored);
@@ -430,7 +430,7 @@ function loadRecordingState(): boolean {
       isRecording = true;
       isPaused = state.isPaused;
       
-      localStorage.removeItem('simplest_recording_state');
+      localStorage.removeItem('openmation_recording_state');
       return true;
     }
   } catch {
@@ -444,7 +444,7 @@ function loadRecordingState(): boolean {
 
 export function startRecording(newSessionId: string): void {
   if (loadRecordingState()) {
-    console.log('[Simplest] Resumed recording from previous page');
+    console.log('[Openmation] Resumed recording from previous page');
     attachListeners();
     return;
   }
@@ -458,17 +458,17 @@ export function startRecording(newSessionId: string): void {
   sessionId = newSessionId;
   
   attachListeners();
-  console.log('[Simplest] Recording started');
+  console.log('[Openmation] Recording started');
 }
 
 export function pauseRecording(): void {
   isPaused = true;
-  console.log('[Simplest] Recording paused');
+  console.log('[Openmation] Recording paused');
 }
 
 export function resumeRecording(): void {
   isPaused = false;
-  console.log('[Simplest] Recording resumed');
+  console.log('[Openmation] Recording resumed');
 }
 
 export function stopRecording(): { 
@@ -481,7 +481,7 @@ export function stopRecording(): {
   isPaused = false;
   
   detachListeners();
-  localStorage.removeItem('simplest_recording_state');
+  localStorage.removeItem('openmation_recording_state');
   
   // Filter out checkpoint events for cleaner replay
   const eventsForReplay = recordedEvents.filter(e => !e.isCheckpoint);
@@ -496,7 +496,7 @@ export function stopRecording(): {
   recordedEvents = [];
   mouseMovements = [];
   
-  console.log('[Simplest] Recording stopped:', result.events.length, 'events');
+  console.log('[Openmation] Recording stopped:', result.events.length, 'events');
   
   return result;
 }

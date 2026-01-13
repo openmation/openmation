@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: ["class"],
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -45,14 +44,14 @@ export default {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
         },
-        // Logo colors - Deep navy palette
+        // Openmation Logo colors - Blue swirl palette
         logo: {
-          'navy-dark': "#0D1321",
-          'navy': "#1D2D44",
-          'navy-light': "#3E5C76",
-          'blue': "#4A90D9",
-          'blue-bright': "#5BA4E6",
-          'highlight': "#7CB9F1",
+          'blue-deep': "#2563EB",
+          'blue': "#3B82F6",
+          'cyan': "#06B6D4",
+          'cyan-light': "#22D3EE",
+          'sky': "#38BDF8",
+          'highlight': "#7DD3FC",
         },
       },
       borderRadius: {

@@ -69,7 +69,7 @@ const features = [
 const stats = [
   { value: "50%", label: "Time saved on repetitive tasks" },
   { value: "1-click", label: "To share any automation" },
-  { value: "100%", label: "Free forever" },
+  { value: "100%", label: "Free & Open Source" },
 ];
 
 export function Features() {
@@ -79,20 +79,10 @@ export function Features() {
 
   return (
     <section id="features" className="section-padding bg-background relative">
-      {/* Subtle grid pattern */}
-      <div 
-        className="absolute inset-0 opacity-[0.01]" 
-        style={{
-          backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px),
-                           linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
-          backgroundSize: '48px 48px'
-        }}
-      />
-
       <div className="container-custom relative z-10">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-6">
             Delegate repetitive work
             <br />
             <span className="logo-gradient-text">to automations</span>
@@ -103,10 +93,10 @@ export function Features() {
           </p>
         </div>
 
-        {/* Feature tabs */}
-        <div className="card-elevated-lg overflow-hidden">
+        {/* Feature tabs - Dark card like Antigravity */}
+        <div className="card-dark overflow-hidden">
           {/* Tab navigation */}
-          <div className="flex items-center gap-1 px-4 py-3 border-b border-border/50 bg-secondary/30 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-2 px-6 py-4 border-b border-white/[0.06] overflow-x-auto no-scrollbar">
             {features.map((feature) => {
               const Icon = feature.icon;
               return (
@@ -114,10 +104,10 @@ export function Features() {
                   key={feature.id}
                   onClick={() => setActiveTab(feature.id)}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap",
+                    "flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap",
                     activeTab === feature.id
-                      ? "bg-card text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground hover:bg-card/50"
+                      ? "bg-white text-black"
+                      : "text-white/60 hover:text-white hover:bg-white/5"
                   )}
                 >
                   <Icon className="w-4 h-4" />
@@ -130,23 +120,23 @@ export function Features() {
           {/* Tab content */}
           <div className="grid md:grid-cols-2 gap-0">
             {/* Left side - Description */}
-            <div className="p-8 md:p-10 bg-card">
+            <div className="p-8 md:p-12">
               <motion.div
                 key={activeTab}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
-                  <activeFeature.icon className="w-6 h-6 text-primary" />
+                <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mb-6">
+                  <activeFeature.icon className="w-7 h-7 text-white" />
                 </div>
 
-                <h3 className="text-xl font-bold mb-3">{activeFeature.title}</h3>
-                <p className="text-muted-foreground mb-6">
+                <h3 className="text-2xl font-semibold text-white mb-4">{activeFeature.title}</h3>
+                <p className="text-white/60 mb-8 text-base leading-relaxed">
                   {activeFeature.description}
                 </p>
 
-                <ul className="space-y-3">
+                <ul className="space-y-4">
                   {activeFeature.items.map((item, index) => (
                     <motion.li
                       key={index}
@@ -155,10 +145,10 @@ export function Features() {
                       transition={{ delay: index * 0.1 }}
                       className="flex items-start gap-3"
                     >
-                      <div className="w-5 h-5 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Check className="w-3 h-3 text-success" />
+                      <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-3 h-3 text-emerald-400" />
                       </div>
-                      <span className="text-sm">{item}</span>
+                      <span className="text-sm text-white/80">{item}</span>
                     </motion.li>
                   ))}
                 </ul>
@@ -166,7 +156,7 @@ export function Features() {
             </div>
 
             {/* Right side - Visual demo */}
-            <div className="p-8 md:p-10 bg-secondary/30 flex items-center justify-center">
+            <div className="p-8 md:p-12 bg-white/[0.02] flex items-center justify-center border-l border-white/[0.06]">
               <motion.div
                 key={activeTab}
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -185,9 +175,9 @@ export function Features() {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="text-center p-5 rounded-xl bg-card border border-border/50"
+              className="text-center p-6 rounded-2xl bg-secondary/50 border border-border/50"
             >
-              <p className="text-2xl md:text-3xl font-bold logo-gradient-text mb-1">
+              <p className="text-3xl md:text-4xl font-semibold logo-gradient-text mb-2">
                 {stat.value}
               </p>
               <p className="text-sm text-muted-foreground">{stat.label}</p>
@@ -202,14 +192,14 @@ export function Features() {
 function FeatureVisual({ featureId }: { featureId: string }) {
   if (featureId === "recording") {
     return (
-      <div className="card-elevated p-4 space-y-3">
-        <div className="flex items-center gap-3 p-3 rounded-lg bg-destructive/5 border border-destructive/10">
-          <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center">
-            <div className="w-3 h-3 rounded-full bg-destructive recording-pulse" />
+      <div className="extension-frame bg-white p-5 space-y-3">
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-red-50 border border-red-100">
+          <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
+            <div className="w-3 h-3 rounded-full bg-red-500 recording-pulse" />
           </div>
           <div>
-            <p className="text-sm font-medium">Recording...</p>
-            <p className="text-xs text-muted-foreground">5 events captured</p>
+            <p className="text-sm font-medium text-gray-900">Recording...</p>
+            <p className="text-xs text-gray-500">5 events captured</p>
           </div>
         </div>
         {["Click email input", "Type: user@example.com", "Click submit"].map(
@@ -219,10 +209,10 @@ function FeatureVisual({ featureId }: { featureId: string }) {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.2 }}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-success/5 border border-success/10 text-xs"
+              className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-emerald-50 border border-emerald-100 text-xs"
             >
-              <Check className="w-3.5 h-3.5 text-success" />
-              <span className="text-success">{step}</span>
+              <Check className="w-3.5 h-3.5 text-emerald-500" />
+              <span className="text-emerald-700">{step}</span>
             </motion.div>
           )
         )}
@@ -232,37 +222,37 @@ function FeatureVisual({ featureId }: { featureId: string }) {
 
   if (featureId === "replay") {
     return (
-      <div className="card-elevated p-6 text-center">
-        <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-          <Play className="w-7 h-7 text-primary fill-current" />
+      <div className="extension-frame bg-white p-6 text-center">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-50 to-blue-50 flex items-center justify-center mx-auto mb-5">
+          <Play className="w-8 h-8 text-blue-500 fill-current" />
         </div>
-        <p className="font-medium mb-3">Running automation...</p>
-        <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+        <p className="font-medium text-gray-900 mb-4">Running automation...</p>
+        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: "75%" }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="h-full bg-primary rounded-full"
+            className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
           />
         </div>
-        <p className="text-xs text-muted-foreground mt-2">Step 3 of 4</p>
+        <p className="text-xs text-gray-500 mt-3">Step 3 of 4</p>
       </div>
     );
   }
 
   if (featureId === "sharing") {
     return (
-      <div className="card-elevated p-5 space-y-4">
-        <div className="flex items-center gap-3 p-3 rounded-lg bg-success/5 border border-success/10">
-          <Check className="w-5 h-5 text-success" />
-          <span className="text-sm font-medium text-success">
+      <div className="extension-frame bg-white p-5 space-y-4">
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-emerald-50 border border-emerald-100">
+          <Check className="w-5 h-5 text-emerald-500" />
+          <span className="text-sm font-medium text-emerald-700">
             Link copied to clipboard!
           </span>
         </div>
-        <div className="px-4 py-3 rounded-lg bg-secondary border border-border font-mono text-xs text-muted-foreground break-all">
-          simplest.app/run/xK9mL2pQ
+        <div className="px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 font-mono text-xs text-gray-600 break-all">
+          openmation.com/run/xK9mL2pQ
         </div>
-        <p className="text-xs text-muted-foreground text-center">
+        <p className="text-xs text-gray-500 text-center">
           Anyone with this link can run your automation
         </p>
       </div>
@@ -270,25 +260,25 @@ function FeatureVisual({ featureId }: { featureId: string }) {
   }
 
   return (
-    <div className="card-elevated p-5">
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-sm font-medium">Schedule</p>
-        <div className="px-2 py-1 rounded-full bg-success/10 text-success text-xs font-medium">
+    <div className="extension-frame bg-white p-5">
+      <div className="flex items-center justify-between mb-5">
+        <p className="text-sm font-medium text-gray-900">Schedule</p>
+        <div className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-medium">
           Active
         </div>
       </div>
       <div className="space-y-3 text-sm">
-        <div className="flex justify-between py-2 border-b border-border">
-          <span className="text-muted-foreground">Frequency</span>
-          <span className="font-medium">Every day</span>
+        <div className="flex justify-between py-3 border-b border-gray-100">
+          <span className="text-gray-500">Frequency</span>
+          <span className="font-medium text-gray-900">Every day</span>
         </div>
-        <div className="flex justify-between py-2 border-b border-border">
-          <span className="text-muted-foreground">Time</span>
-          <span className="font-medium">9:00 AM</span>
+        <div className="flex justify-between py-3 border-b border-gray-100">
+          <span className="text-gray-500">Time</span>
+          <span className="font-medium text-gray-900">9:00 AM</span>
         </div>
-        <div className="flex justify-between py-2">
-          <span className="text-muted-foreground">Next run</span>
-          <span className="font-medium">Tomorrow</span>
+        <div className="flex justify-between py-3">
+          <span className="text-gray-500">Next run</span>
+          <span className="font-medium text-gray-900">Tomorrow</span>
         </div>
       </div>
     </div>

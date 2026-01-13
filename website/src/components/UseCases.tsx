@@ -59,37 +59,37 @@ export function UseCases() {
     <section id="use-cases" className="section-padding bg-background relative">
       <div className="container-custom">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-6">
             Built for
             <br />
             <span className="logo-gradient-text">real workflows</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            From solo users to enterprise teams, Simplest adapts to how you
+            From solo users to enterprise teams, Openmation adapts to how you
             work. Here are some popular use cases.
           </p>
         </div>
 
         {/* Use cases grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {useCases.map((useCase) => {
             const Icon = useCase.icon;
             return (
               <div
                 key={useCase.title}
-                className="group p-5 rounded-xl border border-border/50 bg-card hover:shadow-lg hover:border-border transition-all duration-300"
+                className="group p-6 rounded-2xl border border-border/50 bg-card hover:shadow-lg hover:border-border transition-all duration-300"
               >
-                <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
-                  <Icon className="w-5 h-5 text-primary" />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-50 to-blue-50 flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110">
+                  <Icon className="w-6 h-6 text-blue-500" />
                 </div>
 
-                <h3 className="text-base font-semibold mb-2">{useCase.title}</h3>
-                <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
+                <h3 className="text-base font-semibold mb-3">{useCase.title}</h3>
+                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
                   {useCase.description}
                 </p>
 
-                <div className="flex items-center gap-2 pt-3 border-t border-border/50">
+                <div className="flex items-center gap-2 pt-4 border-t border-border/50">
                   <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
                     Example
                   </span>

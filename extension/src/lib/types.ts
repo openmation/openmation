@@ -10,13 +10,20 @@ export interface RecordedEvent {
   id: string;
   type: 'click' | 'dblclick' | 'input' | 'change' | 'scroll' | 'keydown' | 'keyup' | 'mousedown' | 'mouseup' | 'mousemove' | 'focus' | 'blur' | 'submit' | 'navigate';
   timestamp: number;
-  // Position data
+  // Position data (viewport coordinates)
   x?: number;
   y?: number;
+  // Page coordinates (absolute, including scroll)
+  pageX?: number;
+  pageY?: number;
   // Element data
   selector?: string;
+  selectorFallbacks?: string[];  // Alternative selectors for robustness
   tagName?: string;
   innerText?: string;
+  elementText?: string;  // Text content for button/link matching
+  elementAttributes?: Record<string, string>;  // Key attributes for fallback matching
+  elementRect?: { top: number; left: number; width: number; height: number };  // Element position at record time
   // Input data
   value?: string;
   key?: string;
@@ -29,6 +36,8 @@ export interface RecordedEvent {
   url?: string;
   // Mouse path leading up to this event (for smooth replay)
   mousePath?: MousePosition[];
+  // Checkpoint flag - input events marked as checkpoints are for verification only
+  isCheckpoint?: boolean;
 }
 
 // Complete automation with all recorded data

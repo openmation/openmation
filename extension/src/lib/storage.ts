@@ -61,6 +61,31 @@ export async function getRunHistory(limit = 50): Promise<RunHistory[]> {
   return history.slice(0, limit);
 }
 
+// Clean up stale "running" entries (older than 5 minutes)
+export async function cleanupStaleRuns(): Promise<void> {
+  const history = await getFromStorage<RunHistory[]>(STORAGE_KEYS.RUN_HISTORY, []);
+  const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+  let hasChanges = false;
+  
+  const cleaned = history.map(run => {
+    // If status is "running" and started more than 5 minutes ago, mark as failed
+    if (run.status === 'running' && run.startedAt < fiveMinutesAgo) {
+      hasChanges = true;
+      return {
+        ...run,
+        status: 'failed' as const,
+        completedAt: run.startedAt + 60000, // Assume it failed after 1 minute
+        error: 'Automation timed out or was interrupted',
+      };
+    }
+    return run;
+  });
+  
+  if (hasChanges) {
+    await setToStorage(STORAGE_KEYS.RUN_HISTORY, cleaned);
+  }
+}
+
 export async function addRunHistory(run: RunHistory): Promise<void> {
   const history = await getRunHistory(100);
   history.unshift(run);

@@ -6,27 +6,30 @@
 
 @layer base {
   :root {
-    /* Premium Light Theme - Inspired by Linear/Apple */
-    --background: 0 0% 99%;
-    --foreground: 240 10% 3.9%;
+    /* Light Theme - Deep navy/indigo from logo */
+    --background: 230 25% 98%;
+    --foreground: 230 50% 10%;
     
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 230 50% 10%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 230 50% 10%;
     
-    --primary: 252 100% 63%;
+    /* Primary - Deep indigo blue from logo */
+    --primary: 230 70% 50%;
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 6% 10%;
+    /* Secondary */
+    --secondary: 230 30% 94%;
+    --secondary-foreground: 230 50% 15%;
     
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
+    --muted: 230 20% 95%;
+    --muted-foreground: 230 15% 45%;
     
-    --accent: 240 5% 96%;
-    --accent-foreground: 240 6% 10%;
+    /* Accent - Bright blue highlights from robot joints */
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -34,41 +37,51 @@
     --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
     
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 252 100% 63%;
+    --border: 230 20% 90%;
+    --input: 230 20% 90%;
+    --ring: 230 70% 50%;
     
     --radius: 10px;
     
+    /* Logo colors - Deep navy palette */
+    --logo-navy-dark: #0D1321;
+    --logo-navy: #1D2D44;
+    --logo-navy-light: #3E5C76;
+    --logo-blue: #4A90D9;
+    --logo-blue-bright: #5BA4E6;
+    --logo-highlight: #7CB9F1;
+    
     /* Subtle shadows for depth */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.03);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    --shadow-sm: 0 1px 2px 0 rgb(13 19 33 / 0.04);
+    --shadow: 0 1px 3px 0 rgb(13 19 33 / 0.06), 0 1px 2px -1px rgb(13 19 33 / 0.06);
+    --shadow-md: 0 4px 6px -1px rgb(13 19 33 / 0.08), 0 2px 4px -2px rgb(13 19 33 / 0.08);
+    --shadow-lg: 0 10px 15px -3px rgb(13 19 33 / 0.08), 0 4px 6px -4px rgb(13 19 33 / 0.08);
   }
 
   .dark {
-    /* Premium Dark Theme - Deep, rich, sophisticated */
-    --background: 228 14% 8%;
-    --foreground: 0 0% 95%;
+    /* Dark Theme - Matches logo exactly */
+    --background: 230 45% 8%;
+    --foreground: 220 20% 95%;
     
-    --card: 228 14% 10%;
-    --card-foreground: 0 0% 95%;
+    --card: 230 45% 11%;
+    --card-foreground: 220 20% 95%;
     
-    --popover: 228 14% 11%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 230 45% 12%;
+    --popover-foreground: 220 20% 95%;
     
-    --primary: 252 100% 68%;
+    /* Primary - Bright blue from robot joints */
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 228 14% 14%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 230 40% 15%;
+    --secondary-foreground: 220 20% 95%;
     
-    --muted: 228 14% 14%;
-    --muted-foreground: 228 10% 55%;
+    --muted: 230 40% 15%;
+    --muted-foreground: 220 15% 55%;
     
-    --accent: 228 14% 16%;
-    --accent-foreground: 0 0% 95%;
+    /* Accent - Lighter blue highlight */
+    --accent: 210 100% 70%;
+    --accent-foreground: 230 45% 8%;
     
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
@@ -76,14 +89,14 @@
     --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
     
-    --border: 228 14% 16%;
-    --input: 228 14% 16%;
-    --ring: 252 100% 68%;
+    --border: 230 40% 18%;
+    --input: 230 40% 18%;
+    --ring: 217 91% 60%;
     
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.5);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.5);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
   }
 }
 
@@ -170,9 +183,21 @@
     @apply bg-background/80 backdrop-blur-xl;
   }
   
+  /* Logo gradient - Navy to Blue */
+  .logo-gradient {
+    background: linear-gradient(135deg, #1D2D44 0%, #3E5C76 50%, #4A90D9 100%);
+  }
+  
+  .logo-gradient-text {
+    background: linear-gradient(135deg, #3E5C76 0%, #4A90D9 50%, #7CB9F1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
   /* Gradient text */
   .gradient-text {
-    @apply bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent;
   }
   
   /* Subtle border glow on hover */
@@ -188,6 +213,11 @@
   
   .border-glow:hover::before {
     @apply opacity-100;
+  }
+  
+  /* Logo shadow glow - blue tint */
+  .logo-shadow {
+    box-shadow: 0 4px 20px rgba(74, 144, 217, 0.25), 0 0 40px rgba(29, 45, 68, 0.2);
   }
 }
 
@@ -268,6 +298,15 @@ body {
   }
 }
 
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
 .animate-fade-in {
   animation: fade-in 0.2s ease-out;
 }
@@ -290,6 +329,11 @@ body {
 
 .animate-recording {
   animation: recording-pulse 1.5s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
 }
 
 /* Stagger children animations */

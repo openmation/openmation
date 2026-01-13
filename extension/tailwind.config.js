@@ -45,6 +45,15 @@ export default {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
         },
+        // Logo colors - Deep navy palette
+        logo: {
+          'navy-dark': "#0D1321",
+          'navy': "#1D2D44",
+          'navy-light': "#3E5C76",
+          'blue': "#4A90D9",
+          'blue-bright': "#5BA4E6",
+          'highlight': "#7CB9F1",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

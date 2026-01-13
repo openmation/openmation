@@ -1,19 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { RecordingPanel } from './components/RecordingPanel';
 import { AutomationList } from './components/AutomationList';
 import { RunHistory } from './components/RunHistory';
 import { EditAutomationDialog } from './components/EditAutomationDialog';
+import { Onboarding } from './components/Onboarding';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
 import { TooltipProvider } from './components/ui/tooltip';
 import { ThemeProvider } from './components/ThemeProvider';
 import type { Automation } from '@/lib/types';
 
+const ONBOARDING_KEY = 'simplest_onboarding_complete';
+
 function AppContent() {
+  const [showOnboarding, setShowOnboarding] = useState<boolean | null>(null);
   const [, setIsRecording] = useState(false);
   const [editingAutomation, setEditingAutomation] = useState<Automation | null>(null);
   const [runningAutomationId] = useState<string | undefined>();
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Check if onboarding was completed
+  useEffect(() => {
+    chrome.storage.local.get(ONBOARDING_KEY, (result) => {
+      setShowOnboarding(!result[ONBOARDING_KEY]);
+    });
+  }, []);
+
+  const handleOnboardingComplete = () => {
+    chrome.storage.local.set({ [ONBOARDING_KEY]: true });
+    setShowOnboarding(false);
+  };
 
   const handleEdit = (automation: Automation) => {
     setEditingAutomation(automation);
@@ -22,6 +38,20 @@ function AppContent() {
   const handleSaved = () => {
     setRefreshKey(prev => prev + 1);
   };
+
+  // Loading state
+  if (showOnboarding === null) {
+    return (
+      <div className="flex items-center justify-center h-[520px] bg-background">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // Show onboarding for first-time users
+  if (showOnboarding) {
+    return <Onboarding onComplete={handleOnboardingComplete} />;
+  }
 
   return (
     <div className="flex flex-col h-[520px] bg-background overflow-hidden">

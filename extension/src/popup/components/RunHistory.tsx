@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle2, XCircle, Loader2, Clock } from 'lucide-react';
+import { CheckCircle2, XCircle, Loader2, Clock, Trash2 } from 'lucide-react';
 import { ScrollArea } from './ui/scroll-area';
 import { EmptyState } from './EmptyState';
-import { getRunHistory, onStorageChange } from '@/lib/storage';
+import { getRunHistory, onStorageChange, cleanupStaleRuns } from '@/lib/storage';
 import { formatRelativeTime, formatDuration } from '@/lib/utils';
 import type { RunHistory as RunHistoryType } from '@/lib/types';
+import { Button } from './ui/button';
 
 export function RunHistory() {
   const [history, setHistory] = useState<RunHistoryType[]>([]);
@@ -14,6 +15,9 @@ export function RunHistory() {
     let mounted = true;
     
     const loadData = async () => {
+      // Clean up stale "running" entries first
+      await cleanupStaleRuns();
+      
       const data = await getRunHistory(50);
       if (mounted) {
         setHistory(data);
@@ -34,6 +38,11 @@ export function RunHistory() {
       unsubscribe();
     };
   }, []);
+
+  const handleClearHistory = async () => {
+    await chrome.storage.local.set({ runHistory: [] });
+    setHistory([]);
+  };
 
   const getStatusIcon = (status: RunHistoryType['status']) => {
     switch (status) {
@@ -84,7 +93,21 @@ export function RunHistory() {
 
   return (
     <ScrollArea className="h-[320px]">
-      <div className="p-4 space-y-2 stagger-children">
+      <div className="p-4 space-y-2">
+        {/* Clear history button */}
+        <div className="flex justify-end mb-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClearHistory}
+            className="text-xs text-muted-foreground hover:text-destructive gap-1 h-7"
+          >
+            <Trash2 className="w-3 h-3" />
+            Clear History
+          </Button>
+        </div>
+        
+        <div className="space-y-2 stagger-children">
         {history.map((run) => (
           <div
             key={run.id}
@@ -132,6 +155,7 @@ export function RunHistory() {
             </div>
           </div>
         ))}
+        </div>
       </div>
     </ScrollArea>
   );

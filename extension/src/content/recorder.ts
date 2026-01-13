@@ -1,4 +1,5 @@
-// Enhanced Recorder - Captures all interactions including mouse movements
+// Recorder - Captures ALL interactions exactly as they happen
+// NO debouncing, NO optimization - just record everything faithfully
 import type { RecordedEvent, MousePosition } from '@/lib/types';
 import { generateId, getUniqueSelector } from '@/lib/utils';
 import { incrementEventCount } from './panel';
@@ -11,11 +12,64 @@ let currentMousePath: MousePosition[] = [];
 let startTime = 0;
 let sessionId = '';
 
-// Throttle for mouse movement (capture every N ms)
-const MOUSE_MOVE_THROTTLE = 16; // ~60fps
+// Throttle for mouse movement only (capture every N ms)
+const MOUSE_MOVE_THROTTLE = 50; // 20fps for mouse moves
 let lastMouseMoveTime = 0;
 
-// Create an event
+// Get multiple selectors for redundancy
+function getElementSelectors(element: Element): {
+  primary: string;
+  fallbacks: string[];
+  textContent?: string;
+  attributes: Record<string, string>;
+} {
+  const primary = getUniqueSelector(element);
+  const fallbacks: string[] = [];
+  const attributes: Record<string, string> = {};
+  
+  if (element.id) {
+    fallbacks.push(`#${CSS.escape(element.id)}`);
+    attributes['id'] = element.id;
+  }
+  
+  if (element.className && typeof element.className === 'string') {
+    const classes = element.className.trim().split(/\s+/).filter(c => c && !c.startsWith('sa-'));
+    if (classes.length > 0) {
+      fallbacks.push(`${element.tagName.toLowerCase()}.${classes.map(c => CSS.escape(c)).join('.')}`);
+    }
+  }
+  
+  const el = element as HTMLElement;
+  if (el.getAttribute) {
+    ['name', 'data-testid', 'data-id', 'aria-label', 'placeholder', 'type', 'role'].forEach(attr => {
+      const val = el.getAttribute(attr);
+      if (val) {
+        fallbacks.push(`${element.tagName.toLowerCase()}[${attr}="${CSS.escape(val)}"]`);
+        attributes[attr] = val;
+      }
+    });
+  }
+  
+  let textContent: string | undefined;
+  if (element instanceof HTMLElement && (element.tagName === 'BUTTON' || element.tagName === 'A')) {
+    const text = element.innerText?.trim().slice(0, 50);
+    if (text) textContent = text;
+  }
+  
+  return { primary, fallbacks, textContent, attributes };
+}
+
+function getElementPosition(element: Element) {
+  const rect = element.getBoundingClientRect();
+  return {
+    viewportX: rect.left + rect.width / 2,
+    viewportY: rect.top + rect.height / 2,
+    pageX: rect.left + window.scrollX + rect.width / 2,
+    pageY: rect.top + window.scrollY + rect.height / 2,
+    rect: { top: rect.top, left: rect.left, width: rect.width, height: rect.height },
+  };
+}
+
 function createEvent(
   type: RecordedEvent['type'],
   element: Element | null,
@@ -25,18 +79,29 @@ function createEvent(
     id: generateId(),
     type,
     timestamp: Date.now() - startTime,
+    scrollX: window.scrollX,
+    scrollY: window.scrollY,
     ...extra,
   };
   
   if (element) {
-    event.selector = getUniqueSelector(element);
+    const selectors = getElementSelectors(element);
+    event.selector = selectors.primary;
+    event.selectorFallbacks = selectors.fallbacks;
+    event.elementText = selectors.textContent;
+    event.elementAttributes = selectors.attributes;
     event.tagName = element.tagName.toLowerCase();
+    
+    const pos = getElementPosition(element);
+    event.elementRect = pos.rect;
+    event.pageX = pos.pageX;
+    event.pageY = pos.pageY;
+    
     if (element instanceof HTMLElement && element.innerText) {
       event.innerText = element.innerText.slice(0, 100);
     }
   }
   
-  // Attach current mouse path for smooth replay
   if (currentMousePath.length > 0) {
     event.mousePath = [...currentMousePath];
     currentMousePath = [];
@@ -45,7 +110,8 @@ function createEvent(
   return event;
 }
 
-// Event Handlers
+// ============ EVENT HANDLERS ============
+
 function handleClick(e: MouseEvent): void {
   if (!isRecording || isPaused) return;
   if (isOurElement(e.target as Element)) return;
@@ -53,6 +119,8 @@ function handleClick(e: MouseEvent): void {
   const event = createEvent('click', e.target as Element, {
     x: e.clientX,
     y: e.clientY,
+    pageX: e.pageX,
+    pageY: e.pageY,
   });
   
   recordEvent(event);
@@ -66,6 +134,8 @@ function handleDblClick(e: MouseEvent): void {
   const event = createEvent('dblclick', e.target as Element, {
     x: e.clientX,
     y: e.clientY,
+    pageX: e.pageX,
+    pageY: e.pageY,
   });
   
   recordEvent(event);
@@ -111,29 +181,84 @@ function handleMouseMove(e: MouseEvent): void {
   mouseMovements.push(position);
   currentMousePath.push(position);
   
-  // Keep path manageable (last 50 points)
-  if (currentMousePath.length > 50) {
+  if (currentMousePath.length > 30) {
     currentMousePath.shift();
   }
 }
 
+/**
+ * KEY CHANGE: Record EVERY keydown event with the key pressed
+ * This allows us to replay the exact sequence of keystrokes
+ */
+function handleKeyDown(e: KeyboardEvent): void {
+  if (!isRecording || isPaused) return;
+  if (isOurElement(e.target as Element)) return;
+  
+  const target = e.target as Element;
+  const isFormField = target instanceof HTMLInputElement || 
+                      target instanceof HTMLTextAreaElement;
+  
+  // Record ALL keys for form fields (this captures typing)
+  // For non-form fields, only record special keys
+  const specialKeys = ['Enter', 'Tab', 'Escape', 'Backspace', 'Delete', 
+                       'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+                       'Home', 'End', 'PageUp', 'PageDown'];
+  
+  const shouldRecord = isFormField || 
+                       specialKeys.includes(e.key) || 
+                       e.ctrlKey || e.metaKey || e.altKey;
+  
+  if (shouldRecord) {
+    const event = createEvent('keydown', target, {
+      key: e.key,
+      keyCode: e.keyCode,
+      // Store current value at this moment for debugging
+      value: isFormField ? (target as HTMLInputElement).value : undefined,
+    });
+    
+    recordEvent(event);
+  }
+}
+
+function handleKeyUp(e: KeyboardEvent): void {
+  if (!isRecording || isPaused) return;
+  if (isOurElement(e.target as Element)) return;
+  
+  // Only record keyup for special keys (Enter, Tab, Escape)
+  // We don't need keyup for every character
+  const specialKeys = ['Enter', 'Tab', 'Escape'];
+  
+  if (specialKeys.includes(e.key)) {
+    const event = createEvent('keyup', e.target as Element, {
+      key: e.key,
+      keyCode: e.keyCode,
+    });
+    
+    recordEvent(event);
+  }
+}
+
+/**
+ * We still record input events but ONLY for the final value
+ * This is used as a fallback/verification
+ */
 function handleInput(e: Event): void {
   if (!isRecording || isPaused) return;
   
   const target = e.target as HTMLInputElement | HTMLTextAreaElement;
   if (!target || isOurElement(target)) return;
   
-  // Debounce - update last input event if same element
-  const lastEvent = recordedEvents[recordedEvents.length - 1];
-  if (lastEvent?.type === 'input' && lastEvent.selector === getUniqueSelector(target)) {
-    lastEvent.value = target.value;
-    lastEvent.timestamp = Date.now() - startTime;
-    return;
-  }
+  // Don't record input events - we rely on keydown events instead
+  // This comment left intentionally to explain why we skip this
   
+  // Actually, let's record input events but mark them differently
+  // They serve as checkpoints to verify the value
   const event = createEvent('input', target, {
     value: target.value,
   });
+  
+  // Mark this as a value checkpoint (not for replay, just verification)
+  event.isCheckpoint = true;
   
   recordEvent(event);
 }
@@ -151,49 +276,10 @@ function handleChange(e: Event): void {
   recordEvent(event);
 }
 
-function handleKeyDown(e: KeyboardEvent): void {
-  if (!isRecording || isPaused) return;
-  if (isOurElement(e.target as Element)) return;
-  
-  // Only record special keys or keys in non-input elements
-  const isInput = e.target instanceof HTMLInputElement || 
-                  e.target instanceof HTMLTextAreaElement;
-  
-  const specialKeys = ['Enter', 'Tab', 'Escape', 'Backspace', 'Delete', 
-                       'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
-                       'Home', 'End', 'PageUp', 'PageDown'];
-  
-  if (!isInput || specialKeys.includes(e.key) || e.ctrlKey || e.metaKey || e.altKey) {
-    const event = createEvent('keydown', e.target as Element, {
-      key: e.key,
-      keyCode: e.keyCode,
-    });
-    
-    recordEvent(event);
-  }
-}
-
-function handleKeyUp(e: KeyboardEvent): void {
-  if (!isRecording || isPaused) return;
-  if (isOurElement(e.target as Element)) return;
-  
-  // Only record for special keys
-  const specialKeys = ['Enter', 'Tab', 'Escape'];
-  
-  if (specialKeys.includes(e.key)) {
-    const event = createEvent('keyup', e.target as Element, {
-      key: e.key,
-      keyCode: e.keyCode,
-    });
-    
-    recordEvent(event);
-  }
-}
-
 function handleScroll(): void {
   if (!isRecording || isPaused) return;
   
-  // Debounce scroll events
+  // Debounce scroll events (they can fire very frequently)
   const lastEvent = recordedEvents[recordedEvents.length - 1];
   const now = Date.now() - startTime;
   
@@ -216,8 +302,28 @@ function handleFocus(e: FocusEvent): void {
   if (!isRecording || isPaused) return;
   if (isOurElement(e.target as Element)) return;
   
-  const event = createEvent('focus', e.target as Element);
-  recordEvent(event);
+  const target = e.target as Element;
+  if (target instanceof HTMLInputElement || 
+      target instanceof HTMLTextAreaElement || 
+      target instanceof HTMLSelectElement) {
+    const event = createEvent('focus', target);
+    recordEvent(event);
+  }
+}
+
+function handleBlur(e: FocusEvent): void {
+  if (!isRecording || isPaused) return;
+  if (isOurElement(e.target as Element)) return;
+  
+  const target = e.target as Element;
+  if (target instanceof HTMLInputElement || 
+      target instanceof HTMLTextAreaElement || 
+      target instanceof HTMLSelectElement) {
+    const event = createEvent('blur', target, {
+      value: (target as HTMLInputElement).value,
+    });
+    recordEvent(event);
+  }
 }
 
 function handleSubmit(e: Event): void {
@@ -231,18 +337,16 @@ function handleSubmit(e: Event): void {
 function handleBeforeUnload(): void {
   if (!isRecording) return;
   
-  // Record navigation event
   const event = createEvent('navigate', null, {
     url: window.location.href,
   });
   
   recordEvent(event);
-  
-  // Save state to storage for cross-page persistence
   saveRecordingState();
 }
 
-// Helper functions
+// ============ HELPERS ============
+
 function isOurElement(element: Element | null): boolean {
   if (!element) return false;
   return !!(element.closest('#simplest-automation-panel') || 
@@ -251,12 +355,13 @@ function isOurElement(element: Element | null): boolean {
 
 function recordEvent(event: RecordedEvent): void {
   recordedEvents.push(event);
-  incrementEventCount();
   
-  // Send to background
-  chrome.runtime.sendMessage({ type: 'EVENT_RECORDED', event }).catch(() => {
-    // Ignore errors (e.g., when background is reloading)
-  });
+  // Only increment counter for non-checkpoint events
+  if (!event.isCheckpoint) {
+    incrementEventCount();
+  }
+  
+  chrome.runtime.sendMessage({ type: 'EVENT_RECORDED', event }).catch(() => {});
 }
 
 function showClickFeedback(x: number, y: number): void {
@@ -303,7 +408,6 @@ function saveRecordingState(): void {
     sessionId,
   };
   
-  // Use synchronous localStorage for beforeunload
   try {
     localStorage.setItem('simplest_recording_state', JSON.stringify(state));
   } catch {
@@ -318,7 +422,6 @@ function loadRecordingState(): boolean {
     
     const state = JSON.parse(stored);
     
-    // Check if this is a continuation of the same session
     if (state.sessionId && state.isRecording) {
       recordedEvents = state.events || [];
       mouseMovements = state.mouseMovements || [];
@@ -327,21 +430,19 @@ function loadRecordingState(): boolean {
       isRecording = true;
       isPaused = state.isPaused;
       
-      // Clear the stored state
       localStorage.removeItem('simplest_recording_state');
-      
       return true;
     }
   } catch {
-    // Ignore parse errors
+    // Ignore
   }
   
   return false;
 }
 
-// Public API
+// ============ PUBLIC API ============
+
 export function startRecording(newSessionId: string): void {
-  // Check for existing session first
   if (loadRecordingState()) {
     console.log('[Simplest] Resumed recording from previous page');
     attachListeners();
@@ -357,7 +458,6 @@ export function startRecording(newSessionId: string): void {
   sessionId = newSessionId;
   
   attachListeners();
-  
   console.log('[Simplest] Recording started');
 }
 
@@ -381,12 +481,13 @@ export function stopRecording(): {
   isPaused = false;
   
   detachListeners();
-  
-  // Clear any saved state
   localStorage.removeItem('simplest_recording_state');
   
+  // Filter out checkpoint events for cleaner replay
+  const eventsForReplay = recordedEvents.filter(e => !e.isCheckpoint);
+  
   const result = {
-    events: [...recordedEvents],
+    events: eventsForReplay,
     mouseMovements: [...mouseMovements],
     startUrl: window.location.href,
     duration: Date.now() - startTime,
@@ -423,6 +524,7 @@ function attachListeners(): void {
   document.addEventListener('keydown', handleKeyDown, true);
   document.addEventListener('keyup', handleKeyUp, true);
   document.addEventListener('focus', handleFocus, true);
+  document.addEventListener('blur', handleBlur, true);
   document.addEventListener('submit', handleSubmit, true);
   window.addEventListener('scroll', handleScroll, true);
   window.addEventListener('beforeunload', handleBeforeUnload);
@@ -439,16 +541,15 @@ function detachListeners(): void {
   document.removeEventListener('keydown', handleKeyDown, true);
   document.removeEventListener('keyup', handleKeyUp, true);
   document.removeEventListener('focus', handleFocus, true);
+  document.removeEventListener('blur', handleBlur, true);
   document.removeEventListener('submit', handleSubmit, true);
   window.removeEventListener('scroll', handleScroll, true);
   window.removeEventListener('beforeunload', handleBeforeUnload);
 }
 
-// Initialize - check if we should resume recording
 export function initRecorder(): void {
   if (loadRecordingState()) {
     attachListeners();
-    // Notify background that we've resumed
     chrome.runtime.sendMessage({ 
       type: 'RECORDING_RESUMED_ON_PAGE', 
       sessionId,

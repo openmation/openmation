@@ -1,5 +1,6 @@
-// Enhanced Replayer - Precise timing replay with visual cursor
-import type { RecordedEvent, MousePosition, Automation } from '@/lib/types';
+// Replayer - Replays recordings EXACTLY as they happened
+// Key-by-key, click-by-click, with precise timing
+import type { RecordedEvent, Automation } from '@/lib/types';
 import { 
   createReplayCursor, 
   moveReplayCursor, 
@@ -10,202 +11,361 @@ import {
 let isPlaying = false;
 let shouldStop = false;
 
-const ELEMENT_WAIT_TIMEOUT = 10000;
+const CONFIG = {
+  INITIAL_DELAY: 2000,
+  ELEMENT_WAIT_TIMEOUT: 10000,
+  SCROLL_SETTLE_TIME: 200,
+  CLICK_SETTLE_TIME: 100,
+  KEY_DELAY: 30,  // Delay between keystrokes
+  MIN_EVENT_GAP: 20,
+};
 
-// Wait for element to appear with exponential backoff
-async function waitForElement(selector: string, timeout = ELEMENT_WAIT_TIMEOUT): Promise<Element | null> {
+// Find element using multiple strategies
+async function findElement(event: RecordedEvent): Promise<Element | null> {
+  const strategies: (() => Element | null)[] = [];
+  
+  if (event.selector) {
+    strategies.push(() => {
+      try { return document.querySelector(event.selector!); } catch { return null; }
+    });
+  }
+  
+  if (event.selectorFallbacks) {
+    for (const fallback of event.selectorFallbacks) {
+      strategies.push(() => {
+        try { return document.querySelector(fallback); } catch { return null; }
+      });
+    }
+  }
+  
+  if (event.elementText && event.tagName) {
+    strategies.push(() => {
+      const elements = document.querySelectorAll(event.tagName!);
+      for (const el of elements) {
+        if (el instanceof HTMLElement && el.innerText?.trim().includes(event.elementText!)) {
+          return el;
+        }
+      }
+      return null;
+    });
+  }
+  
+  if (event.elementAttributes) {
+    strategies.push(() => {
+      const attrs = event.elementAttributes!;
+      for (const [key, value] of Object.entries(attrs)) {
+        try {
+          const el = document.querySelector(`[${key}="${CSS.escape(value)}"]`);
+          if (el) return el;
+        } catch { continue; }
+      }
+      return null;
+    });
+  }
+  
   const startTime = Date.now();
   let delay = 50;
   
-  while (Date.now() - startTime < timeout) {
-    try {
-      const element = document.querySelector(selector);
-      if (element) return element;
-    } catch {
-      // Invalid selector
-      return null;
+  while (Date.now() - startTime < CONFIG.ELEMENT_WAIT_TIMEOUT) {
+    for (const strategy of strategies) {
+      const element = strategy();
+      if (element && isElementVisible(element)) {
+        return element;
+      }
     }
     await sleep(delay);
-    delay = Math.min(delay * 1.5, 500);
+    delay = Math.min(delay * 1.3, 300);
+  }
+  
+  for (const strategy of strategies) {
+    const element = strategy();
+    if (element) return element;
   }
   
   return null;
+}
+
+function isElementVisible(element: Element): boolean {
+  if (!(element instanceof HTMLElement)) return true;
+  const style = window.getComputedStyle(element);
+  if (style.display === 'none' || style.visibility === 'hidden') return false;
+  const rect = element.getBoundingClientRect();
+  return rect.width > 0 && rect.height > 0;
+}
+
+async function scrollToElement(element: Element): Promise<void> {
+  const rect = element.getBoundingClientRect();
+  if (rect.top < 0 || rect.bottom > window.innerHeight) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    await sleep(CONFIG.SCROLL_SETTLE_TIME);
+  }
+}
+
+async function scrollToPosition(scrollX: number, scrollY: number): Promise<void> {
+  if (Math.abs(window.scrollX - scrollX) > 5 || Math.abs(window.scrollY - scrollY) > 5) {
+    window.scrollTo({ left: scrollX, top: scrollY, behavior: 'smooth' });
+    await sleep(CONFIG.SCROLL_SETTLE_TIME);
+  }
 }
 
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Animate cursor along a path with EXACT timing
-async function animateMousePath(path: MousePosition[], baseTime: number): Promise<void> {
-  if (!path || path.length === 0) return;
-  
-  for (let i = 0; i < path.length && !shouldStop; i++) {
-    const point = path[i];
-    
-    // Calculate exact time this point should be reached
-    const targetTime = baseTime + point.timestamp;
-    const now = Date.now();
-    const waitTime = targetTime - now;
-    
-    if (waitTime > 0) {
-      await sleep(Math.min(waitTime, 50)); // Cap individual waits for smoothness
-    }
-    
-    moveReplayCursor(point.x, point.y);
-  }
-}
-
-// Execute a single event
-async function executeEvent(event: RecordedEvent, _baseTime: number): Promise<void> {
-  if (shouldStop) return;
-  
-  // Move cursor to event position
-  if (event.x !== undefined && event.y !== undefined) {
-    moveReplayCursor(event.x, event.y);
-  }
-  
-  switch (event.type) {
-    case 'click':
-      await executeClick(event);
-      break;
-    case 'dblclick':
-      await executeDblClick(event);
-      break;
-    case 'input':
-      await executeInput(event);
-      break;
-    case 'change':
-      await executeChange(event);
-      break;
-    case 'scroll':
-      await executeScroll(event);
-      break;
-    case 'keydown':
-    case 'keyup':
-      await executeKey(event);
-      break;
-    case 'focus':
-      await executeFocus(event);
-      break;
-    case 'submit':
-      await executeSubmit(event);
-      break;
-    case 'navigate':
-      await executeNavigate(event);
-      break;
-    case 'mousedown':
-    case 'mouseup':
-    case 'mousemove':
-      // Visual only - handled by cursor
-      break;
-  }
-}
+// ============ EVENT EXECUTORS ============
 
 async function executeClick(event: RecordedEvent): Promise<void> {
-  console.log('[Simplest Replayer] Executing click:', event.selector, 'at', event.x, event.y);
+  console.log('[Replayer] Click:', event.selector);
+  
+  if (event.scrollY !== undefined) {
+    await scrollToPosition(event.scrollX ?? 0, event.scrollY);
+  }
+  
+  const element = await findElement(event);
+  if (!element) {
+    console.warn('[Replayer] Element not found:', event.selector);
+    return;
+  }
+  
+  await scrollToElement(element);
+  
+  const rect = element.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+  
+  moveReplayCursor(x, y);
+  await sleep(30);
   clickReplayCursor();
   
-  if (!event.selector) {
-    console.warn('[Simplest Replayer] No selector for click event');
-    return;
-  }
-  
-  const element = await waitForElement(event.selector);
-  if (!element) {
-    console.warn(`[Simplest Replayer] Element not found: ${event.selector}`);
-    return;
-  }
-  console.log('[Simplest Replayer] Found element:', element);
-  
-  // Scroll into view smoothly
-  element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  await sleep(150);
-  
-  // Get element's actual position
-  const rect = element.getBoundingClientRect();
-  const clickX = event.x ?? rect.left + rect.width / 2;
-  const clickY = event.y ?? rect.top + rect.height / 2;
-  
-  // Dispatch mouse events in correct order
-  const mouseEventInit = {
+  const eventInit: MouseEventInit = {
     bubbles: true,
     cancelable: true,
     view: window,
-    clientX: clickX,
-    clientY: clickY,
+    clientX: x,
+    clientY: y,
+    button: 0,
   };
   
-  element.dispatchEvent(new MouseEvent('mousedown', mouseEventInit));
-  await sleep(50);
-  element.dispatchEvent(new MouseEvent('mouseup', mouseEventInit));
-  element.dispatchEvent(new MouseEvent('click', mouseEventInit));
+  element.dispatchEvent(new MouseEvent('mousedown', eventInit));
+  await sleep(20);
+  element.dispatchEvent(new MouseEvent('mouseup', eventInit));
+  element.dispatchEvent(new MouseEvent('click', eventInit));
   
-  // Also trigger native click for links/buttons
   if (element instanceof HTMLElement) {
     element.click();
   }
+  
+  await sleep(CONFIG.CLICK_SETTLE_TIME);
 }
 
 async function executeDblClick(event: RecordedEvent): Promise<void> {
-  clickReplayCursor();
-  await sleep(80);
-  clickReplayCursor();
-  
-  if (!event.selector) return;
-  
-  const element = await waitForElement(event.selector);
+  const element = await findElement(event);
   if (!element) return;
   
-  element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  await sleep(150);
+  await scrollToElement(element);
   
   const rect = element.getBoundingClientRect();
-  const dblClickEvent = new MouseEvent('dblclick', {
-    bubbles: true,
-    cancelable: true,
-    view: window,
-    clientX: event.x ?? rect.left + rect.width / 2,
-    clientY: event.y ?? rect.top + rect.height / 2,
-  });
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
   
-  element.dispatchEvent(dblClickEvent);
+  moveReplayCursor(x, y);
+  clickReplayCursor();
+  await sleep(50);
+  clickReplayCursor();
+  
+  element.dispatchEvent(new MouseEvent('dblclick', {
+    bubbles: true, cancelable: true, view: window, clientX: x, clientY: y,
+  }));
+  
+  await sleep(CONFIG.CLICK_SETTLE_TIME);
 }
 
-async function executeInput(event: RecordedEvent): Promise<void> {
-  if (!event.selector || event.value === undefined) return;
+/**
+ * Execute a SINGLE keydown event - this is the key to accurate replay
+ * Each keystroke is replayed individually, exactly as recorded
+ */
+async function executeKeyDown(event: RecordedEvent): Promise<void> {
+  if (!event.key) return;
   
-  const element = await waitForElement(event.selector) as HTMLInputElement | HTMLTextAreaElement;
-  if (!element) return;
+  console.log('[Replayer] KeyDown:', event.key);
   
-  element.focus();
-  await sleep(30);
+  // Find the target element (usually the focused input)
+  let target: Element | null = null;
   
-  // Clear existing value
-  element.value = '';
-  element.dispatchEvent(new Event('input', { bubbles: true }));
-  
-  // Type character by character with realistic timing
-  const chars = event.value.split('');
-  for (let i = 0; i < chars.length && !shouldStop; i++) {
-    const char = chars[i];
-    
-    element.value += char;
-    element.dispatchEvent(new Event('input', { bubbles: true }));
-    element.dispatchEvent(new KeyboardEvent('keydown', { key: char, bubbles: true }));
-    element.dispatchEvent(new KeyboardEvent('keyup', { key: char, bubbles: true }));
-    
-    // Variable typing speed (30-70ms per character)
-    await sleep(30 + Math.random() * 40);
+  if (event.selector) {
+    target = await findElement(event);
   }
   
-  element.dispatchEvent(new Event('change', { bubbles: true }));
+  // Fall back to currently focused element or find by selector
+  if (!target) {
+    target = document.activeElement;
+  }
+  
+  if (!target || target === document.body) {
+    console.warn('[Replayer] No target for keydown, trying to find input');
+    // Try to find any focused input
+    target = document.querySelector('input:focus, textarea:focus') || 
+             document.activeElement;
+  }
+  
+  if (!target) {
+    console.warn('[Replayer] No target element for key:', event.key);
+    return;
+  }
+  
+  // Create and dispatch the keydown event
+  const keyboardEvent = new KeyboardEvent('keydown', {
+    key: event.key,
+    code: getKeyCode(event.key),
+    keyCode: event.keyCode || getKeyCodeNumber(event.key),
+    which: event.keyCode || getKeyCodeNumber(event.key),
+    bubbles: true,
+    cancelable: true,
+    composed: true,
+  });
+  
+  target.dispatchEvent(keyboardEvent);
+  
+  // For printable characters, also update the input value and dispatch input event
+  if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+    if (event.key.length === 1) {
+      // Single character - append it
+      const start = target.selectionStart ?? target.value.length;
+      const end = target.selectionEnd ?? target.value.length;
+      const before = target.value.substring(0, start);
+      const after = target.value.substring(end);
+      
+      target.value = before + event.key + after;
+      target.selectionStart = target.selectionEnd = start + 1;
+      
+      // Dispatch input event
+      target.dispatchEvent(new InputEvent('input', {
+        bubbles: true,
+        cancelable: true,
+        inputType: 'insertText',
+        data: event.key,
+      }));
+    } else if (event.key === 'Backspace') {
+      // Handle backspace
+      const start = target.selectionStart ?? target.value.length;
+      const end = target.selectionEnd ?? target.value.length;
+      
+      if (start === end && start > 0) {
+        target.value = target.value.substring(0, start - 1) + target.value.substring(end);
+        target.selectionStart = target.selectionEnd = start - 1;
+      } else if (start !== end) {
+        target.value = target.value.substring(0, start) + target.value.substring(end);
+        target.selectionStart = target.selectionEnd = start;
+      }
+      
+      target.dispatchEvent(new InputEvent('input', {
+        bubbles: true,
+        cancelable: true,
+        inputType: 'deleteContentBackward',
+      }));
+    } else if (event.key === 'Delete') {
+      // Handle delete
+      const start = target.selectionStart ?? 0;
+      const end = target.selectionEnd ?? 0;
+      
+      if (start === end && start < target.value.length) {
+        target.value = target.value.substring(0, start) + target.value.substring(end + 1);
+      } else if (start !== end) {
+        target.value = target.value.substring(0, start) + target.value.substring(end);
+      }
+      target.selectionStart = target.selectionEnd = start;
+      
+      target.dispatchEvent(new InputEvent('input', {
+        bubbles: true,
+        cancelable: true,
+        inputType: 'deleteContentForward',
+      }));
+    }
+  }
+  
+  // Handle Enter for form submission
+  if (event.key === 'Enter' && target) {
+    const form = (target as Element).closest('form');
+    if (form) {
+      await sleep(50);
+      const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+      if (submitBtn instanceof HTMLElement) {
+        submitBtn.click();
+      } else {
+        form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      }
+    }
+  }
+  
+  await sleep(CONFIG.KEY_DELAY);
+}
+
+async function executeKeyUp(event: RecordedEvent): Promise<void> {
+  if (!event.key) return;
+  
+  const target = document.activeElement || document.body;
+  
+  target.dispatchEvent(new KeyboardEvent('keyup', {
+    key: event.key,
+    code: getKeyCode(event.key),
+    keyCode: event.keyCode,
+    bubbles: true,
+    cancelable: true,
+  }));
+  
+  await sleep(10);
+}
+
+async function executeFocus(event: RecordedEvent): Promise<void> {
+  console.log('[Replayer] Focus:', event.selector);
+  
+  const element = await findElement(event) as HTMLElement;
+  if (!element) {
+    console.warn('[Replayer] Element not found for focus');
+    return;
+  }
+  
+  await scrollToElement(element);
+  
+  const rect = element.getBoundingClientRect();
+  moveReplayCursor(rect.left + rect.width / 2, rect.top + rect.height / 2);
+  clickReplayCursor();
+  
+  // Simulate click into field
+  element.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+  element.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+  element.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  
+  element.focus();
+  element.dispatchEvent(new FocusEvent('focus', { bubbles: false }));
+  element.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+  
+  // Select all text if it's an input
+  if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
+    element.select();
+  }
+  
+  await sleep(50);
+}
+
+async function executeBlur(event: RecordedEvent): Promise<void> {
+  console.log('[Replayer] Blur:', event.selector);
+  
+  const element = event.selector ? await findElement(event) : document.activeElement;
+  
+  if (element instanceof HTMLElement) {
+    element.dispatchEvent(new FocusEvent('blur', { bubbles: false }));
+    element.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    element.blur();
+  }
+  
+  await sleep(30);
 }
 
 async function executeChange(event: RecordedEvent): Promise<void> {
-  if (!event.selector) return;
+  console.log('[Replayer] Change:', event.selector);
   
-  const element = await waitForElement(event.selector) as HTMLInputElement | HTMLSelectElement;
+  const element = await findElement(event) as HTMLInputElement | HTMLSelectElement;
   if (!element) return;
   
   if (event.value !== undefined) {
@@ -213,96 +373,126 @@ async function executeChange(event: RecordedEvent): Promise<void> {
   }
   
   element.dispatchEvent(new Event('change', { bubbles: true }));
+  await sleep(30);
 }
 
 async function executeScroll(event: RecordedEvent): Promise<void> {
-  window.scrollTo({
-    left: event.scrollX ?? 0,
-    top: event.scrollY ?? 0,
-    behavior: 'smooth',
-  });
-  
-  await sleep(200);
-}
-
-async function executeKey(event: RecordedEvent): Promise<void> {
-  if (!event.key) return;
-  
-  const target = event.selector ? 
-    await waitForElement(event.selector) : 
-    document.activeElement || document.body;
-  
-  if (!target) return;
-  
-  const keyEvent = new KeyboardEvent(event.type, {
-    key: event.key,
-    keyCode: event.keyCode,
-    bubbles: true,
-    cancelable: true,
-  });
-  
-  target.dispatchEvent(keyEvent);
-  
-  // Handle Enter for form submission
-  if (event.key === 'Enter' && event.type === 'keydown') {
-    const form = (target as Element).closest('form');
-    if (form) {
-      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-    }
-  }
-}
-
-async function executeFocus(event: RecordedEvent): Promise<void> {
-  if (!event.selector) return;
-  
-  const element = await waitForElement(event.selector) as HTMLElement;
-  if (element?.focus) {
-    element.focus();
-  }
+  await scrollToPosition(event.scrollX ?? 0, event.scrollY ?? 0);
 }
 
 async function executeSubmit(event: RecordedEvent): Promise<void> {
-  if (!event.selector) return;
+  console.log('[Replayer] Submit:', event.selector);
   
-  const element = await waitForElement(event.selector) as HTMLFormElement;
-  if (element) {
+  const element = await findElement(event) as HTMLFormElement;
+  if (!element) return;
+  
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+    await sleep(50);
+  }
+  
+  const submitBtn = element.querySelector('button[type="submit"], input[type="submit"], button:not([type])');
+  if (submitBtn instanceof HTMLElement) {
+    submitBtn.click();
+  } else {
     element.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
   }
+  
+  await sleep(CONFIG.CLICK_SETTLE_TIME);
 }
 
 async function executeNavigate(event: RecordedEvent): Promise<void> {
   if (event.url && event.url !== window.location.href) {
+    console.log('[Replayer] Navigate:', event.url);
     window.location.href = event.url;
     await sleep(1000);
   }
 }
 
-// Main replay function with PRECISE TIMING
+// Helper functions
+function getKeyCode(key: string): string {
+  const map: Record<string, string> = {
+    'Enter': 'Enter', 'Tab': 'Tab', 'Escape': 'Escape',
+    'Backspace': 'Backspace', 'Delete': 'Delete',
+    'ArrowUp': 'ArrowUp', 'ArrowDown': 'ArrowDown',
+    'ArrowLeft': 'ArrowLeft', 'ArrowRight': 'ArrowRight',
+    ' ': 'Space',
+  };
+  if (map[key]) return map[key];
+  if (key.length === 1) {
+    if (key >= 'a' && key <= 'z') return `Key${key.toUpperCase()}`;
+    if (key >= 'A' && key <= 'Z') return `Key${key}`;
+    if (key >= '0' && key <= '9') return `Digit${key}`;
+  }
+  return key;
+}
+
+function getKeyCodeNumber(key: string): number {
+  if (key.length === 1) {
+    const code = key.toUpperCase().charCodeAt(0);
+    if (code >= 65 && code <= 90) return code; // A-Z
+    if (code >= 48 && code <= 57) return code; // 0-9
+  }
+  const specialCodes: Record<string, number> = {
+    'Enter': 13, 'Tab': 9, 'Escape': 27, 'Backspace': 8, 'Delete': 46,
+    'ArrowUp': 38, 'ArrowDown': 40, 'ArrowLeft': 37, 'ArrowRight': 39,
+    ' ': 32,
+  };
+  return specialCodes[key] || 0;
+}
+
+// Execute a single event
+async function executeEvent(event: RecordedEvent): Promise<void> {
+  if (shouldStop) return;
+  
+  if (event.x !== undefined && event.y !== undefined) {
+    moveReplayCursor(event.x, event.y);
+  }
+  
+  switch (event.type) {
+    case 'click': await executeClick(event); break;
+    case 'dblclick': await executeDblClick(event); break;
+    case 'keydown': await executeKeyDown(event); break;
+    case 'keyup': await executeKeyUp(event); break;
+    case 'focus': await executeFocus(event); break;
+    case 'blur': await executeBlur(event); break;
+    case 'change': await executeChange(event); break;
+    case 'scroll': await executeScroll(event); break;
+    case 'submit': await executeSubmit(event); break;
+    case 'navigate': await executeNavigate(event); break;
+    case 'input':
+      // Input events are handled via keydown - skip
+      break;
+    case 'mousedown':
+    case 'mouseup':
+    case 'mousemove':
+      // Visual only
+      break;
+  }
+}
+
+// Main replay function
 export async function replayAutomation(
   automation: Automation,
   onProgress?: (completed: number, total: number) => void
 ): Promise<{ success: boolean; error?: string; eventsCompleted: number }> {
-  console.log('[Simplest Replayer] Starting replay:', automation.name);
+  console.log('[Replayer] Starting:', automation.name);
+  console.log('[Replayer] Events:', automation.events?.length);
   
   isPlaying = true;
   shouldStop = false;
   
-  // Create visual cursor
-  console.log('[Simplest Replayer] Creating cursor...');
-  createReplayCursor();
-  
   const events = automation.events;
-  console.log('[Simplest Replayer] Total events:', events?.length);
-  
   if (!events || events.length === 0) {
-    console.error('[Simplest Replayer] No events to replay!');
     return { success: false, error: 'No events to replay', eventsCompleted: 0 };
   }
   
-  let eventsCompleted = 0;
+  createReplayCursor();
   
-  // Base time for calculating exact delays
-  const replayStartTime = Date.now();
+  console.log(`[Replayer] Waiting ${CONFIG.INITIAL_DELAY}ms...`);
+  await sleep(CONFIG.INITIAL_DELAY);
+  
+  let eventsCompleted = 0;
   
   try {
     for (let i = 0; i < events.length; i++) {
@@ -311,38 +501,31 @@ export async function replayAutomation(
       }
       
       const event = events[i];
+      const prevEvent = events[i - 1];
       
-      // Wait until the EXACT time this event should occur
-      // event.timestamp is relative to recording start
-      const targetTime = replayStartTime + event.timestamp;
-      const now = Date.now();
-      const waitTime = targetTime - now;
-      
-      if (waitTime > 0) {
-        // For long waits, cap at 3 seconds to keep replay responsive
-        // but maintain relative timing for shorter intervals
-        await sleep(Math.min(waitTime, 3000));
+      // Use recorded timing
+      if (prevEvent) {
+        const gap = event.timestamp - prevEvent.timestamp;
+        const waitTime = Math.min(Math.max(gap, CONFIG.MIN_EVENT_GAP), 3000);
+        await sleep(waitTime);
       }
       
-      // Animate mouse path leading up to this event
-      if (event.mousePath && event.mousePath.length > 0) {
-        await animateMousePath(event.mousePath, replayStartTime);
-      }
-      
-      await executeEvent(event, replayStartTime);
+      console.log(`[Replayer] ${i + 1}/${events.length}: ${event.type}${event.key ? ` (${event.key})` : ''}`);
+      await executeEvent(event);
       
       eventsCompleted = i + 1;
       onProgress?.(eventsCompleted, events.length);
     }
     
-    // Success!
-    await sleep(400);
+    console.log('[Replayer] Complete!');
+    await sleep(300);
     removeReplayCursor();
     isPlaying = false;
     
     return { success: true, eventsCompleted };
     
   } catch (error) {
+    console.error('[Replayer] Error:', error);
     removeReplayCursor();
     isPlaying = false;
     

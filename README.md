@@ -1,7 +1,7 @@
-# Simplest Automation
+# Openmation
 
 <p align="center">
-  <img src="extension/public/simplest.png" alt="Simplest Automation Logo" width="120" height="120" style="border-radius: 20px;">
+  <img src="extension/public/openmation.png" alt="Simplest Automation Logo" width="120" height="120" style="border-radius: 20px;">
 </p>
 
 <p align="center">

@@ -1,150 +1,330 @@
 # Simplest Automation
 
-A beautiful browser extension for recording, sharing, and running browser automations. Record your actions once, replay them anytime, and share with anyone.
+<p align="center">
+  <img src="extension/public/simplest.png" alt="Simplest Automation Logo" width="120" height="120" style="border-radius: 20px;">
+</p>
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+<p align="center">
+  <strong>Record, replay, and share browser automations with pixel-perfect accuracy</strong>
+</p>
 
-## Features
+<p align="center">
+  A beautiful Chrome extension for recording and replaying browser interactions — with shareable links and scheduled runs.
+</p>
 
-- **Record Automations** - Capture clicks, typing, scrolling, and navigation
-- **Visual Replay** - Watch automations run with animated cursor
-- **Share Links** - Generate shareable URLs that run automations automatically
-- **Schedule Runs** - Set up cron schedules for periodic execution
-- **Premium UI** - Linear/Apple-inspired design with dark mode support
+---
 
-## Project Structure
+## ✨ Features
+
+### 🎬 **Recording**
+- **Keystroke-by-keystroke capture** — Every single key press is recorded for exact replay
+- **Full event tracking** — Clicks, scrolls, form inputs, navigation, and more
+- **Cross-page recording** — Continue recording seamlessly across page navigations
+- **Floating recording panel** — Elegant, non-intrusive UI that floats on any webpage
+- **Real-time event counter** — See exactly how many actions have been captured
+
+### ▶️ **Replay**
+- **Pixel-perfect replay** — Automation runs exactly as recorded, every time
+- **Visual feedback** — Animated cursor shows exactly where actions are being performed
+- **Multi-strategy element finding** — Uses CSS selectors, fallbacks, text content, and position
+- **Smart timing** — Respects original recording timing for consistent results
+- **Form validation support** — Proper focus/blur events trigger site validation correctly
+
+### 🔗 **Sharing**
+- **Shareable links** — Generate a unique URL for any automation
+- **One-click run** — Recipients can run automations instantly via the link
+- **No extension required for sharing** — Just click the link to start
+
+### ⏰ **Scheduling**
+- **Cron-based scheduling** — Set automations to run periodically
+- **Preset schedules** — Quick options for hourly, daily, weekly runs
+- **Custom cron expressions** — Full flexibility for advanced scheduling
+
+### 📊 **History & Management**
+- **Run history** — Track all automation runs with status and timestamps
+- **Edit & delete** — Manage your automations with full CRUD support
+- **Dark/Light mode** — Beautiful UI that adapts to your preference
+
+---
+
+## 🏗️ Architecture
+
+This is a monorepo containing two main packages:
 
 ```
 simplest-automation/
 ├── extension/          # Chrome extension (React + TypeScript)
 │   ├── src/
-│   │   ├── popup/      # Extension popup UI
-│   │   ├── content/    # Content scripts (recorder, replayer)
-│   │   ├── background/ # Service worker
-│   │   └── lib/        # Shared utilities
-│   └── dist/           # Built extension
-├── backend/            # API server (Node.js + Express)
-│   ├── src/
-│   │   ├── routes/     # API endpoints
-│   │   └── db.ts       # SQLite database
-│   └── data/           # Database files
-└── README.md
+│   │   ├── background/ # Service worker (state management, scheduling)
+│   │   ├── content/    # Content scripts (recorder, replayer, panel)
+│   │   ├── popup/      # Extension popup UI (React)
+│   │   └── lib/        # Shared utilities and types
+│   └── public/         # Static assets (icons, manifest)
+│
+└── backend/            # Node.js API server
+    └── src/
+        ├── routes/     # API endpoints
+        └── db.ts       # SQLite database
 ```
 
-## Quick Start
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 18+ 
 - npm or yarn
 - Chrome browser
 
-### 1. Install Dependencies
+### Installation
 
-```bash
-# Install extension dependencies
-cd extension
-npm install
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/simplest-automation.git
+   cd simplest-automation
+   ```
 
-# Install backend dependencies
-cd ../backend
-npm install
-```
+2. **Install extension dependencies**
+   ```bash
+   cd extension
+   npm install
+   ```
 
-### 2. Start the Backend
+3. **Build the extension**
+   ```bash
+   npm run build
+   ```
 
-```bash
-cd backend
-npm run dev
-```
+4. **Load in Chrome**
+   - Open `chrome://extensions/`
+   - Enable "Developer mode" (top right)
+   - Click "Load unpacked"
+   - Select the `extension/dist` folder
 
-The API server runs at `http://localhost:3002`
+5. **Install backend dependencies** (optional, for sharing)
+   ```bash
+   cd ../backend
+   npm install
+   ```
 
-### 3. Build the Extension
+6. **Start the backend server**
+   ```bash
+   npm run dev
+   ```
+   Server runs at `http://localhost:3002`
 
-```bash
-cd extension
-npm run build
-```
+---
 
-### 4. Load the Extension in Chrome
-
-1. Open `chrome://extensions`
-2. Enable "Developer mode" (top right)
-3. Click "Load unpacked"
-4. Select the `extension/dist` folder
-
-## Usage
+## 📖 Usage
 
 ### Recording an Automation
 
-1. Click the extension icon
-2. Click "Start New Recording"
-3. A floating panel appears on the page
-4. Perform your actions (clicks, typing, etc.)
-5. Click "Finish" and name your automation
+1. Click the **Simplest Automation** extension icon
+2. Click **"New Automation"**
+3. A floating panel appears on the webpage
+4. Click **▶️ Start** to begin recording
+5. Perform the actions you want to automate
+6. Click **⏹️ Stop** when done
+7. Enter a name and save
 
 ### Running an Automation
 
 1. Open the extension popup
 2. Find your automation in the list
-3. Click the play button
-4. Watch it replay with visual cursor
+3. Click the **▶️ Play** button
+4. Watch as your automation runs with visual feedback
 
 ### Sharing an Automation
 
-1. Hover over an automation card
-2. Click the share icon
-3. Link is copied to clipboard
-4. Anyone with the link can run it (with extension installed)
+1. Click the **Share** icon on any automation
+2. A unique link is copied to your clipboard
+3. Send the link to anyone
+4. Recipients click **"Run Automation"** to execute it
 
-## Development
+### Scheduling an Automation
 
-### Extension Development
+1. Click the **Edit** icon on an automation
+2. Enable **"Schedule"**
+3. Select a preset or enter a custom cron expression
+4. Save — the automation will run automatically
 
-```bash
-cd extension
-npm run dev    # Watch mode with hot reload
-npm run build  # Production build
-```
+---
 
-### Backend Development
+## 🛠️ Tech Stack
 
-```bash
-cd backend
-npm run dev    # Watch mode
-npm run build  # Compile TypeScript
-npm start      # Run compiled version
-```
+### Extension
+| Technology | Purpose |
+|------------|---------|
+| React 19 | UI framework |
+| TypeScript | Type safety |
+| Tailwind CSS | Styling |
+| shadcn/ui | UI components |
+| Radix UI | Accessible primitives |
+| Vite | Build tool |
+| @crxjs/vite-plugin | Chrome extension bundling |
 
-## API Endpoints
+### Backend
+| Technology | Purpose |
+|------------|---------|
+| Node.js | Runtime |
+| Express | Web framework |
+| TypeScript | Type safety |
+| better-sqlite3 | SQLite database |
+| Zod | Schema validation |
+| nanoid | Unique ID generation |
+
+---
+
+## 📁 Key Files
+
+### Extension
+
+| File | Description |
+|------|-------------|
+| `src/content/recorder.ts` | Captures all user interactions keystroke-by-keystroke |
+| `src/content/replayer.ts` | Executes recorded automations with precise timing |
+| `src/content/panel.ts` | Floating recording panel UI |
+| `src/background/index.ts` | Service worker managing state & messaging |
+| `src/background/scheduler.ts` | Cron-based automation scheduling |
+| `src/popup/App.tsx` | Main extension popup interface |
+| `src/lib/storage.ts` | Chrome storage API wrapper |
+| `src/lib/types.ts` | TypeScript interfaces and types |
+
+### Backend
+
+| File | Description |
+|------|-------------|
+| `src/index.ts` | Express server and shared automation landing pages |
+| `src/routes/automations.ts` | API endpoints for CRUD operations |
+| `src/db.ts` | SQLite database operations |
+
+---
+
+## 🎨 Design Philosophy
+
+Simplest Automation is built with a focus on:
+
+- **Elegance** — UI inspired by Linear.app, Apple, and Notion
+- **Reliability** — Pixel-perfect replay through keystroke-level recording
+- **Simplicity** — No complex setup, just record and run
+- **Accessibility** — Full keyboard support, dark/light modes
+
+---
+
+## 📡 API Endpoints
+
+The backend exposes the following endpoints:
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/api/automations` | Create shareable automation |
-| GET | `/api/automations/:id` | Fetch automation by ID |
-| GET | `/run/:id` | Landing page for shared automation |
-| GET | `/health` | Health check |
+| `GET` | `/api/automations/:id` | Get automation by ID |
+| `POST` | `/api/automations` | Create a new shared automation |
+| `GET` | `/run/:id` | Landing page for shared automation |
+| `GET` | `/health` | Health check endpoint |
 
-## Tech Stack
+### Rate Limits
+- General API: 100 requests/hour per IP
+- Create automation: 20 requests/hour per IP
+
+---
+
+## 🔧 Configuration
 
 ### Extension
-- React 18
-- TypeScript
-- Tailwind CSS
-- shadcn/ui components
-- Vite + CRXJS
+
+The extension stores data in `chrome.storage.local`:
+- `automations` — Array of saved automations
+- `runHistory` — Array of run history entries
+- `onboardingComplete` — Boolean for first-time user flow
 
 ### Backend
-- Node.js
-- Express
-- SQLite (better-sqlite3)
-- TypeScript
 
-## License
+Environment variables:
+```bash
+PORT=3002  # Server port (default: 3002)
+```
 
-MIT License - see [LICENSE](LICENSE) for details.
+Data stored in `data/automations.db` (SQLite).
 
-## Contributing
+---
 
-Contributions are welcome! Please open an issue or submit a PR.
+## 📝 Event Types
+
+The recorder captures these event types:
+
+| Event | Description |
+|-------|-------------|
+| `click` | Mouse clicks on elements |
+| `dblclick` | Double clicks |
+| `keydown` | Individual key presses |
+| `keyup` | Key releases (for special keys) |
+| `focus` | Element focus (form fields) |
+| `blur` | Element blur (triggers validation) |
+| `change` | Value changes (selects, checkboxes) |
+| `scroll` | Page/element scrolling |
+| `submit` | Form submissions |
+| `navigate` | Page navigations |
+
+---
+
+## 🐛 Troubleshooting
+
+### "Could not establish connection" error
+The content script may not be injected. Try:
+1. Refresh the page
+2. Make sure you're not on a `chrome://` or `chrome-extension://` page
+
+### Form values not submitting correctly
+Ensure the form field receives `blur` event before submission. The recorder now captures blur events to trigger validation.
+
+### Automation clicks wrong element
+The replayer uses multiple strategies to find elements. If an element changes between recording and replay, try:
+1. Record with the page in a consistent state
+2. Use unique IDs or data-testid attributes on elements
+
+---
+
+## 🗺️ Roadmap
+
+### Planned Features
+- [ ] **AI-powered recording** — Natural language to automation
+- [ ] **Cloud sync** — Sync automations across devices
+- [ ] **Team sharing** — Share automations within teams
+- [ ] **Conditional logic** — If/else branching in automations
+- [ ] **Variable extraction** — Extract data from pages
+- [ ] **Webhook triggers** — Start automations via API
+- [ ] **Firefox support** — Cross-browser compatibility
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+MIT License — feel free to use this project for personal or commercial purposes.
+
+---
+
+## 🙏 Acknowledgments
+
+- [Linear.app](https://linear.app) — Design inspiration
+- [shadcn/ui](https://ui.shadcn.com) — Beautiful component library
+- [Radix UI](https://radix-ui.com) — Accessible primitives
+- [Lucide Icons](https://lucide.dev) — Icon library
+
+---
+
+<p align="center">
+  Built with ❤️ by the Simplest team
+</p>

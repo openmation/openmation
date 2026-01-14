@@ -256,6 +256,7 @@ For each permission, provide justification:
 DATABASE_PATH=/app/data/automations.db
 NODE_ENV=production
 SHARE_BASE_URL=https://openmation.dev (optional)
+TRUST_PROXY=1 (recommended; enables correct rate limiting behind Railway)
 PORT=3002 (optional, Railway sets automatically)
 ```
 

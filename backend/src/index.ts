@@ -12,6 +12,24 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3002;
 
+// Railway (and most hosted environments) run behind a reverse proxy and set
+// X-Forwarded-* headers. express-rate-limit validates this and requires
+// `trust proxy` to be enabled to accurately identify client IPs.
+//
+// Default: enable in production. You can override with TRUST_PROXY:
+// - "1" / "true" enables
+// - "0" / "false" disables
+const trustProxyRaw = process.env.TRUST_PROXY;
+const trustProxyEnabled =
+  trustProxyRaw === undefined
+    ? process.env.NODE_ENV === "production"
+    : trustProxyRaw === "1" || trustProxyRaw.toLowerCase() === "true";
+
+if (trustProxyEnabled) {
+  // `1` trusts the first proxy hop (typical for Railway / Vercel / etc).
+  app.set("trust proxy", 1);
+}
+
 // Middleware
 app.use(cors({
   origin: [

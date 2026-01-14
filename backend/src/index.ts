@@ -30,17 +30,36 @@ if (trustProxyEnabled) {
   app.set("trust proxy", 1);
 }
 
-// Middleware
-app.use(cors({
-  origin: [
-    'https://openmation.dev',
-    'https://www.openmation.dev',
-    /^chrome-extension:\/\/.*/,  // Allow all Chrome extensions
-    ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:3000', 'http://localhost:5173'] : []),
-  ],
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type'],
-}));
+// CORS
+//
+// Important: after the user clicks "Run", the extension redirects to the target
+// site (any origin). The content script then fetches the automation JSON from
+// the API. That fetch is subject to the target site's origin CORS policy.
+// Therefore, **public reads** must allow any origin.
+const publicReadCors = cors({
+  origin: "*",
+  methods: ["GET", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
+});
+
+// Allow any origin to GET a shared automation by id
+app.use("/api/automations/:id", publicReadCors);
+
+// For everything else (creates, etc.), keep origins restricted.
+app.use(
+  cors({
+    origin: [
+      "https://openmation.dev",
+      "https://www.openmation.dev",
+      /^chrome-extension:\/\/.*/, // Allow all Chrome extensions
+      ...(process.env.NODE_ENV !== "production"
+        ? ["http://localhost:3000", "http://localhost:5173"]
+        : []),
+    ],
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
 
 app.use(express.json({ limit: '1mb' }));
 

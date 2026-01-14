@@ -222,6 +222,7 @@ For each permission, provide justification:
 - [ ] Extension installs from Chrome Web Store
 - [ ] Create test automation and verify share URL uses `openmation.dev/run/:id`
 - [ ] Run shared automation link successfully
+- [ ] Confirm automation runs on arbitrary sites (CORS allows GET from any origin)
 
 ---
 

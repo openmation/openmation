@@ -1,7 +1,7 @@
 {
-  "name": "simplest-automation-backend",
+  "name": "openmation-backend",
   "version": "1.0.0",
-  "description": "Backend API for Simplest Automation shareable links",
+  "description": "Backend API for Openmation shareable automation links",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {

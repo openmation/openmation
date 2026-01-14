@@ -13,7 +13,12 @@ const PORT = process.env.PORT || 3002;
 
 // Middleware
 app.use(cors({
-  origin: '*', // Allow extension access from any origin
+  origin: [
+    'https://openmation.dev',
+    'https://www.openmation.dev',
+    /^chrome-extension:\/\/.*/,  // Allow all Chrome extensions
+    ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:3000', 'http://localhost:5173'] : []),
+  ],
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
 }));

@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowRight, Chrome, Star, Github } from "lucide-react";
+import { Chrome, Star, Github } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const stats = [
   { value: "10K+", label: "Active Users" },
@@ -19,15 +20,24 @@ export function CTA() {
       
       <div className="container-custom relative z-10">
         <div className="max-w-3xl mx-auto text-center">
-          {/* Logo */}
+          {/* Logo with spinning animation */}
           <div className="inline-block mb-8">
-            <Image
-              src="/openmation.png"
-              alt="Openmation"
-              width={96}
-              height={96}
-              className="w-24 h-24 object-contain"
-            />
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: [0.4, 0, 0.2, 1], // Ease in-out with acceleration/deceleration
+              }}
+            >
+              <Image
+                src="/openmation-transparent.png"
+                alt="Openmation"
+                width={96}
+                height={96}
+                className="w-24 h-24 object-contain"
+              />
+            </motion.div>
           </div>
 
           {/* Heading */}

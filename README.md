@@ -1,7 +1,7 @@
 # Openmation
 
 <p align="center">
-  <img src="extension/public/openmation.png" alt="Simplest Automation Logo" width="120" height="120" style="border-radius: 20px;">
+  <img src="website/public/openmation.png" alt="Openmation Logo" width="120" height="120" style="border-radius: 20px;">
 </p>
 
 <p align="center">
@@ -10,6 +10,12 @@
 
 <p align="center">
   A beautiful Chrome extension for recording and replaying browser interactions — with shareable links and scheduled runs.
+</p>
+
+<p align="center">
+  <a href="https://openmation.dev">Website</a> •
+  <a href="https://chrome.google.com/webstore/detail/openmation">Chrome Web Store</a> •
+  <a href="https://openmation.dev/privacy">Privacy Policy</a>
 </p>
 
 ---
@@ -116,11 +122,49 @@ simplest-automation/
 
 ---
 
+## 🌐 Production Deployment
+
+### Live URLs
+- **Website:** https://openmation.dev
+- **API:** https://api.openmation.dev
+- **Extension:** [Chrome Web Store](https://chrome.google.com/webstore/detail/openmation)
+
+### Deploy Backend (Railway)
+
+1. Create a new project on [Railway](https://railway.app)
+2. Connect your GitHub repository
+3. Set root directory to `backend`
+4. Add a Volume mounted at `/app/data`
+5. Set environment variables:
+   ```
+   DATABASE_PATH=/app/data/automations.db
+   NODE_ENV=production
+   ```
+6. Add custom domain: `api.openmation.dev`
+
+### Deploy Website (Vercel)
+
+1. Import project on [Vercel](https://vercel.com)
+2. Set root directory to `website`
+3. Add environment variable:
+   ```
+   NEXT_PUBLIC_API_URL=https://api.openmation.dev
+   ```
+4. Add custom domains: `openmation.dev` and `www.openmation.dev`
+
+### Deploy Extension (Chrome Web Store)
+
+1. Build: `cd extension && npm run build`
+2. ZIP the `dist` folder
+3. Upload to [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole)
+
+---
+
 ## 📖 Usage
 
 ### Recording an Automation
 
-1. Click the **Simplest Automation** extension icon
+1. Click the **Openmation** extension icon
 2. Click **"New Automation"**
 3. A floating panel appears on the webpage
 4. Click **▶️ Start** to begin recording
@@ -203,7 +247,7 @@ simplest-automation/
 
 ## 🎨 Design Philosophy
 
-Simplest Automation is built with a focus on:
+Openmation is built with a focus on:
 
 - **Elegance** — UI inspired by Linear.app, Apple, and Notion
 - **Reliability** — Pixel-perfect replay through keystroke-level recording
@@ -326,5 +370,5 @@ MIT License — feel free to use this project for personal or commercial purpose
 ---
 
 <p align="center">
-  Built with ❤️ by the Simplest team
+  Built with ❤️ by the Openmation team
 </p>

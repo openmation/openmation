@@ -1,7 +1,8 @@
 // API configuration and helpers for sharing automations
 
-// Backend URL - change this for production
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
+// Backend URL - uses production URL, fallback to localhost for development
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.MODE === 'production' ? 'https://api.openmation.dev' : 'http://localhost:3002');
 
 export interface ShareResponse {
   success: boolean;

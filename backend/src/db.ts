@@ -4,7 +4,10 @@ import { fileURLToPath } from 'url';
 import type { AutomationRow, Automation } from './types.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dbPath = path.join(__dirname, '..', 'data', 'automations.db');
+
+// Use environment variable for database path (for Railway deployment with volumes)
+// Falls back to local data folder for development
+const dbPath = process.env.DATABASE_PATH || path.join(__dirname, '..', 'data', 'automations.db');
 
 // Initialize database
 const db: DatabaseType = new Database(dbPath);

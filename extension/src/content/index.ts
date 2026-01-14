@@ -22,7 +22,7 @@ console.log(
 );
 
 // API base URL for fetching shared automations
-const API_BASE_URL = "http://localhost:3002";
+const API_BASE_URL = "https://api.openmation.dev";
 
 // Initialize - check for existing recording session
 initRecorder();
@@ -318,7 +318,7 @@ function executeAutomation(automation: Automation): void {
 // Check for pending automation to run (after redirect from share page)
 async function checkPendingAutomation(): Promise<void> {
   // Don't run on the run page itself
-  if (window.location.href.includes("localhost:3002/run/")) {
+  if (window.location.href.includes("api.openmation.dev/run/")) {
     console.log("[Openmation] On run page, skipping pending check");
     return;
   }

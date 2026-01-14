@@ -201,20 +201,29 @@ export function Hero() {
           </Link>
         </motion.div>
 
-        {/* Logo centered */}
+        {/* Logo centered with spinning animation */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.1 }}
           className="flex justify-center mb-8"
         >
-          <Image
-            src="/openmation.png"
-            alt="Openmation"
-            width={80}
-            height={80}
-            className="w-20 h-20 object-contain"
-          />
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: [0.4, 0, 0.2, 1], // Ease in-out with acceleration/deceleration
+            }}
+          >
+            <Image
+              src="/openmation-transparent.png"
+              alt="Openmation"
+              width={80}
+              height={80}
+              className="w-20 h-20 object-contain"
+            />
+          </motion.div>
         </motion.div>
 
         {/* Main headline - Clean like Antigravity */}

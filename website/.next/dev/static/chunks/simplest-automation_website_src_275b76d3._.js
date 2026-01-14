@@ -2386,7 +2386,7 @@ function GradientMesh() {
         "GradientMesh.useEffect": ()=>{
             const canvas = canvasRef.current;
             if (!canvas) return;
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext("2d");
             if (!ctx) return;
             let animationId;
             let time = 0;
@@ -2397,35 +2397,35 @@ function GradientMesh() {
                 }
             }["GradientMesh.useEffect.resize"];
             resize();
-            window.addEventListener('resize', resize);
+            window.addEventListener("resize", resize);
             // Gradient orbs configuration
             const orbs = [
                 {
                     x: 0.3,
                     y: 0.2,
                     radius: 0.4,
-                    color: 'rgba(6, 182, 212, 0.15)',
+                    color: "rgba(6, 182, 212, 0.15)",
                     speed: 0.0003
                 },
                 {
                     x: 0.7,
                     y: 0.3,
                     radius: 0.5,
-                    color: 'rgba(59, 130, 246, 0.12)',
+                    color: "rgba(59, 130, 246, 0.12)",
                     speed: 0.0004
                 },
                 {
                     x: 0.5,
                     y: 0.7,
                     radius: 0.45,
-                    color: 'rgba(37, 99, 235, 0.1)',
+                    color: "rgba(37, 99, 235, 0.1)",
                     speed: 0.00035
                 },
                 {
                     x: 0.2,
                     y: 0.8,
                     radius: 0.35,
-                    color: 'rgba(6, 182, 212, 0.08)',
+                    color: "rgba(6, 182, 212, 0.08)",
                     speed: 0.00045
                 }
             ];
@@ -2443,7 +2443,7 @@ function GradientMesh() {
                             const radius = orb.radius * Math.min(canvas.width, canvas.height);
                             const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
                             gradient.addColorStop(0, orb.color);
-                            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                            gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
                             ctx.fillStyle = gradient;
                             ctx.fillRect(0, 0, canvas.width, canvas.height);
                         }
@@ -2454,7 +2454,7 @@ function GradientMesh() {
             animate();
             return ({
                 "GradientMesh.useEffect": ()=>{
-                    window.removeEventListener('resize', resize);
+                    window.removeEventListener("resize", resize);
                     cancelAnimationFrame(animationId);
                 }
             })["GradientMesh.useEffect"];
@@ -2468,7 +2468,7 @@ function GradientMesh() {
         }
     }, void 0, false, {
         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-        lineNumber: 81,
+        lineNumber: 105,
         columnNumber: 5
     }, this);
 }
@@ -2700,12 +2700,12 @@ function FloatingParticles() {
                 }
             }, particle.id, false, {
                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                lineNumber: 118,
+                lineNumber: 302,
                 columnNumber: 9
             }, this))
     }, void 0, false, {
         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-        lineNumber: 116,
+        lineNumber: 300,
         columnNumber: 5
     }, this);
 }
@@ -2719,13 +2719,13 @@ function GridPattern() {
           linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px),
           linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px)
         `,
-            backgroundSize: '60px 60px',
-            maskImage: 'radial-gradient(ellipse 80% 50% at 50% 50%, black 40%, transparent 100%)',
-            WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 50%, black 40%, transparent 100%)'
+            backgroundSize: "60px 60px",
+            maskImage: "radial-gradient(ellipse 80% 50% at 50% 50%, black 40%, transparent 100%)",
+            WebkitMaskImage: "radial-gradient(ellipse 80% 50% at 50% 50%, black 40%, transparent 100%)"
         }
     }, void 0, false, {
         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-        lineNumber: 149,
+        lineNumber: 337,
         columnNumber: 5
     }, this);
 }
@@ -2752,17 +2752,17 @@ function Hero() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(GradientMesh, {}, void 0, false, {
                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                lineNumber: 177,
+                lineNumber: 367,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(FloatingParticles, {}, void 0, false, {
                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                lineNumber: 180,
+                lineNumber: 370,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(GridPattern, {}, void 0, false, {
                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                lineNumber: 183,
+                lineNumber: 373,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2790,32 +2790,32 @@ function Hero() {
                                     className: "w-4 h-4"
                                 }, void 0, false, {
                                     fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                    lineNumber: 198,
+                                    lineNumber: 388,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     children: "100% Open Source"
                                 }, void 0, false, {
                                     fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                    lineNumber: 199,
+                                    lineNumber: 389,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowRight$3e$__["ArrowRight"], {
                                     className: "w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"
                                 }, void 0, false, {
                                     fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                    lineNumber: 200,
+                                    lineNumber: 390,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                            lineNumber: 193,
+                            lineNumber: 383,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                        lineNumber: 187,
+                        lineNumber: 377,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -2837,7 +2837,7 @@ function Hero() {
                                 rotate: 360
                             },
                             transition: {
-                                duration: 8,
+                                duration: 2,
                                 repeat: Infinity,
                                 ease: [
                                     0.4,
@@ -2854,17 +2854,17 @@ function Hero() {
                                 className: "w-20 h-20 object-contain"
                             }, void 0, false, {
                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                lineNumber: 219,
+                                lineNumber: 409,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                            lineNumber: 211,
+                            lineNumber: 401,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                        lineNumber: 205,
+                        lineNumber: 395,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -2911,23 +2911,23 @@ function Hero() {
                                                 children: rotatingWords[currentWordIndex]
                                             }, currentWordIndex, false, {
                                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                                lineNumber: 240,
+                                                lineNumber: 430,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                            lineNumber: 239,
+                                            lineNumber: 429,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                        lineNumber: 238,
+                                        lineNumber: 428,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                lineNumber: 236,
+                                lineNumber: 426,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2938,14 +2938,14 @@ function Hero() {
                                         className: "hidden sm:block"
                                     }, void 0, false, {
                                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                        lineNumber: 257,
+                                        lineNumber: 447,
                                         columnNumber: 13
                                     }, this),
                                     "Record once, replay forever, share with anyone."
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                lineNumber: 255,
+                                lineNumber: 445,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2959,20 +2959,20 @@ function Hero() {
                                                 className: "w-5 h-5"
                                             }, void 0, false, {
                                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                                lineNumber: 264,
+                                                lineNumber: 457,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: "Download for Chrome"
                                             }, void 0, false, {
                                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                                lineNumber: 265,
+                                                lineNumber: 458,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                        lineNumber: 263,
+                                        lineNumber: 453,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -2984,26 +2984,26 @@ function Hero() {
                                                 className: "w-5 h-5"
                                             }, void 0, false, {
                                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                                lineNumber: 272,
+                                                lineNumber: 465,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: "View on GitHub"
                                             }, void 0, false, {
                                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                                lineNumber: 273,
+                                                lineNumber: 466,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                        lineNumber: 267,
+                                        lineNumber: 460,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                lineNumber: 262,
+                                lineNumber: 452,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3013,18 +3013,18 @@ function Hero() {
                                         className: `h-1.5 rounded-full transition-all duration-300 ${index === currentWordIndex ? "w-8 bg-foreground" : "w-1.5 bg-muted-foreground/20 hover:bg-muted-foreground/40"}`
                                     }, index, false, {
                                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                        lineNumber: 280,
+                                        lineNumber: 473,
                                         columnNumber: 15
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                lineNumber: 278,
+                                lineNumber: 471,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                        lineNumber: 230,
+                        lineNumber: 420,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3043,24 +3043,24 @@ function Hero() {
                         className: "max-w-6xl mx-auto",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$src$2f$components$2f$AutomationDemo$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AutomationDemo"], {}, void 0, false, {
                             fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                            lineNumber: 300,
+                            lineNumber: 493,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                        lineNumber: 294,
+                        lineNumber: 487,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                lineNumber: 185,
+                lineNumber: 375,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-        lineNumber: 175,
+        lineNumber: 365,
         columnNumber: 5
     }, this);
 }
@@ -4228,7 +4228,7 @@ function CTA() {
                 className: "absolute inset-0 bg-gradient-subtle opacity-50"
             }, void 0, false, {
                 fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                lineNumber: 19,
+                lineNumber: 22,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4243,7 +4243,7 @@ function CTA() {
                                     rotate: 360
                                 },
                                 transition: {
-                                    duration: 8,
+                                    duration: 2,
                                     repeat: Infinity,
                                     ease: [
                                         0.4,
@@ -4260,17 +4260,17 @@ function CTA() {
                                     className: "w-24 h-24 object-contain"
                                 }, void 0, false, {
                                     fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                                    lineNumber: 33,
+                                    lineNumber: 36,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                                lineNumber: 25,
+                                lineNumber: 28,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                            lineNumber: 24,
+                            lineNumber: 27,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -4278,7 +4278,7 @@ function CTA() {
                             children: "Ready to automate?"
                         }, void 0, false, {
                             fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                            lineNumber: 44,
+                            lineNumber: 47,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4286,7 +4286,7 @@ function CTA() {
                             children: "Join thousands of users who have simplified their browser workflows. Free and open source forever."
                         }, void 0, false, {
                             fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                            lineNumber: 48,
+                            lineNumber: 51,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4301,20 +4301,20 @@ function CTA() {
                                             className: "w-5 h-5"
                                         }, void 0, false, {
                                             fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                                            lineNumber: 60,
+                                            lineNumber: 63,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             children: "Download for Chrome"
                                         }, void 0, false, {
                                             fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                                            lineNumber: 61,
+                                            lineNumber: 64,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                                    lineNumber: 55,
+                                    lineNumber: 58,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -4326,26 +4326,26 @@ function CTA() {
                                             className: "w-5 h-5"
                                         }, void 0, false, {
                                             fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                                            lineNumber: 68,
+                                            lineNumber: 71,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             children: "View on GitHub"
                                         }, void 0, false, {
                                             fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                                            lineNumber: 69,
+                                            lineNumber: 72,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                                    lineNumber: 63,
+                                    lineNumber: 66,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                            lineNumber: 54,
+                            lineNumber: 57,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4361,20 +4361,20 @@ function CTA() {
                                                     children: stat.value
                                                 }, void 0, false, {
                                                     fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                                                    lineNumber: 81,
+                                                    lineNumber: 84,
                                                     columnNumber: 19
                                                 }, this),
                                                 stat.icon && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$star$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Star$3e$__["Star"], {
                                                     className: "w-4 h-4 text-yellow-500 fill-yellow-500"
                                                 }, void 0, false, {
                                                     fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                                                    lineNumber: 84,
-                                                    columnNumber: 33
+                                                    lineNumber: 88,
+                                                    columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                                            lineNumber: 80,
+                                            lineNumber: 83,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4382,29 +4382,29 @@ function CTA() {
                                             children: stat.label
                                         }, void 0, false, {
                                             fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                                            lineNumber: 86,
+                                            lineNumber: 91,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, index, true, {
                                     fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                                    lineNumber: 76,
+                                    lineNumber: 79,
                                     columnNumber: 15
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                            lineNumber: 74,
+                            lineNumber: 77,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                    lineNumber: 22,
+                    lineNumber: 25,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/simplest-automation/website/src/components/CTA.tsx",
-                lineNumber: 21,
+                lineNumber: 24,
                 columnNumber: 7
             }, this)
         ]

@@ -42,6 +42,7 @@ var __TURBOPACK__imported__module__$5b$next$5d2f$internal$2f$font$2f$google$2f$i
 ;
 ;
 const metadata = {
+    metadataBase: new URL("https://openmation.dev"),
     title: "Openmation - Browser Automation Made Beautiful",
     description: "Record, replay, and share browser automations with pixel-perfect accuracy. The most elegant way to automate your repetitive browser tasks.",
     keywords: [
@@ -57,17 +58,37 @@ const metadata = {
             name: "Openmation Team"
         }
     ],
+    icons: {
+        icon: [
+            {
+                url: "/favicon.svg",
+                type: "image/svg+xml"
+            }
+        ]
+    },
     openGraph: {
         title: "Openmation - Browser Automation Made Beautiful",
         description: "Record, replay, and share browser automations with pixel-perfect accuracy.",
         type: "website",
         locale: "en_US",
-        siteName: "Openmation"
+        siteName: "Openmation",
+        url: "/",
+        images: [
+            {
+                url: "/opengraph-image",
+                width: 1200,
+                height: 630,
+                alt: "Openmation"
+            }
+        ]
     },
     twitter: {
         card: "summary_large_image",
         title: "Openmation - Browser Automation Made Beautiful",
-        description: "Record, replay, and share browser automations with pixel-perfect accuracy."
+        description: "Record, replay, and share browser automations with pixel-perfect accuracy.",
+        images: [
+            "/twitter-image"
+        ]
     }
 };
 function RootLayout({ children }) {
@@ -78,12 +99,12 @@ function RootLayout({ children }) {
             children: children
         }, void 0, false, {
             fileName: "[project]/simplest-automation/website/src/app/layout.tsx",
-            lineNumber: 36,
+            lineNumber: 52,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/simplest-automation/website/src/app/layout.tsx",
-        lineNumber: 35,
+        lineNumber: 51,
         columnNumber: 5
     }, this);
 }

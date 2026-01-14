@@ -14,10 +14,13 @@ const stats = [
 
 export function CTA() {
   return (
-    <section id="get-started" className="section-padding bg-background relative">
+    <section
+      id="get-started"
+      className="section-padding bg-background relative"
+    >
       {/* Subtle gradient */}
       <div className="absolute inset-0 bg-gradient-subtle opacity-50" />
-      
+
       <div className="container-custom relative z-10">
         <div className="max-w-3xl mx-auto text-center">
           {/* Logo with spinning animation */}
@@ -25,7 +28,7 @@ export function CTA() {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{
-                duration: 8,
+                duration: 2,
                 repeat: Infinity,
                 ease: [0.4, 0, 0.2, 1], // Ease in-out with acceleration/deceleration
               }}
@@ -81,9 +84,13 @@ export function CTA() {
                   <p className="text-2xl font-semibold logo-gradient-text">
                     {stat.value}
                   </p>
-                  {stat.icon && <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />}
+                  {stat.icon && (
+                    <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                  )}
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {stat.label}
+                </p>
               </div>
             ))}
           </div>

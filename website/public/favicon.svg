@@ -1,0 +1,17 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="16" y1="16" x2="112" y2="112" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#06B6D4"/>
+      <stop offset="0.5" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#2563EB"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer spiral -->
+  <path d="M64 10C91 10 112 31 112 58C112 85 91 106 64 106C37 106 16 85 16 58C16 36 32 20 49 17" stroke="url(#g)" stroke-width="10" stroke-linecap="round"/>
+  <!-- Middle spiral -->
+  <path d="M64 28C80 28 92 40 92 56C92 72 80 84 64 84C48 84 36 72 36 56C36 45 44 37 54 35" stroke="url(#g)" stroke-width="10" stroke-linecap="round"/>
+  <!-- Inner spiral -->
+  <path d="M64 44C72 44 78 50 78 58C78 66 72 72 64 72C56 72 50 66 50 58C50 54 53 50 58 49" stroke="url(#g)" stroke-width="10" stroke-linecap="round"/>
+  <!-- Center dot -->
+  <circle cx="64" cy="58" r="9" fill="url(#g)"/>
+</svg>

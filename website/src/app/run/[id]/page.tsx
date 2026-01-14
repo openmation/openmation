@@ -2,7 +2,7 @@ import { Play } from "lucide-react";
 import RunClient from "./RunClient";
 
 type PageProps = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 type Automation = {
@@ -30,7 +30,7 @@ async function fetchAutomation(id: string): Promise<Automation | null> {
 }
 
 export default async function RunPage({ params }: PageProps) {
-  const { id } = params;
+  const { id } = await params;
   const apiBase =
     process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "") ||
     "https://api.openmation.dev";

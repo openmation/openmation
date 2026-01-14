@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import { Play } from "lucide-react";
 import RunClient from "./RunClient";
 
@@ -32,10 +31,14 @@ async function fetchAutomation(id: string): Promise<Automation | null> {
 
 export default async function RunPage({ params }: PageProps) {
   const { id } = params;
-  const automation = await fetchAutomation(id);
-  if (!automation) notFound();
+  const apiBase =
+    process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "") ||
+    "https://api.openmation.dev";
 
-  const eventCount = Array.isArray(automation.events) ? automation.events.length : 0;
+  const automation = await fetchAutomation(id);
+
+  const eventCount =
+    automation && Array.isArray(automation.events) ? automation.events.length : 0;
 
   return (
     <main className="min-h-screen bg-gradient-subtle flex items-center justify-center px-4 py-12">
@@ -46,22 +49,42 @@ export default async function RunPage({ params }: PageProps) {
           </div>
 
           <h1 className="text-2xl font-semibold tracking-tight">
-            {automation.name}
+            {automation ? automation.name : "Automation not found"}
           </h1>
           <div className="mt-2 text-sm text-muted-foreground">
-            {eventCount} actions • Shared automation
+            {automation ? `${eventCount} actions • Shared automation` : "This link may be invalid or expired."}
           </div>
 
           <div className="mt-6 rounded-xl border border-border/60 bg-background/80 px-4 py-3 text-left">
             <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-              Starts at
+              {automation ? "Starts at" : "Tried API"}
             </div>
             <div className="mt-1 break-all text-sm text-foreground/80">
-              {automation.startUrl}
+              {automation ? automation.startUrl : `${apiBase}/api/automations/${id}`}
             </div>
           </div>
 
-          <RunClient id={id} startUrl={automation.startUrl} />
+          {automation ? (
+            <RunClient id={id} startUrl={automation.startUrl} />
+          ) : (
+            <div className="mt-8 flex flex-col gap-3">
+              <a className="btn-primary w-full" href="/">
+                Go to openmation.dev
+              </a>
+              <a
+                className="btn-secondary w-full"
+                href={`${apiBase}/api/automations/${id}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open API response
+              </a>
+              <div className="text-xs text-muted-foreground">
+                If the API link 404s, the automation isn’t in the backend DB.
+                If it errors, the website’s API env (`NEXT_PUBLIC_API_URL`) may be wrong.
+              </div>
+            </div>
+          )}
 
           <div className="mt-8 text-xs text-muted-foreground">
             Powered by{" "}

@@ -15,6 +15,7 @@ import {
   clearRecordingState,
   saveAutomation,
 } from "@/lib/storage";
+import { API_BASE_URL } from "@/lib/api";
 import { generateId } from "@/lib/utils";
 import type {
   MessageType,
@@ -366,7 +367,6 @@ async function handleMessage(
       // Automatically share the automation and get the URL
       let shareUrl: string | undefined;
       try {
-        const API_BASE_URL = 'https://api.openmation.dev';
         const shareResponse = await fetch(`${API_BASE_URL}/api/automations`, {
           method: 'POST',
           headers: {

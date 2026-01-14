@@ -220,7 +220,7 @@ For each permission, provide justification:
 - [ ] Terms page loads: https://openmation.dev/terms
 - [ ] SSL certificates active (check for padlock icon)
 - [ ] Extension installs from Chrome Web Store
-- [ ] Create test automation and verify share URL uses `api.openmation.dev`
+- [ ] Create test automation and verify share URL uses `openmation.dev/run/:id`
 - [ ] Run shared automation link successfully
 
 ---
@@ -255,6 +255,7 @@ For each permission, provide justification:
 ```
 DATABASE_PATH=/app/data/automations.db
 NODE_ENV=production
+SHARE_BASE_URL=https://openmation.dev (optional)
 PORT=3002 (optional, Railway sets automatically)
 ```
 

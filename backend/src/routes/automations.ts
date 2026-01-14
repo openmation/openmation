@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { nanoid } from 'nanoid';
 import { CreateAutomationRequestSchema } from '../types.js';
 import { createAutomation, getAutomation, recordRun } from '../db.js';
+import { getShareBaseUrl } from '../public-url.js';
 
 const router = Router();
 
@@ -47,8 +48,7 @@ router.post('/', (req: Request, res: Response) => {
     createAutomation(automationToStore);
 
     // Build share URL
-    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
-    const shareUrl = `${baseUrl}/run/${shareId}`;
+    const shareUrl = `${getShareBaseUrl()}/run/${shareId}`;
 
     res.status(201).json({
       success: true,

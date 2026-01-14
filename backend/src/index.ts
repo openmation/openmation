@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import automationsRouter from './routes/automations.js';
 import { getAutomation } from './db.js';
+import { getShareBaseUrl } from './public-url.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -71,7 +72,7 @@ app.get('/health', (_req, res) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Openmation API running at http://localhost:${PORT}`);
-  console.log(`📋 Share links will be: http://localhost:${PORT}/run/{id}`);
+  console.log(`📋 Share links will be: ${getShareBaseUrl()}/run/{id}`);
 });
 
 // Landing page HTML - Openmation white theme

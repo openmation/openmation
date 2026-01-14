@@ -15,14 +15,12 @@ import {
   restorePanelState,
 } from "./panel";
 import type { MessageType, Automation } from "@/lib/types";
+import { API_BASE_URL } from "@/lib/api";
 
 console.log(
   "[Openmation] Content script loaded on:",
   window.location.href
 );
-
-// API base URL for fetching shared automations
-const API_BASE_URL = "https://api.openmation.dev";
 
 // Initialize - check for existing recording session
 initRecorder();
@@ -317,8 +315,14 @@ function executeAutomation(automation: Automation): void {
 
 // Check for pending automation to run (after redirect from share page)
 async function checkPendingAutomation(): Promise<void> {
-  // Don't run on the run page itself
-  if (window.location.href.includes("api.openmation.dev/run/")) {
+  // Don't run on the share page itself (openmation.dev/run/:id)
+  const hostname = window.location.hostname;
+  const isShareHost =
+    hostname === "openmation.dev" ||
+    hostname === "www.openmation.dev" ||
+    hostname === "api.openmation.dev";
+
+  if (isShareHost && window.location.pathname.startsWith("/run/")) {
     console.log("[Openmation] On run page, skipping pending check");
     return;
   }

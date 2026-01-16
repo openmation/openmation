@@ -385,6 +385,7 @@ async function recordEvent(event: RecordedEvent, element?: Element | null): Prom
     ['click', 'dblclick', 'focus', 'change', 'submit'].includes(event.type);
 
   if (shouldCaptureAI && element) {
+    console.log('[Openmation] 📸 Capturing AI context for:', event.type);
     try {
       // Capture screenshot and element crop in parallel
       const [screenshotResult, elementCropResult] = await Promise.allSettled([
@@ -394,19 +395,27 @@ async function recordEvent(event: RecordedEvent, element?: Element | null): Prom
 
       if (screenshotResult.status === 'fulfilled') {
         event.screenshot = screenshotResult.value;
+        console.log('[Openmation] 📸 Screenshot captured:', Math.round(event.screenshot.length / 1024), 'KB');
+      } else {
+        console.warn('[Openmation] 📸 Screenshot failed:', screenshotResult.reason);
       }
 
       if (elementCropResult.status === 'fulfilled') {
         event.elementCrop = elementCropResult.value;
+        console.log('[Openmation] 📸 Element crop captured:', Math.round(event.elementCrop.length / 1024), 'KB');
+      } else {
+        console.warn('[Openmation] 📸 Element crop failed:', elementCropResult.reason);
       }
 
       // Capture visual context (synchronous)
       event.visualContext = captureVisualContext(element);
+      console.log('[Openmation] 📸 Visual context:', event.visualContext);
 
       // Request AI description from background (async, don't block)
       if (event.screenshot && event.elementCrop) {
-        requestAIDescription(event).catch(() => {
-          // AI description is optional, don't fail recording
+        console.log('[Openmation] 🤖 Requesting AI description...');
+        requestAIDescription(event).catch((err) => {
+          console.warn('[Openmation] 🤖 AI description failed:', err);
         });
       }
     } catch (error) {
@@ -497,6 +506,12 @@ async function requestAIDescription(event: RecordedEvent): Promise<void> {
       const eventIndex = recordedEvents.findIndex(e => e.id === event.id);
       if (eventIndex >= 0) {
         recordedEvents[eventIndex].aiDescription = response.result.description;
+        console.log('[Openmation] 🤖 AI Description received:', {
+          eventId: event.id,
+          description: response.result.description,
+          elementType: response.result.elementType,
+          elementLabel: response.result.elementLabel,
+        });
       }
     }
   } catch (error) {

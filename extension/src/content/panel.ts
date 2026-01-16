@@ -181,15 +181,26 @@ function showRecordingControls(): void {
 function showSaveView(): void {
   const panel = document.getElementById(PANEL_ID);
   if (!panel) return;
-  
+
   const startView = panel.querySelector('.sa-start-view') as HTMLElement;
   const recordingView = panel.querySelector('.sa-recording-view') as HTMLElement;
   const saveView = panel.querySelector('.sa-save-view') as HTMLElement;
-  
+
   if (startView) startView.style.display = 'none';
   if (recordingView) recordingView.style.display = 'none';
   if (saveView) saveView.style.display = 'block';
+
+  // Update the event count and duration in save view
+  const eventCountFinal = panel.querySelector('.sa-event-count-final') as HTMLElement;
+  const durationFinal = panel.querySelector('.sa-duration-final') as HTMLElement;
   
+  if (eventCountFinal) {
+    eventCountFinal.textContent = `${panelState.eventCount} action${panelState.eventCount !== 1 ? 's' : ''}`;
+  }
+  if (durationFinal) {
+    durationFinal.textContent = formatDuration(panelState.duration);
+  }
+
   // Focus the input
   const input = panel.querySelector('.sa-name-input') as HTMLInputElement;
   if (input) {

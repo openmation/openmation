@@ -23,6 +23,452 @@ const CONFIG = {
   AI_CONFIDENCE_THRESHOLD: 0.6, // Minimum confidence to use AI result
 };
 
+// Smart delays for UI-changing actions
+const UI_SETTLE_DELAYS = {
+  DROPDOWN_SELECTION: 500,   // After clicking dropdown item
+  DATE_SELECTION: 400,       // After selecting a date
+  PANEL_TRIGGER: 300,        // After opening a panel/modal
+  DEFAULT: 100,
+};
+
+// ============ TEXT VERIFICATION ============
+
+// Extract expected text/keywords from AI description
+function extractExpectedText(description: string): string[] {
+  const keywords: string[] = [];
+  
+  // Extract text in single quotes: 'Alanya, Antalya'
+  const singleQuoteMatches = description.match(/'([^']+)'/g);
+  if (singleQuoteMatches) {
+    for (const match of singleQuoteMatches) {
+      const text = match.slice(1, -1); // Remove quotes
+      keywords.push(text);
+      // Also add individual parts if comma-separated
+      if (text.includes(',')) {
+        keywords.push(...text.split(',').map(s => s.trim()));
+      }
+    }
+  }
+  
+  // Extract text in double quotes: "Submit"
+  const doubleQuoteMatches = description.match(/"([^"]+)"/g);
+  if (doubleQuoteMatches) {
+    for (const match of doubleQuoteMatches) {
+      keywords.push(match.slice(1, -1));
+    }
+  }
+  
+  // Extract labeled elements: labeled 'X', labeled "X"
+  const labeledMatch = description.match(/label(?:ed|)\s+['"]?([^'"]+)['"]?/gi);
+  if (labeledMatch) {
+    for (const match of labeledMatch) {
+      const label = match.replace(/label(?:ed|)\s+['"]?/i, '').replace(/['"]$/, '');
+      if (label) keywords.push(label);
+    }
+  }
+  
+  // Extract date numbers for calendar: date '16', '17', etc.
+  const dateMatch = description.match(/date\s+['"]?(\d{1,2})['"]?/gi);
+  if (dateMatch) {
+    for (const match of dateMatch) {
+      const num = match.match(/\d+/);
+      if (num) keywords.push(num[0]);
+    }
+  }
+  
+  // Extract button labeled: button labeled '17'
+  const buttonLabelMatch = description.match(/button\s+labeled\s+['"]?(\d+)['"]?/gi);
+  if (buttonLabelMatch) {
+    for (const match of buttonLabelMatch) {
+      const num = match.match(/\d+/);
+      if (num) keywords.push(num[0]);
+    }
+  }
+  
+  return [...new Set(keywords)]; // Remove duplicates
+}
+
+// Verify element contains expected text from description
+function verifyElementMatchesDescription(element: Element, description?: string): boolean {
+  if (!description) return true; // No description to verify against
+  
+  const expectedTexts = extractExpectedText(description);
+  if (expectedTexts.length === 0) return true; // No specific text to match
+  
+  // Get element's text content
+  const elementText = element.textContent?.trim().toLowerCase() || '';
+  const elementValue = (element as HTMLInputElement).value?.toLowerCase() || '';
+  const ariaLabel = element.getAttribute('aria-label')?.toLowerCase() || '';
+  const placeholder = element.getAttribute('placeholder')?.toLowerCase() || '';
+  
+  // Check if any expected text matches
+  for (const expected of expectedTexts) {
+    const lowerExpected = expected.toLowerCase();
+    if (
+      elementText.includes(lowerExpected) ||
+      elementValue.includes(lowerExpected) ||
+      ariaLabel.includes(lowerExpected) ||
+      placeholder.includes(lowerExpected)
+    ) {
+      console.log('[Replayer] ✓ Text verification passed:', expected);
+      return true;
+    }
+  }
+  
+  console.log('[Replayer] ⚠️ Text verification failed. Expected:', expectedTexts, 'Got:', elementText.substring(0, 50));
+  return false;
+}
+
+// Find nearby elements that match the expected text
+function findNearbyMatchingElement(x: number, y: number, description?: string): Element | null {
+  if (!description) return null;
+  
+  const expectedTexts = extractExpectedText(description);
+  if (expectedTexts.length === 0) return null;
+  
+  // Search in expanding radius around the AI coordinates
+  const searchRadii = [20, 40, 60, 80, 100];
+  const offsets = [
+    [0, 0], [1, 0], [-1, 0], [0, 1], [0, -1],
+    [1, 1], [-1, 1], [1, -1], [-1, -1],
+  ];
+  
+  for (const radius of searchRadii) {
+    for (const [dx, dy] of offsets) {
+      const testX = x + dx * radius;
+      const testY = y + dy * radius;
+      
+      const element = document.elementFromPoint(testX, testY);
+      if (element && isElementVisible(element)) {
+        const elementText = element.textContent?.toLowerCase() || '';
+        
+        for (const expected of expectedTexts) {
+          if (elementText.includes(expected.toLowerCase())) {
+            console.log('[Replayer] 🎯 Found matching element at offset (', dx * radius, ',', dy * radius, '):', expected);
+            // Return the interactive element at this position
+            return findInteractiveElementAtPoint(testX, testY) || element;
+          }
+        }
+      }
+    }
+  }
+  
+  // Also search all visible elements matching the expected text
+  console.log('[Replayer] 🔍 Searching all visible elements for:', expectedTexts);
+  for (const expected of expectedTexts) {
+    // Try to find elements containing this text
+    const allElements = document.querySelectorAll('*');
+    for (const el of allElements) {
+      if (!isElementVisible(el)) continue;
+      
+      const text = el.textContent?.trim() || '';
+      const ariaLabel = el.getAttribute('aria-label') || '';
+      
+      // Check for exact or contained match
+      if (
+        text.toLowerCase() === expected.toLowerCase() ||
+        ariaLabel.toLowerCase().includes(expected.toLowerCase())
+      ) {
+        // Check if this element is close to the original coordinates
+        const rect = el.getBoundingClientRect();
+        const elCenterX = rect.left + rect.width / 2;
+        const elCenterY = rect.top + rect.height / 2;
+        const distance = Math.sqrt(Math.pow(elCenterX - x, 2) + Math.pow(elCenterY - y, 2));
+        
+        if (distance < 200) { // Within reasonable distance
+          console.log('[Replayer] 🎯 Found matching element by text search:', expected, 'distance:', Math.round(distance));
+          return findInteractiveElementAtPoint(elCenterX, elCenterY) || el;
+        }
+      }
+    }
+  }
+  
+  return null;
+}
+
+// Determine the type of action for smart delays
+function getActionType(event: RecordedEvent): 'dropdown' | 'date' | 'panel' | 'default' {
+  const description = event.aiDescription?.toLowerCase() || '';
+  const selector = event.selector?.toLowerCase() || '';
+  
+  // Check for dropdown/list selection
+  if (
+    description.includes('list item') ||
+    description.includes('option') ||
+    description.includes('dropdown') ||
+    description.includes('suggestion') ||
+    selector.includes('suggestion') ||
+    selector.includes('option') ||
+    selector.includes('listbox')
+  ) {
+    return 'dropdown';
+  }
+  
+  // Check for date picker
+  if (
+    description.includes('date') ||
+    description.includes('calendar') ||
+    selector.includes('calendar') ||
+    selector.includes('datepicker')
+  ) {
+    return 'date';
+  }
+  
+  // Check for panel/modal triggers
+  if (
+    description.includes('misafir') ||
+    description.includes('guest') ||
+    description.includes('panel') ||
+    description.includes('ekleyin') ||
+    selector.includes('stepper')
+  ) {
+    return 'panel';
+  }
+  
+  return 'default';
+}
+
+// Get the appropriate delay for an action type
+function getSettleDelay(actionType: 'dropdown' | 'date' | 'panel' | 'default'): number {
+  switch (actionType) {
+    case 'dropdown': return UI_SETTLE_DELAYS.DROPDOWN_SELECTION;
+    case 'date': return UI_SETTLE_DELAYS.DATE_SELECTION;
+    case 'panel': return UI_SETTLE_DELAYS.PANEL_TRIGGER;
+    default: return UI_SETTLE_DELAYS.DEFAULT;
+  }
+}
+
+// ============ DROPDOWN SCROLLING ============
+
+// Scroll within dropdown containers to find hidden elements
+async function scrollDropdownToFindElement(event: RecordedEvent): Promise<Element | null> {
+  const expectedTexts = extractExpectedText(event.aiDescription || '');
+  if (expectedTexts.length === 0) return null;
+  
+  console.log('[Replayer] 🔍 Looking for dropdown with text:', expectedTexts);
+  
+  // Find potential dropdown/list containers
+  const dropdownSelectors = [
+    '[role="listbox"]',
+    '[role="menu"]',
+    '[role="list"]',
+    '[data-testid*="suggestion"]',
+    '[class*="dropdown"]',
+    '[class*="suggestion"]',
+    '[class*="autocomplete"]',
+    '[class*="listbox"]',
+    '[class*="options"]',
+    // Airbnb specific
+    '[id*="location-suggestion"]',
+    '.dir-ltr [data-testid]',
+  ];
+  
+  // Find scrollable containers
+  const allContainers = document.querySelectorAll(dropdownSelectors.join(', '));
+  const scrollableContainers: Element[] = [];
+  
+  for (const container of allContainers) {
+    if (isScrollable(container)) {
+      scrollableContainers.push(container);
+    }
+  }
+  
+  // Also check for any element that's scrollable and contains list items
+  const allScrollable = document.querySelectorAll('*');
+  for (const el of allScrollable) {
+    if (isScrollable(el) && el.querySelectorAll('[role="option"], li, [data-testid*="suggestion"]').length > 2) {
+      if (!scrollableContainers.includes(el)) {
+        scrollableContainers.push(el);
+      }
+    }
+  }
+  
+  console.log('[Replayer] Found', scrollableContainers.length, 'scrollable containers');
+  
+  for (const container of scrollableContainers) {
+    const result = await scrollContainerToFindText(container, expectedTexts);
+    if (result) {
+      return result;
+    }
+  }
+  
+  // If no scrollable container found, search the entire page for matching text
+  return searchPageForMatchingElement(expectedTexts);
+}
+
+// Check if element is scrollable
+function isScrollable(element: Element): boolean {
+  if (!(element instanceof HTMLElement)) return false;
+  
+  const style = window.getComputedStyle(element);
+  const overflowY = style.overflowY;
+  const overflowX = style.overflowX;
+  
+  const isScrollableY = (overflowY === 'scroll' || overflowY === 'auto') && element.scrollHeight > element.clientHeight;
+  const isScrollableX = (overflowX === 'scroll' || overflowX === 'auto') && element.scrollWidth > element.clientWidth;
+  
+  return isScrollableY || isScrollableX;
+}
+
+// Scroll within a container to find text
+async function scrollContainerToFindText(container: Element, expectedTexts: string[]): Promise<Element | null> {
+  if (!(container instanceof HTMLElement)) return null;
+  
+  const originalScrollTop = container.scrollTop;
+  const maxScrollAttempts = 10;
+  const scrollStep = container.clientHeight * 0.7;
+  
+  console.log('[Replayer] 🔄 Scrolling container to find:', expectedTexts[0]);
+  
+  // First, check if element is already visible
+  let found = findTextInContainer(container, expectedTexts);
+  if (found) return found;
+  
+  // Scroll down to find element
+  for (let i = 0; i < maxScrollAttempts; i++) {
+    container.scrollTop += scrollStep;
+    await sleep(100);
+    
+    found = findTextInContainer(container, expectedTexts);
+    if (found) {
+      console.log('[Replayer] ✓ Found element after scrolling down', i + 1, 'times');
+      return found;
+    }
+    
+    // Check if we've reached the bottom
+    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 10) {
+      break;
+    }
+  }
+  
+  // Reset and try scrolling from top
+  container.scrollTop = 0;
+  await sleep(100);
+  
+  found = findTextInContainer(container, expectedTexts);
+  if (found) return found;
+  
+  // Restore original position
+  container.scrollTop = originalScrollTop;
+  
+  return null;
+}
+
+// Find element with matching text in container
+function findTextInContainer(container: Element, expectedTexts: string[]): Element | null {
+  const items = container.querySelectorAll('[role="option"], li, [data-testid*="suggestion"], div[class*="option"]');
+  
+  for (const item of items) {
+    const text = item.textContent?.toLowerCase() || '';
+    
+    for (const expected of expectedTexts) {
+      if (text.includes(expected.toLowerCase())) {
+        // Make sure element is visible
+        const rect = item.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0 && rect.top >= 0 && rect.bottom <= window.innerHeight) {
+          console.log('[Replayer] 🎯 Found matching item:', expected);
+          return item;
+        }
+      }
+    }
+  }
+  
+  return null;
+}
+
+// Search entire page for matching element
+function searchPageForMatchingElement(expectedTexts: string[]): Element | null {
+  console.log('[Replayer] 🔍 Searching entire page for:', expectedTexts);
+  
+  // Look for elements containing the expected text
+  for (const expected of expectedTexts) {
+    const lowerExpected = expected.toLowerCase();
+    
+    // Try common interactive elements first
+    const interactiveElements = document.querySelectorAll('button, a, [role="option"], [role="button"], li, [data-testid]');
+    
+    for (const el of interactiveElements) {
+      const text = el.textContent?.trim().toLowerCase() || '';
+      const ariaLabel = el.getAttribute('aria-label')?.toLowerCase() || '';
+      
+      if (text.includes(lowerExpected) || ariaLabel.includes(lowerExpected)) {
+        if (isElementVisible(el)) {
+          console.log('[Replayer] 🎯 Found matching element on page:', expected);
+          return el;
+        }
+      }
+    }
+  }
+  
+  return null;
+}
+
+// ============ UI STABILITY DETECTION ============
+
+// Wait for UI to stabilize (no DOM mutations for a period)
+async function waitForUIStability(maxWait = 500, stableTime = 100): Promise<void> {
+  return new Promise((resolve) => {
+    let lastMutationTime = Date.now();
+    let resolved = false;
+    
+    const observer = new MutationObserver(() => {
+      lastMutationTime = Date.now();
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      characterData: true,
+    });
+    
+    const checkStability = () => {
+      if (resolved) return;
+      
+      const timeSinceLastMutation = Date.now() - lastMutationTime;
+      const totalWaitTime = Date.now() - startTime;
+      
+      if (timeSinceLastMutation >= stableTime || totalWaitTime >= maxWait) {
+        resolved = true;
+        observer.disconnect();
+        resolve();
+      } else {
+        setTimeout(checkStability, 20);
+      }
+    };
+    
+    const startTime = Date.now();
+    setTimeout(checkStability, stableTime);
+  });
+}
+
+// Wait for element to be ready for interaction
+async function waitForElementReady(element: Element, maxWait = 300): Promise<void> {
+  const startTime = Date.now();
+  
+  while (Date.now() - startTime < maxWait) {
+    const rect = element.getBoundingClientRect();
+    
+    // Element should have dimensions and be in viewport
+    if (rect.width > 0 && rect.height > 0) {
+      // Check if element is not animating (position is stable)
+      await sleep(50);
+      const newRect = element.getBoundingClientRect();
+      
+      if (
+        Math.abs(rect.left - newRect.left) < 2 &&
+        Math.abs(rect.top - newRect.top) < 2 &&
+        Math.abs(rect.width - newRect.width) < 2 &&
+        Math.abs(rect.height - newRect.height) < 2
+      ) {
+        return; // Element is stable
+      }
+    }
+    
+    await sleep(50);
+  }
+}
+
 // Check if AI is enabled
 async function checkAIEnabled(): Promise<boolean> {
   try {
@@ -42,10 +488,68 @@ async function findElement(event: RecordedEvent): Promise<Element | null> {
     if (aiResult) {
       console.log('[Replayer] AI found element with confidence:', aiResult.confidence);
       if (aiResult.confidence >= CONFIG.AI_CONFIDENCE_THRESHOLD) {
-        // Find the element at the AI-predicted coordinates
-        const element = document.elementFromPoint(aiResult.x, aiResult.y);
+        // Find the actual interactive element at the AI-predicted coordinates
+        const element = findInteractiveElementAtPoint(aiResult.x, aiResult.y, event.tagName);
         if (element && isElementVisible(element)) {
-          return element;
+          console.log('[Replayer] ✓ AI coordinates matched element:', element.tagName, element.id || element.className?.toString().substring(0, 50));
+          
+          // Verify element text matches description
+          if (verifyElementMatchesDescription(element, event.aiDescription)) {
+            return element;
+          } else {
+            // Text doesn't match - try to find a nearby element that matches
+            console.log('[Replayer] 🔍 Text mismatch, searching nearby elements...');
+            const betterMatch = findNearbyMatchingElement(aiResult.x, aiResult.y, event.aiDescription);
+            if (betterMatch) {
+              console.log('[Replayer] ✓ Found better matching element nearby');
+              return betterMatch;
+            }
+            // If no better match, still use the element but log warning
+            console.log('[Replayer] ⚠️ Using element despite text mismatch');
+            return element;
+          }
+        } else {
+          console.log('[Replayer] ⚠️ AI coordinates (', aiResult.x, ',', aiResult.y, ') did not match a visible element');
+          const rawElement = document.elementFromPoint(aiResult.x, aiResult.y);
+          console.log('[Replayer] Raw element at point:', rawElement?.tagName || 'none');
+        }
+      } else {
+        console.log('[Replayer] ⚠️ AI confidence too low:', aiResult.confidence, '< threshold', CONFIG.AI_CONFIDENCE_THRESHOLD);
+        
+        // Try scrolling within dropdown/list containers to find hidden elements
+        const actionType = getActionType(event);
+        if (actionType === 'dropdown') {
+          console.log('[Replayer] 🔄 Attempting to scroll dropdown to find element...');
+          const foundByScroll = await scrollDropdownToFindElement(event);
+          if (foundByScroll) {
+            console.log('[Replayer] ✓ Found element after scrolling dropdown');
+            return foundByScroll;
+          }
+        }
+        
+        // For date picker, wait and retry - calendar may still be loading
+        if (actionType === 'date') {
+          console.log('[Replayer] 🔄 Waiting for calendar to appear...');
+          await waitForUIStability(500, 100);
+          
+          // Retry AI search after waiting
+          const retryResult = await findElementWithAI(event);
+          if (retryResult && retryResult.confidence >= CONFIG.AI_CONFIDENCE_THRESHOLD) {
+            const element = findInteractiveElementAtPoint(retryResult.x, retryResult.y, event.tagName);
+            if (element && isElementVisible(element)) {
+              console.log('[Replayer] ✓ Found element on retry:', element.tagName);
+              return element;
+            }
+          }
+          
+          // Try searching for the date number in the page
+          const expectedTexts = extractExpectedText(event.aiDescription || '');
+          if (expectedTexts.length > 0) {
+            const dateButton = searchPageForMatchingElement(expectedTexts);
+            if (dateButton) {
+              return dateButton;
+            }
+          }
         }
       }
     }
@@ -56,17 +560,92 @@ async function findElement(event: RecordedEvent): Promise<Element | null> {
   return findElementWithSelectors(event);
 }
 
+// Find the actual interactive element at coordinates, not just any element
+function findInteractiveElementAtPoint(x: number, y: number, expectedTagName?: string): Element | null {
+  const element = document.elementFromPoint(x, y);
+  if (!element) return null;
+
+  // If the element itself is interactive, return it
+  if (isInteractiveElement(element)) {
+    return element;
+  }
+
+  // Check if we clicked on an element inside an interactive parent
+  // (e.g., clicked on SVG icon inside a button)
+  let parent: Element | null = element;
+  let depth = 0;
+  while (parent && depth < 5) {
+    if (isInteractiveElement(parent)) {
+      console.log('[Replayer] Found interactive parent:', parent.tagName);
+      return parent;
+    }
+    parent = parent.parentElement;
+    depth++;
+  }
+
+  // Check children at this point - maybe we hit a container but the button is inside
+  const children = element.querySelectorAll('button, a, input, [role="button"], [role="option"], [role="menuitem"]');
+  for (const child of children) {
+    const rect = child.getBoundingClientRect();
+    if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+      console.log('[Replayer] Found interactive child:', child.tagName);
+      return child;
+    }
+  }
+
+  // If expected tag matches, use it
+  if (expectedTagName && element.tagName.toLowerCase() === expectedTagName.toLowerCase()) {
+    return element;
+  }
+
+  // Last resort: return the original element
+  console.log('[Replayer] No interactive element found, using raw element:', element.tagName);
+  return element;
+}
+
+function isInteractiveElement(element: Element): boolean {
+  const interactiveTags = ['BUTTON', 'A', 'INPUT', 'SELECT', 'TEXTAREA', 'LABEL'];
+  const interactiveRoles = ['button', 'link', 'checkbox', 'radio', 'menuitem', 'option', 'tab', 'listbox'];
+
+  if (interactiveTags.includes(element.tagName)) {
+    return true;
+  }
+
+  const role = element.getAttribute('role');
+  if (role && interactiveRoles.includes(role)) {
+    return true;
+  }
+
+  // Check for click handlers (elements with onclick or cursor pointer)
+  if (element instanceof HTMLElement) {
+    const style = window.getComputedStyle(element);
+    if (style.cursor === 'pointer') {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 // AI-powered element finding
 async function findElementWithAI(event: RecordedEvent): Promise<AIFindElementResponse | null> {
   try {
+    console.log('[Replayer] 🤖 AI element finding started');
+    
     // Capture current screenshot
+    console.log('[Replayer] 📸 Capturing current screenshot...');
     const currentScreenshot = await captureScreenshot();
     const compressedScreenshot = await compressImage(currentScreenshot, 1280, 0.7);
+    console.log('[Replayer] 📸 Screenshot size:', Math.round(compressedScreenshot.length / 1024), 'KB');
 
     // Build description from available context
+    // Prefer AI-generated description from recording
     let description = event.aiDescription || '';
-    if (!description) {
-      // Construct a description from available data
+    
+    if (description) {
+      console.log('[Replayer] 🤖 Using AI description from recording:', description);
+    } else {
+      // Construct a description from available data as fallback
       const parts: string[] = [];
       if (event.tagName) parts.push(event.tagName);
       if (event.elementText) parts.push(`with text "${event.elementText}"`);
@@ -74,7 +653,15 @@ async function findElementWithAI(event: RecordedEvent): Promise<AIFindElementRes
       if (event.elementAttributes?.['aria-label']) parts.push(`labeled "${event.elementAttributes['aria-label']}"`);
       if (event.visualContext?.relativePosition) parts.push(`at ${event.visualContext.relativePosition} of page`);
       description = parts.join(' ') || `Element at position (${event.x}, ${event.y})`;
+      console.log('[Replayer] ⚠️ No AI description, using fallback:', description);
     }
+
+    console.log('[Replayer] 🤖 Sending to AI:', {
+      description,
+      hasReferenceScreenshot: !!event.screenshot,
+      hasElementCrop: !!event.elementCrop,
+      originalRect: event.elementRect,
+    });
 
     // Request AI to find element
     const response = await new Promise<{ success: boolean; result?: AIFindElementResponse; error?: string }>((resolve, reject) => {
@@ -100,12 +687,19 @@ async function findElementWithAI(event: RecordedEvent): Promise<AIFindElementRes
     });
 
     if (response.success && response.result) {
+      console.log('[Replayer] 🤖 AI Response:', {
+        x: response.result.x,
+        y: response.result.y,
+        confidence: response.result.confidence,
+        reasoning: response.result.reasoning,
+      });
       return response.result;
     }
 
+    console.warn('[Replayer] 🤖 AI returned no result:', response.error);
     return null;
   } catch (error) {
-    console.warn('[Replayer] AI element finding failed:', error);
+    console.warn('[Replayer] 🤖 AI element finding failed:', error);
     return null;
   }
 }
@@ -211,6 +805,13 @@ async function executeClick(event: RecordedEvent): Promise<void> {
     await scrollToPosition(event.scrollX ?? 0, event.scrollY);
   }
   
+  // Determine action type for smart delays
+  const actionType = getActionType(event);
+  console.log('[Replayer] Action type:', actionType);
+  
+  // Wait for UI to stabilize before finding element
+  await waitForUIStability(300, 80);
+  
   const element = await findElement(event);
   if (!element) {
     console.warn('[Replayer] Element not found:', event.selector);
@@ -218,6 +819,9 @@ async function executeClick(event: RecordedEvent): Promise<void> {
   }
   
   await scrollToElement(element);
+  
+  // Wait for element to be ready (not animating)
+  await waitForElementReady(element, 200);
   
   const rect = element.getBoundingClientRect();
   const x = rect.left + rect.width / 2;
@@ -245,7 +849,13 @@ async function executeClick(event: RecordedEvent): Promise<void> {
     element.click();
   }
   
-  await sleep(CONFIG.CLICK_SETTLE_TIME);
+  // Use smart delay based on action type
+  const settleDelay = getSettleDelay(actionType);
+  console.log('[Replayer] Waiting', settleDelay, 'ms for UI to settle');
+  await sleep(settleDelay);
+  
+  // Wait for any UI changes triggered by the click
+  await waitForUIStability(settleDelay, 80);
 }
 
 async function executeDblClick(event: RecordedEvent): Promise<void> {
@@ -408,34 +1018,39 @@ async function executeKeyUp(event: RecordedEvent): Promise<void> {
 
 async function executeFocus(event: RecordedEvent): Promise<void> {
   console.log('[Replayer] Focus:', event.selector);
-  
+
+  // Wait for UI stability before finding element
+  await waitForUIStability(200, 60);
+
   const element = await findElement(event) as HTMLElement;
   if (!element) {
     console.warn('[Replayer] Element not found for focus');
     return;
   }
-  
+
   await scrollToElement(element);
-  
+  await waitForElementReady(element, 150);
+
   const rect = element.getBoundingClientRect();
   moveReplayCursor(rect.left + rect.width / 2, rect.top + rect.height / 2);
   clickReplayCursor();
-  
+
   // Simulate click into field
   element.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
   element.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
   element.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-  
+
   element.focus();
   element.dispatchEvent(new FocusEvent('focus', { bubbles: false }));
   element.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
-  
+
   // Select all text if it's an input
   if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
     element.select();
   }
-  
-  await sleep(50);
+
+  await sleep(100);
+  await waitForUIStability(200, 60);
 }
 
 async function executeBlur(event: RecordedEvent): Promise<void> {

@@ -317,6 +317,7 @@ async function handleMessage(
 
       try {
         // Get final recording data from content script
+        // The content script has the authoritative events with AI context (screenshots, descriptions)
         const response = (await chrome.tabs.sendMessage(tabId, {
           type: "STOP_RECORDING",
         })) as {
@@ -327,27 +328,27 @@ async function handleMessage(
           duration: number;
         };
 
-        // Merge events from background (navigation events) and content script
+        // Use ONLY content script events - they have the AI context (screenshots, descriptions)
+        // Don't merge with background events to avoid duplication
         recordingData = {
-          events: [
-            ...activeRecordingSession.events,
-            ...(response.events || []),
-          ],
-          mouseMovements: [
-            ...activeRecordingSession.mouseMovements,
-            ...(response.mouseMovements || []),
-          ],
+          events: response.events || [],
+          mouseMovements: response.mouseMovements || [],
           startUrl: activeRecordingSession.startUrl,
           duration: Date.now() - activeRecordingSession.startTime,
         };
+        
+        console.log("[Openmation] Recording stopped with", recordingData.events.length, "events");
+        console.log("[Openmation] Events with AI context:", recordingData.events.filter(e => e.aiDescription).length);
       } catch {
-        // Content script might be gone - use what we have
+        // Content script might be gone - use what we have from background
+        // Note: These won't have AI context (screenshots/descriptions)
         recordingData = {
           events: activeRecordingSession.events,
           mouseMovements: activeRecordingSession.mouseMovements,
           startUrl: activeRecordingSession.startUrl,
           duration: Date.now() - activeRecordingSession.startTime,
         };
+        console.log("[Openmation] Using background events (no AI context):", recordingData.events.length);
       }
 
       // Create and save automation
@@ -528,8 +529,29 @@ async function handleMessage(
         }
 
         const request = (message as { request: AIFindElementRequest }).request;
+        
+        // Log what we're sending to AI
+        console.log("[Openmation] 🤖 AI_FIND_ELEMENT Request:", {
+          description: request.description,
+          hasCurrentScreenshot: !!request.currentScreenshot,
+          currentScreenshotSize: request.currentScreenshot?.length || 0,
+          hasReferenceScreenshot: !!request.referenceScreenshot,
+          referenceScreenshotSize: request.referenceScreenshot?.length || 0,
+          hasElementCrop: !!request.elementCrop,
+          elementCropSize: request.elementCrop?.length || 0,
+          elementRect: request.elementRect,
+        });
+
         const provider = getAIProvider(settings.provider, apiKey);
         const result = await provider.findElement(request);
+
+        // Log what AI returned
+        console.log("[Openmation] 🤖 AI_FIND_ELEMENT Response:", {
+          x: result.x,
+          y: result.y,
+          confidence: result.confidence,
+          reasoning: result.reasoning,
+        });
 
         return { success: true, result };
       } catch (error) {
@@ -548,8 +570,27 @@ async function handleMessage(
         }
 
         const request = (message as { request: AIDescribeActionRequest }).request;
+        
+        // Log what we're sending to AI
+        console.log("[Openmation] 🤖 AI_DESCRIBE_ACTION Request:", {
+          actionType: request.actionType,
+          coordinates: request.coordinates,
+          value: request.value ? `"${request.value.substring(0, 20)}..."` : undefined,
+          hasScreenshot: !!request.screenshot,
+          screenshotSize: request.screenshot?.length || 0,
+          hasElementCrop: !!request.elementCrop,
+          elementCropSize: request.elementCrop?.length || 0,
+        });
+
         const provider = getAIProvider(settings.provider, apiKey);
         const result = await provider.describeAction(request);
+
+        // Log what AI returned
+        console.log("[Openmation] 🤖 AI_DESCRIBE_ACTION Response:", {
+          description: result.description,
+          elementType: result.elementType,
+          elementLabel: result.elementLabel,
+        });
 
         return { success: true, result };
       } catch (error) {

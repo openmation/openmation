@@ -5,11 +5,11 @@
 </p>
 
 <p align="center">
-  <strong>Record, replay, and share browser automations with pixel-perfect accuracy</strong>
+  <strong>AI-driven browser automation — record, replay, and share with resilient accuracy</strong>
 </p>
 
 <p align="center">
-  A beautiful Chrome extension for recording and replaying browser interactions — with shareable links and scheduled runs.
+  A beautiful Chrome extension for AI-powered recording and replay — with shareable links and scheduled runs.
 </p>
 
 <p align="center">
@@ -28,6 +28,12 @@
 - **Cross-page recording** — Continue recording seamlessly across page navigations
 - **Floating recording panel** — Elegant, non-intrusive UI that floats on any webpage
 - **Real-time event counter** — See exactly how many actions have been captured
+
+### 🤖 **AI-Driven Recording & Replay**
+- **AI-powered element matching** — Vision-based targeting keeps automations resilient to layout changes
+- **Rich context capture** — Screenshots and context improve replay accuracy over time
+- **Smart fallbacks** — AI-first replay with selector and text-based fallbacks
+- **Provider support** — Works with OpenAI and Claude API keys
 
 ### ▶️ **Replay**
 - **Pixel-perfect replay** — Automation runs exactly as recorded, every time
@@ -62,7 +68,7 @@ simplest-automation/
 ├── extension/          # Chrome extension (React + TypeScript)
 │   ├── src/
 │   │   ├── background/ # Service worker (state management, scheduling)
-│   │   ├── content/    # Content scripts (recorder, replayer, panel)
+│   │   ├── content/    # Content scripts (AI recorder, replayer, panel)
 │   │   ├── popup/      # Extension popup UI (React)
 │   │   └── lib/        # Shared utilities and types
 │   └── public/         # Static assets (icons, manifest)
@@ -332,7 +338,7 @@ The replayer uses multiple strategies to find elements. If an element changes be
 ## 🗺️ Roadmap
 
 ### Planned Features
-- [ ] **AI-powered recording** — Natural language to automation
+- [x] **AI-powered recording & replay** — Vision-based resilience for automations
 - [ ] **Cloud sync** — Sync automations across devices
 - [ ] **Team sharing** — Share automations within teams
 - [ ] **Conditional logic** — If/else branching in automations

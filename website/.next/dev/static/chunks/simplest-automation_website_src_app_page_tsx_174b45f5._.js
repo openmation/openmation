@@ -4,7 +4,7 @@
   "static/chunks/simplest-automation_website_src_275b76d3._.js",
   "static/chunks/01207_next_80aaaf55._.js",
   "static/chunks/01207_framer-motion_dist_es_910a24fd._.js",
-  "static/chunks/01207_49730492._.js"
+  "static/chunks/01207_e6cef241._.js"
 ],
     source: "dynamic"
 });

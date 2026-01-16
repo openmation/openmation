@@ -362,7 +362,10 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-white">
+    <section
+      id="top"
+      className="relative min-h-screen overflow-hidden bg-white"
+    >
       {/* Premium gradient mesh background */}
       <GradientMesh />
 
@@ -424,7 +427,7 @@ export function Hero() {
           className="text-center max-w-4xl mx-auto"
         >
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight text-foreground mb-6 leading-[1.1]">
-            Automate your{" "}
+            AI-driven automation for{" "}
             <span className="relative inline-block">
               <AnimatePresence mode="wait">
                 <motion.span
@@ -443,7 +446,7 @@ export function Hero() {
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            Turn repetitive browser tasks into one-click automations.
+            Turn repetitive browser tasks into resilient, AI-powered workflows.
             <br className="hidden sm:block" />
             Record once, replay forever, share with anyone.
           </p>
@@ -490,6 +493,11 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="max-w-6xl mx-auto"
         >
+          <div className="text-center mb-6">
+            <p className="text-sm font-medium text-muted-foreground uppercase tracking-[0.2em]">
+              AI-driven recording and replay
+            </p>
+          </div>
           <AutomationDemo />
         </motion.div>
       </div>

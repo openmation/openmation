@@ -7,6 +7,7 @@ import { EditAutomationDialog } from './components/EditAutomationDialog';
 import { Onboarding } from './components/Onboarding';
 import { AISettings } from './components/AISettings';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
+import { Sparkles } from 'lucide-react';
 import { TooltipProvider } from './components/ui/tooltip';
 import { ThemeProvider } from './components/ThemeProvider';
 import type { Automation } from '@/lib/types';
@@ -19,6 +20,7 @@ function AppContent() {
   const [editingAutomation, setEditingAutomation] = useState<Automation | null>(null);
   const [runningAutomationId] = useState<string | undefined>();
   const [refreshKey, setRefreshKey] = useState(0);
+  const [activeTab, setActiveTab] = useState('automations');
 
   // Check if onboarding was completed
   useEffect(() => {
@@ -57,15 +59,21 @@ function AppContent() {
   return (
     <div className="flex flex-col h-[520px] bg-background overflow-hidden">
       <Header />
-      <RecordingPanel onRecordingChange={setIsRecording} />
+      <RecordingPanel
+        onRecordingChange={setIsRecording}
+        onOpenAISettings={() => setActiveTab('ai')}
+      />
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Tabs defaultValue="automations" className="flex-1 flex flex-col">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
           <div className="px-4 py-3 border-b border-border/50">
             <TabsList>
               <TabsTrigger value="automations">Automations</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
-              <TabsTrigger value="ai">AI</TabsTrigger>
+              <TabsTrigger value="ai" className="gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                AI
+              </TabsTrigger>
             </TabsList>
           </div>
           
@@ -81,7 +89,7 @@ function AppContent() {
             <RunHistory />
           </TabsContent>
           
-          <TabsContent value="ai" className="flex-1 m-0 overflow-y-auto max-h-[380px]">
+          <TabsContent value="ai" className="flex-1 min-h-0 m-0 overflow-y-auto">
             <AISettings />
           </TabsContent>
         </Tabs>

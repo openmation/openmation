@@ -100,7 +100,7 @@ export function AISettings() {
   const hasApiKey = !!currentApiKey;
 
   return (
-    <div className="p-3 space-y-3">
+    <div className="p-3 pb-6 space-y-3">
       <Card>
         <CardHeader className="pb-2 pt-3 px-3">
           <div className="flex items-center justify-between">

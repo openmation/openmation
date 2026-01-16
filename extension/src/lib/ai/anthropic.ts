@@ -59,14 +59,25 @@ export class AnthropicProvider implements AIProvider {
       content.push({ type: 'text', text: 'Above: Cropped image of the target element' });
     }
 
-    // Add the prompt and description
+    // Build the prompt with all context
     let promptText = AI_PROMPTS.findElement + `\n\nDescription of element to find: "${request.description}"`;
+    
+    // Add rich AI guidance if available
+    if (request.aiGuidance) {
+      promptText += this.formatAIGuidance(request.aiGuidance);
+    }
+    
+    // Add interaction context if available
+    if (request.interactionContext) {
+      promptText += this.formatInteractionContext(request.interactionContext);
+    }
+    
     if (request.elementRect) {
       promptText += `\nOriginal element position: top=${request.elementRect.top}, left=${request.elementRect.left}, width=${request.elementRect.width}, height=${request.elementRect.height}`;
     }
     content.push({ type: 'text', text: promptText });
 
-    const response = await this.callAPI(content);
+    const response = await this.callAPI(content, 800);
     return this.parseFindElementResponse(response);
   }
 
@@ -95,12 +106,18 @@ export class AnthropicProvider implements AIProvider {
     });
     content.push({ type: 'text', text: 'Above: The element being interacted with' });
 
-    // Add the prompt
-    const promptText = AI_PROMPTS.describeAction +
+    // Build the prompt with context
+    let promptText = AI_PROMPTS.describeAction +
       `\n\nAction type: ${request.actionType}\nCoordinates: (${request.coordinates.x}, ${request.coordinates.y})${request.value ? `\nInput value: "${request.value}"` : ''}`;
+    
+    // Add interaction context if available
+    if (request.interactionContext) {
+      promptText += this.formatInteractionContext(request.interactionContext);
+    }
+    
     content.push({ type: 'text', text: promptText });
 
-    const response = await this.callAPI(content);
+    const response = await this.callAPI(content, 1200); // More tokens for detailed response
     return this.parseDescribeActionResponse(response);
   }
 
@@ -136,7 +153,8 @@ export class AnthropicProvider implements AIProvider {
   }
 
   private async callAPI(
-    content: Array<{ type: string; text?: string; source?: { type: string; media_type: string; data: string } }>
+    content: Array<{ type: string; text?: string; source?: { type: string; media_type: string; data: string } }>,
+    maxTokens: number = 500
   ): Promise<string> {
     const response = await fetch(ANTHROPIC_API_URL, {
       method: 'POST',
@@ -148,7 +166,7 @@ export class AnthropicProvider implements AIProvider {
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 500,
+        max_tokens: maxTokens,
         messages: [
           {
             role: 'user',
@@ -182,6 +200,76 @@ export class AnthropicProvider implements AIProvider {
     return match ? match[1] : base64;
   }
 
+  private formatAIGuidance(guidance: NonNullable<AIFindElementRequest['aiGuidance']>): string {
+    const parts: string[] = ['\n\n=== AI GUIDANCE FROM RECORDING ==='];
+    
+    if (guidance.elementIdentification) {
+      parts.push(`Element Identification: ${guidance.elementIdentification}`);
+    }
+    
+    if (guidance.widgetType && guidance.widgetType !== 'none') {
+      parts.push(`Widget Type: ${guidance.widgetType}`);
+    }
+    
+    if (guidance.widgetContainer) {
+      parts.push(`Widget Container: ${guidance.widgetContainer}`);
+    }
+    
+    if (guidance.preparationSteps && guidance.preparationSteps.length > 0) {
+      parts.push(`Preparation Steps:\n${guidance.preparationSteps.map((s, i) => `  ${i + 1}. ${s}`).join('\n')}`);
+    }
+    
+    return parts.join('\n');
+  }
+
+  private formatInteractionContext(context: NonNullable<AIFindElementRequest['interactionContext']>): string {
+    const parts: string[] = ['\n\n=== INTERACTION CONTEXT ==='];
+    
+    // Widget context
+    if (context.widgetContext) {
+      parts.push(`Widget: ${context.widgetContext.type} (${context.widgetContext.state})`);
+      if (context.widgetContext.currentValue) {
+        parts.push(`Current Value: "${context.widgetContext.currentValue}"`);
+      }
+    }
+    
+    // DOM path
+    if (context.domPath.length > 0) {
+      parts.push(`DOM Path: ${context.domPath.join(' > ')}`);
+    }
+    
+    // Scroll containers
+    if (context.scrollContainers.length > 0) {
+      const scrollInfo = context.scrollContainers.map(c => 
+        `${c.scrollDirection} scroll (${c.isElementVisible ? 'element visible' : 'needs scroll to reveal'})`
+      );
+      parts.push(`Scroll Containers: ${scrollInfo.join(', ')}`);
+    }
+    
+    // Sibling elements
+    if (context.siblingElements.length > 0) {
+      const siblings = context.siblingElements.slice(0, 3).map(s => 
+        `"${s.text}" (${s.position})`
+      );
+      parts.push(`Nearby Elements: ${siblings.join(', ')}`);
+    }
+    
+    // Accessibility info
+    if (context.accessibilityInfo.role) {
+      parts.push(`Role: ${context.accessibilityInfo.role}`);
+    }
+    if (context.accessibilityInfo.label) {
+      parts.push(`Label: "${context.accessibilityInfo.label}"`);
+    }
+    
+    // Preparation steps
+    if (context.preparationSteps.length > 0) {
+      parts.push(`Required Preparation:\n${context.preparationSteps.map((s, i) => `  ${i + 1}. ${s}`).join('\n')}`);
+    }
+    
+    return parts.join('\n');
+  }
+
   private parseFindElementResponse(response: string): AIFindElementResponse {
     try {
       // Extract JSON from the response (handle markdown code blocks)
@@ -195,6 +283,7 @@ export class AnthropicProvider implements AIProvider {
         y: parsed.y || 0,
         confidence: parsed.confidence || 0,
         reasoning: parsed.reasoning,
+        preparationNeeded: parsed.preparationNeeded,
       };
     } catch (error) {
       console.error('[Anthropic] Failed to parse findElement response:', response, error);
@@ -213,6 +302,12 @@ export class AnthropicProvider implements AIProvider {
         description: parsed.description || 'Unknown action',
         elementType: parsed.elementType,
         elementLabel: parsed.elementLabel,
+        // Enhanced fields
+        elementIdentification: parsed.elementIdentification,
+        widgetType: parsed.widgetType,
+        widgetContainer: parsed.widgetContainer,
+        preparationSteps: parsed.preparationSteps,
+        verificationSteps: parsed.verificationSteps,
       };
     } catch (error) {
       console.error('[Anthropic] Failed to parse describeAction response:', response, error);

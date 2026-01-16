@@ -6,19 +6,19 @@ import Link from "next/link";
 
 const links = {
   product: [
+    { name: "Overview", href: "#top" },
     { name: "Features", href: "#features" },
     { name: "How It Works", href: "#how-it-works" },
     { name: "Use Cases", href: "#use-cases" },
   ],
   resources: [
-    { name: "Documentation", href: "/docs" },
-    { name: "API Reference", href: "/api" },
-    { name: "Support", href: "/support" },
+    { name: "Get Started", href: "#get-started" },
+    { name: "Download", href: "#get-started" },
+    { name: "Open Source", href: "https://github.com/openmation" },
   ],
   company: [
-    { name: "About", href: "/about" },
-    { name: "Blog", href: "/blog" },
-    { name: "Contact", href: "/contact" },
+    { name: "Privacy", href: "/privacy" },
+    { name: "Terms", href: "/terms" },
   ],
   legal: [
     { name: "Privacy", href: "/privacy" },
@@ -55,8 +55,8 @@ export function Footer() {
               <span className="text-lg font-semibold">Openmation</span>
             </Link>
             <p className="text-sm text-muted-foreground mb-6 max-w-xs">
-              Browser automation made beautiful. Record, replay, and share with
-              pixel-perfect accuracy.
+              AI-driven browser automation. Record once, replay reliably, and
+              share workflows instantly.
             </p>
             {/* Social links */}
             <div className="flex items-center gap-2">
@@ -149,6 +149,17 @@ export function Footer() {
             <p className="text-xs text-muted-foreground">
               © {new Date().getFullYear()} Openmation. All rights reserved.
             </p>
+            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <Link href="#features" className="hover:text-foreground transition-colors">
+                Features
+              </Link>
+              <Link href="#how-it-works" className="hover:text-foreground transition-colors">
+                How it Works
+              </Link>
+              <Link href="#use-cases" className="hover:text-foreground transition-colors">
+                Use Cases
+              </Link>
+            </div>
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
               Open source with{" "}
               <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" />

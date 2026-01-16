@@ -2,25 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown, Chrome } from "lucide-react";
+import { Menu, X, Chrome } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 
 const navItems = [
-  { 
-    name: "Features", 
-    href: "#features",
-    hasDropdown: true,
-  },
-  { name: "Pricing", href: "#pricing" },
-  { 
-    name: "Resources", 
-    href: "#resources",
-    hasDropdown: true,
-  },
-  { name: "Customers", href: "#customers" },
-  { name: "Careers", href: "#careers" },
+  { name: "Overview", href: "#top" },
+  { name: "Features", href: "#features" },
+  { name: "How it Works", href: "#how-it-works" },
+  { name: "Use Cases", href: "#use-cases" },
+  { name: "Get Started", href: "#get-started" },
 ];
 
 export function Navbar() {
@@ -78,21 +70,12 @@ export function Navbar() {
                     className="flex items-center gap-1 px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-black/[0.03]"
                   >
                     {item.name}
-                    {item.hasDropdown && (
-                      <ChevronDown className="w-3.5 h-3.5 opacity-50" />
-                    )}
                   </Link>
                 ))}
               </div>
 
               {/* CTA Buttons */}
               <div className="hidden md:flex items-center gap-1.5 pl-2">
-                <Link
-                  href="#login"
-                  className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-black/[0.03]"
-                >
-                  Log in
-                </Link>
                 <Link
                   href="#get-started"
                   className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-foreground hover:bg-foreground/90 transition-colors rounded-full"
@@ -137,19 +120,9 @@ export function Navbar() {
                   className="flex items-center justify-between px-4 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-black/[0.03] rounded-xl transition-colors"
                 >
                   {item.name}
-                  {item.hasDropdown && (
-                    <ChevronDown className="w-4 h-4 opacity-50" />
-                  )}
                 </Link>
               ))}
               <div className="pt-4 mt-4 border-t border-black/[0.06] space-y-2">
-                <Link
-                  href="#login"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-center text-base font-medium text-muted-foreground hover:text-foreground hover:bg-black/[0.03] rounded-xl transition-colors"
-                >
-                  Log in
-                </Link>
                 <Link
                   href="#get-started"
                   onClick={() => setIsMobileMenuOpen(false)}

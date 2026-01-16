@@ -30,7 +30,6 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$we
 var __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/simplest-automation/website/node_modules/framer-motion/dist/es/components/AnimatePresence/index.mjs [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$menu$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Menu$3e$__ = __turbopack_context__.i("[project]/simplest-automation/website/node_modules/lucide-react/dist/esm/icons/menu.js [app-client] (ecmascript) <export default as Menu>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$x$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__X$3e$__ = __turbopack_context__.i("[project]/simplest-automation/website/node_modules/lucide-react/dist/esm/icons/x.js [app-client] (ecmascript) <export default as X>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__ = __turbopack_context__.i("[project]/simplest-automation/website/node_modules/lucide-react/dist/esm/icons/chevron-down.js [app-client] (ecmascript) <export default as ChevronDown>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chrome$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Chrome$3e$__ = __turbopack_context__.i("[project]/simplest-automation/website/node_modules/lucide-react/dist/esm/icons/chrome.js [app-client] (ecmascript) <export default as Chrome>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/simplest-automation/website/src/lib/utils.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/simplest-automation/website/node_modules/next/image.js [app-client] (ecmascript)");
@@ -46,26 +45,24 @@ var _s = __turbopack_context__.k.signature();
 ;
 const navItems = [
     {
+        name: "Overview",
+        href: "#top"
+    },
+    {
         name: "Features",
-        href: "#features",
-        hasDropdown: true
+        href: "#features"
     },
     {
-        name: "Pricing",
-        href: "#pricing"
+        name: "How it Works",
+        href: "#how-it-works"
     },
     {
-        name: "Resources",
-        href: "#resources",
-        hasDropdown: true
+        name: "Use Cases",
+        href: "#use-cases"
     },
     {
-        name: "Customers",
-        href: "#customers"
-    },
-    {
-        name: "Careers",
-        href: "#careers"
+        name: "Get Started",
+        href: "#get-started"
     }
 ];
 function Navbar() {
@@ -124,7 +121,7 @@ function Navbar() {
                                                 className: "w-8 h-8 object-contain"
                                             }, void 0, false, {
                                                 fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                                lineNumber: 60,
+                                                lineNumber: 52,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -132,13 +129,13 @@ function Navbar() {
                                                 children: "Openmation"
                                             }, void 0, false, {
                                                 fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                                lineNumber: 67,
+                                                lineNumber: 59,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                        lineNumber: 59,
+                                        lineNumber: 51,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -146,72 +143,52 @@ function Navbar() {
                                         children: navItems.map((item)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                                 href: item.href,
                                                 className: "flex items-center gap-1 px-3.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-black/[0.03]",
-                                                children: [
-                                                    item.name,
-                                                    item.hasDropdown && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__["ChevronDown"], {
-                                                        className: "w-3.5 h-3.5 opacity-50"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                                        lineNumber: 82,
-                                                        columnNumber: 23
-                                                    }, this)
-                                                ]
-                                            }, item.name, true, {
+                                                children: item.name
+                                            }, item.name, false, {
                                                 fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                                lineNumber: 75,
+                                                lineNumber: 67,
                                                 columnNumber: 19
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                        lineNumber: 73,
+                                        lineNumber: 65,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "hidden md:flex items-center gap-1.5 pl-2",
-                                        children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                                href: "#login",
-                                                className: "px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-black/[0.03]",
-                                                children: "Log in"
-                                            }, void 0, false, {
-                                                fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                                lineNumber: 90,
-                                                columnNumber: 17
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                                href: "#get-started",
-                                                className: "flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-foreground hover:bg-foreground/90 transition-colors rounded-full",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chrome$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Chrome$3e$__["Chrome"], {
-                                                        className: "w-4 h-4"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                                        lineNumber: 100,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        children: "Download"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                                        lineNumber: 101,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                                lineNumber: 96,
-                                                columnNumber: 17
-                                            }, this)
-                                        ]
-                                    }, void 0, true, {
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                            href: "#get-started",
+                                            className: "flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-foreground hover:bg-foreground/90 transition-colors rounded-full",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chrome$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Chrome$3e$__["Chrome"], {
+                                                    className: "w-4 h-4"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
+                                                    lineNumber: 83,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    children: "Download"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
+                                                    lineNumber: 84,
+                                                    columnNumber: 19
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
+                                            lineNumber: 79,
+                                            columnNumber: 17
+                                        }, this)
+                                    }, void 0, false, {
                                         fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                        lineNumber: 89,
+                                        lineNumber: 78,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                lineNumber: 52,
+                                lineNumber: 44,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -221,34 +198,34 @@ function Navbar() {
                                     className: "w-5 h-5"
                                 }, void 0, false, {
                                     fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                    lineNumber: 112,
+                                    lineNumber: 95,
                                     columnNumber: 17
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$menu$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Menu$3e$__["Menu"], {
                                     className: "w-5 h-5"
                                 }, void 0, false, {
                                     fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                    lineNumber: 114,
+                                    lineNumber: 97,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                lineNumber: 107,
+                                lineNumber: 90,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                        lineNumber: 50,
+                        lineNumber: 42,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                    lineNumber: 49,
+                    lineNumber: 41,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                lineNumber: 40,
+                lineNumber: 32,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -276,79 +253,58 @@ function Navbar() {
                                     href: item.href,
                                     onClick: ()=>setIsMobileMenuOpen(false),
                                     className: "flex items-center justify-between px-4 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-black/[0.03] rounded-xl transition-colors",
-                                    children: [
-                                        item.name,
-                                        item.hasDropdown && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__["ChevronDown"], {
-                                            className: "w-4 h-4 opacity-50"
-                                        }, void 0, false, {
-                                            fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                            lineNumber: 141,
-                                            columnNumber: 21
-                                        }, this)
-                                    ]
-                                }, item.name, true, {
+                                    children: item.name
+                                }, item.name, false, {
                                     fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                    lineNumber: 133,
+                                    lineNumber: 116,
                                     columnNumber: 17
                                 }, this)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "pt-4 mt-4 border-t border-black/[0.06] space-y-2",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                        href: "#login",
-                                        onClick: ()=>setIsMobileMenuOpen(false),
-                                        className: "block px-4 py-3 text-center text-base font-medium text-muted-foreground hover:text-foreground hover:bg-black/[0.03] rounded-xl transition-colors",
-                                        children: "Log in"
-                                    }, void 0, false, {
-                                        fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                        lineNumber: 146,
-                                        columnNumber: 17
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                        href: "#get-started",
-                                        onClick: ()=>setIsMobileMenuOpen(false),
-                                        className: "flex items-center justify-center gap-2 px-4 py-3.5 text-base font-medium text-white bg-foreground hover:bg-foreground/90 rounded-xl transition-colors",
-                                        children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chrome$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Chrome$3e$__["Chrome"], {
-                                                className: "w-5 h-5"
-                                            }, void 0, false, {
-                                                fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                                lineNumber: 158,
-                                                columnNumber: 19
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                children: "Download for Chrome"
-                                            }, void 0, false, {
-                                                fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                                lineNumber: 159,
-                                                columnNumber: 19
-                                            }, this)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                        lineNumber: 153,
-                                        columnNumber: 17
-                                    }, this)
-                                ]
-                            }, void 0, true, {
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                    href: "#get-started",
+                                    onClick: ()=>setIsMobileMenuOpen(false),
+                                    className: "flex items-center justify-center gap-2 px-4 py-3.5 text-base font-medium text-white bg-foreground hover:bg-foreground/90 rounded-xl transition-colors",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chrome$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Chrome$3e$__["Chrome"], {
+                                            className: "w-5 h-5"
+                                        }, void 0, false, {
+                                            fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
+                                            lineNumber: 131,
+                                            columnNumber: 19
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            children: "Download for Chrome"
+                                        }, void 0, false, {
+                                            fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
+                                            lineNumber: 132,
+                                            columnNumber: 19
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
+                                    lineNumber: 126,
+                                    columnNumber: 17
+                                }, this)
+                            }, void 0, false, {
                                 fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                                lineNumber: 145,
+                                lineNumber: 125,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                        lineNumber: 131,
+                        lineNumber: 114,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                    lineNumber: 124,
+                    lineNumber: 107,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/simplest-automation/website/src/components/Navbar.tsx",
-                lineNumber: 122,
+                lineNumber: 105,
                 columnNumber: 7
             }, this)
         ]
@@ -2748,21 +2704,22 @@ function Hero() {
         }
     }["Hero.useEffect"], []);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
+        id: "top",
         className: "relative min-h-screen overflow-hidden bg-white",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(GradientMesh, {}, void 0, false, {
                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                lineNumber: 367,
+                lineNumber: 370,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(FloatingParticles, {}, void 0, false, {
                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                lineNumber: 370,
+                lineNumber: 373,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(GridPattern, {}, void 0, false, {
                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                lineNumber: 373,
+                lineNumber: 376,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2790,32 +2747,32 @@ function Hero() {
                                     className: "w-4 h-4"
                                 }, void 0, false, {
                                     fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                    lineNumber: 388,
+                                    lineNumber: 391,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     children: "100% Open Source"
                                 }, void 0, false, {
                                     fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                    lineNumber: 389,
+                                    lineNumber: 392,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowRight$3e$__["ArrowRight"], {
                                     className: "w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"
                                 }, void 0, false, {
                                     fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                    lineNumber: 390,
+                                    lineNumber: 393,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                            lineNumber: 383,
+                            lineNumber: 386,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                        lineNumber: 377,
+                        lineNumber: 380,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -2854,17 +2811,17 @@ function Hero() {
                                 className: "w-20 h-20 object-contain"
                             }, void 0, false, {
                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                lineNumber: 409,
+                                lineNumber: 412,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                            lineNumber: 401,
+                            lineNumber: 404,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                        lineNumber: 395,
+                        lineNumber: 398,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -2885,7 +2842,7 @@ function Hero() {
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                                 className: "text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight text-foreground mb-6 leading-[1.1]",
                                 children: [
-                                    "Automate your",
+                                    "AI-driven automation for",
                                     " ",
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: "relative inline-block",
@@ -2911,41 +2868,41 @@ function Hero() {
                                                 children: rotatingWords[currentWordIndex]
                                             }, currentWordIndex, false, {
                                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                                lineNumber: 430,
+                                                lineNumber: 433,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                            lineNumber: 429,
+                                            lineNumber: 432,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                        lineNumber: 428,
+                                        lineNumber: 431,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                lineNumber: 426,
+                                lineNumber: 429,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10",
                                 children: [
-                                    "Turn repetitive browser tasks into one-click automations.",
+                                    "Turn repetitive browser tasks into resilient, AI-powered workflows.",
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {
                                         className: "hidden sm:block"
                                     }, void 0, false, {
                                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                        lineNumber: 447,
+                                        lineNumber: 450,
                                         columnNumber: 13
                                     }, this),
                                     "Record once, replay forever, share with anyone."
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                lineNumber: 445,
+                                lineNumber: 448,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2959,20 +2916,20 @@ function Hero() {
                                                 className: "w-5 h-5"
                                             }, void 0, false, {
                                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                                lineNumber: 457,
+                                                lineNumber: 460,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: "Download for Chrome"
                                             }, void 0, false, {
                                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                                lineNumber: 458,
+                                                lineNumber: 461,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                        lineNumber: 453,
+                                        lineNumber: 456,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -2984,26 +2941,26 @@ function Hero() {
                                                 className: "w-5 h-5"
                                             }, void 0, false, {
                                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                                lineNumber: 465,
+                                                lineNumber: 468,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: "View on GitHub"
                                             }, void 0, false, {
                                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                                lineNumber: 466,
+                                                lineNumber: 469,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                        lineNumber: 460,
+                                        lineNumber: 463,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                lineNumber: 452,
+                                lineNumber: 455,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3013,18 +2970,18 @@ function Hero() {
                                         className: `h-1.5 rounded-full transition-all duration-300 ${index === currentWordIndex ? "w-8 bg-foreground" : "w-1.5 bg-muted-foreground/20 hover:bg-muted-foreground/40"}`
                                     }, index, false, {
                                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                        lineNumber: 473,
+                                        lineNumber: 476,
                                         columnNumber: 15
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                                lineNumber: 471,
+                                lineNumber: 474,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                        lineNumber: 420,
+                        lineNumber: 423,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3041,20 +2998,37 @@ function Hero() {
                             delay: 0.4
                         },
                         className: "max-w-6xl mx-auto",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$src$2f$components$2f$AutomationDemo$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AutomationDemo"], {}, void 0, false, {
-                            fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                            lineNumber: 493,
-                            columnNumber: 11
-                        }, this)
-                    }, void 0, false, {
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "text-center mb-6",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                    className: "text-sm font-medium text-muted-foreground uppercase tracking-[0.2em]",
+                                    children: "AI-driven recording and replay"
+                                }, void 0, false, {
+                                    fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
+                                    lineNumber: 497,
+                                    columnNumber: 13
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
+                                lineNumber: 496,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$src$2f$components$2f$AutomationDemo$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AutomationDemo"], {}, void 0, false, {
+                                fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
+                                lineNumber: 501,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
                         fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                        lineNumber: 487,
+                        lineNumber: 490,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/simplest-automation/website/src/components/Hero.tsx",
-                lineNumber: 375,
+                lineNumber: 378,
                 columnNumber: 7
             }, this)
         ]
@@ -4443,6 +4417,10 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$we
 const links = {
     product: [
         {
+            name: "Overview",
+            href: "#top"
+        },
+        {
             name: "Features",
             href: "#features"
         },
@@ -4457,30 +4435,26 @@ const links = {
     ],
     resources: [
         {
-            name: "Documentation",
-            href: "/docs"
+            name: "Get Started",
+            href: "#get-started"
         },
         {
-            name: "API Reference",
-            href: "/api"
+            name: "Download",
+            href: "#get-started"
         },
         {
-            name: "Support",
-            href: "/support"
+            name: "Open Source",
+            href: "https://github.com/openmation"
         }
     ],
     company: [
         {
-            name: "About",
-            href: "/about"
+            name: "Privacy",
+            href: "/privacy"
         },
         {
-            name: "Blog",
-            href: "/blog"
-        },
-        {
-            name: "Contact",
-            href: "/contact"
+            name: "Terms",
+            href: "/terms"
         }
     ],
     legal: [
@@ -4554,7 +4528,7 @@ function Footer() {
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     className: "text-sm text-muted-foreground mb-6 max-w-xs",
-                                    children: "Browser automation made beautiful. Record, replay, and share with pixel-perfect accuracy."
+                                    children: "AI-driven browser automation. Record once, replay reliably, and share workflows instantly."
                                 }, void 0, false, {
                                     fileName: "[project]/simplest-automation/website/src/components/Footer.tsx",
                                     lineNumber: 57,
@@ -4773,6 +4747,42 @@ function Footer() {
                                 lineNumber: 149,
                                 columnNumber: 13
                             }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "flex items-center gap-4 text-xs text-muted-foreground",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                        href: "#features",
+                                        className: "hover:text-foreground transition-colors",
+                                        children: "Features"
+                                    }, void 0, false, {
+                                        fileName: "[project]/simplest-automation/website/src/components/Footer.tsx",
+                                        lineNumber: 153,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                        href: "#how-it-works",
+                                        className: "hover:text-foreground transition-colors",
+                                        children: "How it Works"
+                                    }, void 0, false, {
+                                        fileName: "[project]/simplest-automation/website/src/components/Footer.tsx",
+                                        lineNumber: 156,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                        href: "#use-cases",
+                                        className: "hover:text-foreground transition-colors",
+                                        children: "Use Cases"
+                                    }, void 0, false, {
+                                        fileName: "[project]/simplest-automation/website/src/components/Footer.tsx",
+                                        lineNumber: 159,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/simplest-automation/website/src/components/Footer.tsx",
+                                lineNumber: 152,
+                                columnNumber: 13
+                            }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$simplest$2d$automation$2f$website$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "flex items-center gap-1.5 text-xs text-muted-foreground",
                                 children: [
@@ -4782,13 +4792,13 @@ function Footer() {
                                         className: "w-3.5 h-3.5 text-red-500 fill-red-500"
                                     }, void 0, false, {
                                         fileName: "[project]/simplest-automation/website/src/components/Footer.tsx",
-                                        lineNumber: 154,
+                                        lineNumber: 165,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/simplest-automation/website/src/components/Footer.tsx",
-                                lineNumber: 152,
+                                lineNumber: 163,
                                 columnNumber: 13
                             }, this)
                         ]

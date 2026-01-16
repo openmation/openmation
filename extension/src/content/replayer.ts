@@ -1,15 +1,17 @@
-// Replayer - Replays recordings EXACTLY as they happened
-// Key-by-key, click-by-click, with precise timing
-import type { RecordedEvent, Automation } from '@/lib/types';
+// Replayer - Replays recordings with AI-first element finding
+// Uses AI vision to locate elements, falling back to selectors when needed
+import type { RecordedEvent, Automation, AIFindElementResponse } from '@/lib/types';
 import { 
   createReplayCursor, 
   moveReplayCursor, 
   clickReplayCursor, 
   removeReplayCursor 
 } from './panel';
+import { captureScreenshot, compressImage } from '@/lib/screenshot';
 
 let isPlaying = false;
 let shouldStop = false;
+let aiEnabled = false;
 
 const CONFIG = {
   INITIAL_DELAY: 2000,
@@ -18,10 +20,98 @@ const CONFIG = {
   CLICK_SETTLE_TIME: 100,
   KEY_DELAY: 30,  // Delay between keystrokes
   MIN_EVENT_GAP: 20,
+  AI_CONFIDENCE_THRESHOLD: 0.6, // Minimum confidence to use AI result
 };
 
-// Find element using multiple strategies
+// Check if AI is enabled
+async function checkAIEnabled(): Promise<boolean> {
+  try {
+    const response = await chrome.runtime.sendMessage({ type: 'GET_AI_STATUS' });
+    return response?.enabled ?? false;
+  } catch {
+    return false;
+  }
+}
+
+// Find element using AI-first approach, with selector fallback
 async function findElement(event: RecordedEvent): Promise<Element | null> {
+  // Try AI-first if enabled and we have AI context
+  if (aiEnabled && (event.screenshot || event.aiDescription)) {
+    console.log('[Replayer] Trying AI-first element finding');
+    const aiResult = await findElementWithAI(event);
+    if (aiResult) {
+      console.log('[Replayer] AI found element with confidence:', aiResult.confidence);
+      if (aiResult.confidence >= CONFIG.AI_CONFIDENCE_THRESHOLD) {
+        // Find the element at the AI-predicted coordinates
+        const element = document.elementFromPoint(aiResult.x, aiResult.y);
+        if (element && isElementVisible(element)) {
+          return element;
+        }
+      }
+    }
+  }
+
+  // Fall back to selector-based strategies
+  console.log('[Replayer] Falling back to selector-based finding');
+  return findElementWithSelectors(event);
+}
+
+// AI-powered element finding
+async function findElementWithAI(event: RecordedEvent): Promise<AIFindElementResponse | null> {
+  try {
+    // Capture current screenshot
+    const currentScreenshot = await captureScreenshot();
+    const compressedScreenshot = await compressImage(currentScreenshot, 1280, 0.7);
+
+    // Build description from available context
+    let description = event.aiDescription || '';
+    if (!description) {
+      // Construct a description from available data
+      const parts: string[] = [];
+      if (event.tagName) parts.push(event.tagName);
+      if (event.elementText) parts.push(`with text "${event.elementText}"`);
+      if (event.elementAttributes?.placeholder) parts.push(`placeholder "${event.elementAttributes.placeholder}"`);
+      if (event.elementAttributes?.['aria-label']) parts.push(`labeled "${event.elementAttributes['aria-label']}"`);
+      if (event.visualContext?.relativePosition) parts.push(`at ${event.visualContext.relativePosition} of page`);
+      description = parts.join(' ') || `Element at position (${event.x}, ${event.y})`;
+    }
+
+    // Request AI to find element
+    const response = await new Promise<{ success: boolean; result?: AIFindElementResponse; error?: string }>((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        {
+          type: 'AI_FIND_ELEMENT',
+          request: {
+            currentScreenshot: compressedScreenshot,
+            referenceScreenshot: event.screenshot,
+            elementCrop: event.elementCrop,
+            description,
+            elementRect: event.elementRect,
+          },
+        },
+        (resp) => {
+          if (chrome.runtime.lastError) {
+            reject(new Error(chrome.runtime.lastError.message));
+          } else {
+            resolve(resp);
+          }
+        }
+      );
+    });
+
+    if (response.success && response.result) {
+      return response.result;
+    }
+
+    return null;
+  } catch (error) {
+    console.warn('[Replayer] AI element finding failed:', error);
+    return null;
+  }
+}
+
+// Selector-based element finding (original logic)
+async function findElementWithSelectors(event: RecordedEvent): Promise<Element | null> {
   const strategies: (() => Element | null)[] = [];
   
   if (event.selector) {
@@ -481,6 +571,10 @@ export async function replayAutomation(
   
   isPlaying = true;
   shouldStop = false;
+  
+  // Check if AI is enabled for this replay
+  aiEnabled = await checkAIEnabled();
+  console.log('[Replayer] AI enabled:', aiEnabled);
   
   const events = automation.events;
   if (!events || events.length === 0) {

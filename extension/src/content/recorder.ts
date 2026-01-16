@@ -1,8 +1,9 @@
 // Recorder - Captures ALL interactions exactly as they happen
-// NO debouncing, NO optimization - just record everything faithfully
-import type { RecordedEvent, MousePosition } from '@/lib/types';
+// Now with AI-powered screenshot capture for improved replay accuracy
+import type { RecordedEvent, MousePosition, AIDescribeActionResponse } from '@/lib/types';
 import { generateId, getUniqueSelector } from '@/lib/utils';
 import { incrementEventCount } from './panel';
+import { captureScreenshot, captureVisualContext, compressImage, cropImage } from '@/lib/screenshot';
 
 let isRecording = false;
 let isPaused = false;
@@ -11,6 +12,20 @@ let mouseMovements: MousePosition[] = [];
 let currentMousePath: MousePosition[] = [];
 let startTime = 0;
 let sessionId = '';
+let aiEnabled = false;
+
+// Check if AI is enabled on startup
+async function checkAIEnabled(): Promise<void> {
+  try {
+    const response = await chrome.runtime.sendMessage({ type: 'GET_AI_STATUS' });
+    aiEnabled = response?.enabled ?? false;
+  } catch {
+    aiEnabled = false;
+  }
+}
+
+// Initialize AI status check
+checkAIEnabled();
 
 // Throttle for mouse movement only (capture every N ms)
 const MOUSE_MOVE_THROTTLE = 50; // 20fps for mouse moves
@@ -116,14 +131,15 @@ function handleClick(e: MouseEvent): void {
   if (!isRecording || isPaused) return;
   if (isOurElement(e.target as Element)) return;
   
-  const event = createEvent('click', e.target as Element, {
+  const element = e.target as Element;
+  const event = createEvent('click', element, {
     x: e.clientX,
     y: e.clientY,
     pageX: e.pageX,
     pageY: e.pageY,
   });
   
-  recordEvent(event);
+  recordEvent(event, element);
   showClickFeedback(e.clientX, e.clientY);
 }
 
@@ -131,38 +147,41 @@ function handleDblClick(e: MouseEvent): void {
   if (!isRecording || isPaused) return;
   if (isOurElement(e.target as Element)) return;
   
-  const event = createEvent('dblclick', e.target as Element, {
+  const element = e.target as Element;
+  const event = createEvent('dblclick', element, {
     x: e.clientX,
     y: e.clientY,
     pageX: e.pageX,
     pageY: e.pageY,
   });
   
-  recordEvent(event);
+  recordEvent(event, element);
 }
 
 function handleMouseDown(e: MouseEvent): void {
   if (!isRecording || isPaused) return;
   if (isOurElement(e.target as Element)) return;
   
-  const event = createEvent('mousedown', e.target as Element, {
+  const element = e.target as Element;
+  const event = createEvent('mousedown', element, {
     x: e.clientX,
     y: e.clientY,
   });
   
-  recordEvent(event);
+  recordEvent(event, element);
 }
 
 function handleMouseUp(e: MouseEvent): void {
   if (!isRecording || isPaused) return;
   if (isOurElement(e.target as Element)) return;
   
-  const event = createEvent('mouseup', e.target as Element, {
+  const element = e.target as Element;
+  const event = createEvent('mouseup', element, {
     x: e.clientX,
     y: e.clientY,
   });
   
-  recordEvent(event);
+  recordEvent(event, element);
 }
 
 function handleMouseMove(e: MouseEvent): void {
@@ -216,6 +235,7 @@ function handleKeyDown(e: KeyboardEvent): void {
       value: isFormField ? (target as HTMLInputElement).value : undefined,
     });
     
+    // Keydown events don't need AI screenshot (too frequent)
     recordEvent(event);
   }
 }
@@ -273,7 +293,8 @@ function handleChange(e: Event): void {
     value: target.value,
   });
   
-  recordEvent(event);
+  // Change events are important - capture AI context
+  recordEvent(event, target);
 }
 
 function handleScroll(): void {
@@ -307,7 +328,8 @@ function handleFocus(e: FocusEvent): void {
       target instanceof HTMLTextAreaElement || 
       target instanceof HTMLSelectElement) {
     const event = createEvent('focus', target);
-    recordEvent(event);
+    // Focus events are important for form interactions - capture AI context
+    recordEvent(event, target);
   }
 }
 
@@ -322,6 +344,7 @@ function handleBlur(e: FocusEvent): void {
     const event = createEvent('blur', target, {
       value: (target as HTMLInputElement).value,
     });
+    // Blur events don't need AI screenshot
     recordEvent(event);
   }
 }
@@ -330,8 +353,10 @@ function handleSubmit(e: Event): void {
   if (!isRecording || isPaused) return;
   if (isOurElement(e.target as Element)) return;
   
-  const event = createEvent('submit', e.target as Element);
-  recordEvent(event);
+  const target = e.target as Element;
+  const event = createEvent('submit', target);
+  // Submit events are critical - capture AI context
+  recordEvent(event, target);
 }
 
 function handleBeforeUnload(): void {
@@ -341,6 +366,7 @@ function handleBeforeUnload(): void {
     url: window.location.href,
   });
   
+  // Navigate events don't need AI context
   recordEvent(event);
   saveRecordingState();
 }
@@ -353,7 +379,42 @@ function isOurElement(element: Element | null): boolean {
             element.closest('#openmation-cursor'));
 }
 
-function recordEvent(event: RecordedEvent): void {
+async function recordEvent(event: RecordedEvent, element?: Element | null): Promise<void> {
+  // Capture AI-powered context for significant events
+  const shouldCaptureAI = aiEnabled && 
+    ['click', 'dblclick', 'focus', 'change', 'submit'].includes(event.type);
+
+  if (shouldCaptureAI && element) {
+    try {
+      // Capture screenshot and element crop in parallel
+      const [screenshotResult, elementCropResult] = await Promise.allSettled([
+        captureAndCompressScreenshot(),
+        captureAndCompressElementCrop(element),
+      ]);
+
+      if (screenshotResult.status === 'fulfilled') {
+        event.screenshot = screenshotResult.value;
+      }
+
+      if (elementCropResult.status === 'fulfilled') {
+        event.elementCrop = elementCropResult.value;
+      }
+
+      // Capture visual context (synchronous)
+      event.visualContext = captureVisualContext(element);
+
+      // Request AI description from background (async, don't block)
+      if (event.screenshot && event.elementCrop) {
+        requestAIDescription(event).catch(() => {
+          // AI description is optional, don't fail recording
+        });
+      }
+    } catch (error) {
+      console.warn('[Openmation] Failed to capture AI context:', error);
+      // Continue recording without AI context
+    }
+  }
+
   recordedEvents.push(event);
   
   // Only increment counter for non-checkpoint events
@@ -362,6 +423,85 @@ function recordEvent(event: RecordedEvent): void {
   }
   
   chrome.runtime.sendMessage({ type: 'EVENT_RECORDED', event }).catch(() => {});
+}
+
+async function captureAndCompressScreenshot(): Promise<string> {
+  const screenshot = await captureScreenshot();
+  return compressImage(screenshot, 1280, 0.7);
+}
+
+async function captureAndCompressElementCrop(element: Element): Promise<string> {
+  const rect = element.getBoundingClientRect();
+  const padding = 20;
+  
+  // Request full screenshot from background
+  const response = await new Promise<{ screenshot: string; crop: { x: number; y: number; width: number; height: number }; viewport: { width: number; height: number } }>((resolve, reject) => {
+    chrome.runtime.sendMessage(
+      {
+        type: 'CAPTURE_ELEMENT_CROP',
+        crop: {
+          x: Math.max(0, rect.left - padding),
+          y: Math.max(0, rect.top - padding),
+          width: rect.width + padding * 2,
+          height: rect.height + padding * 2,
+        },
+        viewport: {
+          width: window.innerWidth,
+          height: window.innerHeight,
+        },
+      },
+      (resp) => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+        } else if (resp?.error) {
+          reject(new Error(resp.error));
+        } else {
+          resolve(resp);
+        }
+      }
+    );
+  });
+
+  // Crop the image
+  return cropImage(response.screenshot, response.crop, response.viewport);
+}
+
+async function requestAIDescription(event: RecordedEvent): Promise<void> {
+  if (!event.screenshot || !event.elementCrop) return;
+
+  try {
+    const response = await new Promise<{ success: boolean; result?: AIDescribeActionResponse; error?: string }>((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        {
+          type: 'AI_DESCRIBE_ACTION',
+          request: {
+            screenshot: event.screenshot,
+            elementCrop: event.elementCrop,
+            actionType: event.type,
+            coordinates: { x: event.x ?? 0, y: event.y ?? 0 },
+            value: event.value,
+          },
+        },
+        (resp) => {
+          if (chrome.runtime.lastError) {
+            reject(new Error(chrome.runtime.lastError.message));
+          } else {
+            resolve(resp);
+          }
+        }
+      );
+    });
+
+    if (response.success && response.result) {
+      // Find and update the event in recordedEvents
+      const eventIndex = recordedEvents.findIndex(e => e.id === event.id);
+      if (eventIndex >= 0) {
+        recordedEvents[eventIndex].aiDescription = response.result.description;
+      }
+    }
+  } catch (error) {
+    console.warn('[Openmation] Failed to get AI description:', error);
+  }
 }
 
 function showClickFeedback(x: number, y: number): void {
@@ -442,13 +582,17 @@ function loadRecordingState(): boolean {
 
 // ============ PUBLIC API ============
 
-export function startRecording(newSessionId: string): void {
+export async function startRecording(newSessionId: string): Promise<void> {
+  // Always re-check AI status when starting a new recording
+  await checkAIEnabled();
+  console.log('[Openmation] AI enabled:', aiEnabled);
+
   if (loadRecordingState()) {
     console.log('[Openmation] Resumed recording from previous page');
     attachListeners();
     return;
   }
-  
+
   isRecording = true;
   isPaused = false;
   recordedEvents = [];
@@ -456,7 +600,7 @@ export function startRecording(newSessionId: string): void {
   currentMousePath = [];
   startTime = Date.now();
   sessionId = newSessionId;
-  
+
   attachListeners();
   console.log('[Openmation] Recording started');
 }

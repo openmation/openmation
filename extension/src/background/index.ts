@@ -14,15 +14,20 @@ import {
   setRecordingState,
   clearRecordingState,
   saveAutomation,
+  getAISettings,
+  getActiveAIApiKey,
 } from "@/lib/storage";
 import { API_BASE_URL } from "@/lib/api";
 import { generateId } from "@/lib/utils";
+import { getAIProvider } from "@/lib/ai/provider";
 import type {
   MessageType,
   RecordedEvent,
   MousePosition,
   Automation,
   RecordingState,
+  AIFindElementRequest,
+  AIDescribeActionRequest,
 } from "@/lib/types";
 
 // Current recording session
@@ -462,6 +467,131 @@ async function handleMessage(
       };
       await handleAutomationComplete(runId, status, error);
       return { success: true };
+    }
+
+    // Screenshot capture for AI-powered recording
+    case "CAPTURE_SCREENSHOT": {
+      try {
+        const windowId = sender.tab?.windowId;
+        if (!windowId) {
+          return { error: "No window ID available" };
+        }
+
+        // Capture visible tab as PNG
+        const dataUrl = await chrome.tabs.captureVisibleTab(
+          windowId,
+          { format: "png" }
+        );
+
+        // Return compressed image (compression happens in content script)
+        return { screenshot: dataUrl };
+      } catch (error) {
+        console.error("[Openmation] Screenshot capture failed:", error);
+        return { error: "Failed to capture screenshot" };
+      }
+    }
+
+    case "CAPTURE_ELEMENT_CROP": {
+      try {
+        const windowId = sender.tab?.windowId;
+        if (!windowId) {
+          return { error: "No window ID available" };
+        }
+
+        const { crop, viewport } = message as {
+          crop: { x: number; y: number; width: number; height: number };
+          viewport: { width: number; height: number };
+        };
+
+        // Capture full visible tab
+        const dataUrl = await chrome.tabs.captureVisibleTab(
+          windowId,
+          { format: "png" }
+        );
+
+        // Return with crop parameters - cropping will happen in content script
+        return { screenshot: dataUrl, crop, viewport };
+      } catch (error) {
+        console.error("[Openmation] Element crop capture failed:", error);
+        return { error: "Failed to capture element crop" };
+      }
+    }
+
+    // AI API calls - these run from background to avoid CORS
+    case "AI_FIND_ELEMENT": {
+      try {
+        const settings = await getAISettings();
+        const apiKey = await getActiveAIApiKey();
+
+        if (!settings.enabled || !apiKey) {
+          return { error: "AI is not enabled or API key is not set" };
+        }
+
+        const request = (message as { request: AIFindElementRequest }).request;
+        const provider = getAIProvider(settings.provider, apiKey);
+        const result = await provider.findElement(request);
+
+        return { success: true, result };
+      } catch (error) {
+        console.error("[Openmation] AI find element failed:", error);
+        return { error: error instanceof Error ? error.message : "AI request failed" };
+      }
+    }
+
+    case "AI_DESCRIBE_ACTION": {
+      try {
+        const settings = await getAISettings();
+        const apiKey = await getActiveAIApiKey();
+
+        if (!settings.enabled || !apiKey) {
+          return { error: "AI is not enabled or API key is not set" };
+        }
+
+        const request = (message as { request: AIDescribeActionRequest }).request;
+        const provider = getAIProvider(settings.provider, apiKey);
+        const result = await provider.describeAction(request);
+
+        return { success: true, result };
+      } catch (error) {
+        console.error("[Openmation] AI describe action failed:", error);
+        return { error: error instanceof Error ? error.message : "AI request failed" };
+      }
+    }
+
+    case "AI_TEST_CONNECTION": {
+      try {
+        const settings = await getAISettings();
+        console.log("[Openmation] AI settings:", { provider: settings.provider, enabled: settings.enabled, hasOpenAIKey: !!settings.openaiApiKey, hasAnthropicKey: !!settings.anthropicApiKey });
+        
+        const apiKey = await getActiveAIApiKey();
+        console.log("[Openmation] Active API key:", apiKey ? apiKey.substring(0, 10) + '...' : 'none');
+
+        if (!apiKey) {
+          return { success: false, error: "API key is not set" };
+        }
+
+        const provider = getAIProvider(settings.provider, apiKey);
+        console.log("[Openmation] Testing connection with provider:", settings.provider);
+        
+        const isConnected = await provider.testConnection();
+        console.log("[Openmation] Connection test result:", isConnected);
+
+        return { success: isConnected, error: isConnected ? undefined : "Connection test failed" };
+      } catch (error) {
+        console.error("[Openmation] AI connection test failed:", error);
+        return { success: false, error: error instanceof Error ? error.message : "Connection test failed" };
+      }
+    }
+
+    case "GET_AI_STATUS": {
+      try {
+        const settings = await getAISettings();
+        const apiKey = await getActiveAIApiKey();
+        const enabled = settings.enabled && !!apiKey;
+        return { enabled, provider: settings.provider };
+      } catch {
+        return { enabled: false };
+      }
     }
 
     default:

@@ -5,6 +5,16 @@ export interface MousePosition {
   timestamp: number;
 }
 
+// Visual context captured during recording for AI-powered replay
+export interface VisualContext {
+  elementColor?: string;           // Dominant color of the element
+  elementSize?: { width: number; height: number };
+  surroundingText?: string;        // Text near the element
+  relativePosition?: string;       // e.g., "top-right of form", "below header"
+  pageTitle?: string;              // Document title at time of action
+  pageUrl?: string;                // URL at time of action
+}
+
 // Individual recorded event
 export interface RecordedEvent {
   id: string;
@@ -38,6 +48,12 @@ export interface RecordedEvent {
   mousePath?: MousePosition[];
   // Checkpoint flag - input events marked as checkpoints are for verification only
   isCheckpoint?: boolean;
+  
+  // AI-powered recording fields
+  screenshot?: string;             // Base64 WebP of viewport at action time
+  elementCrop?: string;            // Base64 crop of the target element
+  aiDescription?: string;          // AI-generated description: "Click the blue Submit button"
+  visualContext?: VisualContext;   // Additional visual context for AI matching
 }
 
 // Complete automation with all recorded data
@@ -114,7 +130,14 @@ export type MessageType =
   | { type: 'REMOVE_PANEL' }
   | { type: 'OPEN_POPUP' }
   | { type: 'CHECK_RECORDING_SESSION'; sessionId: string }
-  | { type: 'RECORDING_SESSION_ACTIVE'; isActive: boolean; state?: RecordingState };
+  | { type: 'RECORDING_SESSION_ACTIVE'; isActive: boolean; state?: RecordingState }
+  // AI-related messages
+  | { type: 'CAPTURE_SCREENSHOT' }
+  | { type: 'CAPTURE_ELEMENT_CROP'; crop: { x: number; y: number; width: number; height: number }; viewport: { width: number; height: number } }
+  | { type: 'AI_FIND_ELEMENT'; request: AIFindElementRequest }
+  | { type: 'AI_DESCRIBE_ACTION'; request: AIDescribeActionRequest }
+  | { type: 'AI_TEST_CONNECTION' }
+  | { type: 'GET_AI_STATUS' };
 
 export interface CronPreset {
   label: string;
@@ -130,3 +153,42 @@ export const CRON_PRESETS: CronPreset[] = [
   { label: 'Weekly on Monday', value: '0 9 * * 1', description: 'Every Monday at 9:00 AM' },
   { label: 'Weekly on Friday', value: '0 17 * * 5', description: 'Every Friday at 5:00 PM' },
 ];
+
+// AI Provider types
+export type AIProviderType = 'openai' | 'anthropic';
+
+export interface AISettings {
+  provider: AIProviderType;
+  openaiApiKey?: string;
+  anthropicApiKey?: string;
+  enabled: boolean;
+}
+
+export interface AIFindElementRequest {
+  currentScreenshot: string;       // Base64 of current viewport
+  referenceScreenshot?: string;    // Base64 of viewport when action was recorded
+  elementCrop?: string;            // Base64 crop of the target element
+  description: string;             // AI description or fallback text description
+  elementRect?: { top: number; left: number; width: number; height: number };
+}
+
+export interface AIFindElementResponse {
+  x: number;
+  y: number;
+  confidence: number;              // 0-1, how confident the AI is
+  reasoning?: string;              // Why the AI chose this location
+}
+
+export interface AIDescribeActionRequest {
+  screenshot: string;              // Base64 of viewport
+  elementCrop: string;             // Base64 crop of the element
+  actionType: string;              // click, input, etc.
+  coordinates: { x: number; y: number };
+  value?: string;                  // For input actions
+}
+
+export interface AIDescribeActionResponse {
+  description: string;             // Human-readable description
+  elementType?: string;            // button, input, link, etc.
+  elementLabel?: string;           // Text or aria-label of element
+}

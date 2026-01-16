@@ -1,11 +1,18 @@
-import type { Automation, RunHistory, RecordingState } from './types';
+import type { Automation, RunHistory, RecordingState, AISettings, AIProviderType } from './types';
 
 const STORAGE_KEYS = {
   AUTOMATIONS: 'automations',
   RUN_HISTORY: 'runHistory',
   RECORDING_STATE: 'recordingState',
   THEME: 'theme',
+  AI_SETTINGS: 'aiSettings',
 } as const;
+
+// Default AI settings
+const DEFAULT_AI_SETTINGS: AISettings = {
+  provider: 'openai',
+  enabled: false,
+};
 
 // Helper to work with Chrome storage
 async function getFromStorage<T>(key: string, defaultValue: T): Promise<T> {
@@ -145,6 +152,48 @@ export async function getTheme(): Promise<Theme> {
 
 export async function setTheme(theme: Theme): Promise<void> {
   await setToStorage(STORAGE_KEYS.THEME, theme);
+}
+
+// AI Settings
+export async function getAISettings(): Promise<AISettings> {
+  return getFromStorage<AISettings>(STORAGE_KEYS.AI_SETTINGS, DEFAULT_AI_SETTINGS);
+}
+
+export async function setAISettings(settings: AISettings): Promise<void> {
+  await setToStorage(STORAGE_KEYS.AI_SETTINGS, settings);
+}
+
+export async function updateAISettings(updates: Partial<AISettings>): Promise<void> {
+  const current = await getAISettings();
+  await setAISettings({ ...current, ...updates });
+}
+
+export async function setAIProvider(provider: AIProviderType): Promise<void> {
+  await updateAISettings({ provider });
+}
+
+export async function setAIApiKey(provider: AIProviderType, apiKey: string): Promise<void> {
+  if (provider === 'openai') {
+    await updateAISettings({ openaiApiKey: apiKey });
+  } else if (provider === 'anthropic') {
+    await updateAISettings({ anthropicApiKey: apiKey });
+  }
+}
+
+export async function getActiveAIApiKey(): Promise<string | undefined> {
+  const settings = await getAISettings();
+  if (settings.provider === 'openai') {
+    return settings.openaiApiKey;
+  } else if (settings.provider === 'anthropic') {
+    return settings.anthropicApiKey;
+  }
+  return undefined;
+}
+
+export async function isAIEnabled(): Promise<boolean> {
+  const settings = await getAISettings();
+  const apiKey = settings.provider === 'openai' ? settings.openaiApiKey : settings.anthropicApiKey;
+  return settings.enabled && !!apiKey;
 }
 
 // Listen for storage changes

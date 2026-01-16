@@ -5,6 +5,7 @@ import { AutomationList } from './components/AutomationList';
 import { RunHistory } from './components/RunHistory';
 import { EditAutomationDialog } from './components/EditAutomationDialog';
 import { Onboarding } from './components/Onboarding';
+import { AISettings } from './components/AISettings';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
 import { TooltipProvider } from './components/ui/tooltip';
 import { ThemeProvider } from './components/ThemeProvider';
@@ -64,6 +65,7 @@ function AppContent() {
             <TabsList>
               <TabsTrigger value="automations">Automations</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
+              <TabsTrigger value="ai">AI</TabsTrigger>
             </TabsList>
           </div>
           
@@ -77,6 +79,10 @@ function AppContent() {
           
           <TabsContent value="history" className="flex-1 m-0 overflow-hidden">
             <RunHistory />
+          </TabsContent>
+          
+          <TabsContent value="ai" className="flex-1 m-0 overflow-y-auto max-h-[380px]">
+            <AISettings />
           </TabsContent>
         </Tabs>
       </div>

@@ -105,7 +105,7 @@ async function handleMessage(
     case "START_RECORDING": {
       const sessionId =
         (message as { sessionId?: string }).sessionId || crypto.randomUUID();
-      startRecording(sessionId);
+      await startRecording(sessionId);
       updatePanelState({
         mode: "recording",
         eventCount: 0,
@@ -137,7 +137,7 @@ async function handleMessage(
         };
 
       // Resume recording in the recorder
-      startRecording(sessionId);
+      await startRecording(sessionId);
 
       // Restore panel visual state
       restorePanelState(eventCount, duration, isPaused);

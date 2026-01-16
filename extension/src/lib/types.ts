@@ -5,10 +5,133 @@ export interface MousePosition {
   timestamp: number;
 }
 
+// ============ ENHANCED AI CONTEXT TYPES ============
+
+// Widget types the system can detect
+export type WidgetType =
+  | "datepicker"
+  | "timepicker"
+  | "calendar"
+  | "dropdown"
+  | "select"
+  | "combobox"
+  | "autocomplete"
+  | "modal"
+  | "dialog"
+  | "popover"
+  | "tooltip"
+  | "menu"
+  | "submenu"
+  | "context-menu"
+  | "tabs"
+  | "accordion"
+  | "collapse"
+  | "slider"
+  | "range"
+  | "stepper"
+  | "table"
+  | "grid"
+  | "list"
+  | "form"
+  | "search"
+  | "none";
+
+// Widget state
+export type WidgetState =
+  | "open"
+  | "closed"
+  | "expanded"
+  | "collapsed"
+  | "active"
+  | "inactive";
+
+// Scroll container context
+export interface ScrollContainer {
+  selector: string;
+  scrollDirection: "vertical" | "horizontal" | "both";
+  currentScroll: { x: number; y: number };
+  maxScroll: { x: number; y: number };
+  isElementVisible: boolean;
+  scrollToReveal?: { x: number; y: number };
+}
+
+// Widget context information
+export interface WidgetContext {
+  type: WidgetType;
+  state: WidgetState;
+  containerSelector: string;
+  triggerSelector?: string; // Element that opens this widget
+  currentValue?: string; // Current selection/value
+  options?: string[]; // Available options if detectable
+}
+
+// Sibling element for relative positioning
+export interface SiblingElement {
+  selector: string;
+  text: string;
+  position: "above" | "below" | "left" | "right";
+}
+
+// Accessibility information
+export interface AccessibilityInfo {
+  role?: string;
+  label?: string;
+  description?: string;
+  expanded?: boolean;
+  selected?: boolean;
+  checked?: boolean;
+  disabled?: boolean;
+  required?: boolean;
+}
+
+// Rich interaction context for AI-powered replay
+export interface InteractionContext {
+  preparationSteps: string[]; // Steps needed before main action
+  scrollContainers: ScrollContainer[]; // Nested scroll contexts
+  widgetContext?: WidgetContext; // Widget information
+  domPath: string[]; // Semantic path: ['form', 'date-picker', 'calendar', 'day-button']
+  siblingElements: SiblingElement[]; // Nearby interactive elements for reference
+  accessibilityInfo: AccessibilityInfo; // ARIA/accessibility context
+}
+
+// AI guidance for element finding
+export interface AIGuidance {
+  description: string; // Human-readable what this does
+  elementIdentification: string; // How to uniquely identify this element
+  preparationSteps: string[]; // What to do before the main action
+  verificationSteps: string[]; // How to verify success
+  widgetType?: WidgetType;
+  widgetContainer?: string;
+}
+
+// Visual context captured during recording for AI-powered replay
+export interface VisualContext {
+  elementColor?: string; // Dominant color of the element
+  elementSize?: { width: number; height: number };
+  surroundingText?: string; // Text near the element
+  relativePosition?: string; // e.g., "top-right of form", "below header"
+  pageTitle?: string; // Document title at time of action
+  pageUrl?: string; // URL at time of action
+}
+
 // Individual recorded event
 export interface RecordedEvent {
   id: string;
-  type: 'click' | 'dblclick' | 'input' | 'change' | 'scroll' | 'keydown' | 'keyup' | 'mousedown' | 'mouseup' | 'mousemove' | 'focus' | 'blur' | 'submit' | 'navigate';
+  type:
+    | "click"
+    | "dblclick"
+    | "input"
+    | "change"
+    | "scroll"
+    | "keydown"
+    | "keyup"
+    | "mousedown"
+    | "mouseup"
+    | "mousemove"
+    | "focus"
+    | "blur"
+    | "submit"
+    | "navigate";
   timestamp: number;
   // Position data (viewport coordinates)
   x?: number;
@@ -18,12 +141,12 @@ export interface RecordedEvent {
   pageY?: number;
   // Element data
   selector?: string;
-  selectorFallbacks?: string[];  // Alternative selectors for robustness
+  selectorFallbacks?: string[]; // Alternative selectors for robustness
   tagName?: string;
   innerText?: string;
-  elementText?: string;  // Text content for button/link matching
-  elementAttributes?: Record<string, string>;  // Key attributes for fallback matching
-  elementRect?: { top: number; left: number; width: number; height: number };  // Element position at record time
+  elementText?: string; // Text content for button/link matching
+  elementAttributes?: Record<string, string>; // Key attributes for fallback matching
+  elementRect?: { top: number; left: number; width: number; height: number }; // Element position at record time
   // Input data
   value?: string;
   key?: string;
@@ -38,6 +161,16 @@ export interface RecordedEvent {
   mousePath?: MousePosition[];
   // Checkpoint flag - input events marked as checkpoints are for verification only
   isCheckpoint?: boolean;
+
+  // AI-powered recording fields
+  screenshot?: string; // Base64 WebP of viewport at action time
+  elementCrop?: string; // Base64 crop of the target element
+  aiDescription?: string; // AI-generated description: "Click the blue Submit button"
+  visualContext?: VisualContext; // Additional visual context for AI matching
+
+  // Enhanced AI context fields
+  interactionContext?: InteractionContext; // Rich context for complex interactions
+  aiGuidance?: AIGuidance; // Detailed AI guidance for element finding
 }
 
 // Complete automation with all recorded data
@@ -59,7 +192,7 @@ export interface Automation {
 // Legacy support - map steps to events
 export interface AutomationStep {
   id: string;
-  type: 'click' | 'input' | 'scroll' | 'navigate' | 'wait' | 'keypress';
+  type: "click" | "input" | "scroll" | "navigate" | "wait" | "keypress";
   selector: string;
   value?: string;
   url?: string;
@@ -75,7 +208,7 @@ export interface RunHistory {
   automationName: string;
   startedAt: number;
   completedAt?: number;
-  status: 'running' | 'success' | 'failed' | 'paused';
+  status: "running" | "success" | "failed" | "paused";
   error?: string;
   eventsCompleted: number;
   totalEvents: number;
@@ -94,27 +227,59 @@ export interface RecordingState {
 
 // Messages between components
 export type MessageType =
-  | { type: 'START_RECORDING'; tabId: number }
-  | { type: 'PAUSE_RECORDING' }
-  | { type: 'RESUME_RECORDING' }
-  | { type: 'STOP_RECORDING' }
-  | { type: 'RECORDING_STARTED'; sessionId: string }
-  | { type: 'RECORDING_PAUSED' }
-  | { type: 'RECORDING_RESUMED' }
-  | { type: 'RECORDING_STOPPED'; events: RecordedEvent[]; mouseMovements: MousePosition[]; startUrl: string; duration: number }
-  | { type: 'EVENT_RECORDED'; event: RecordedEvent }
-  | { type: 'MOUSE_MOVE'; position: MousePosition }
-  | { type: 'RUN_AUTOMATION'; automation: Automation }
-  | { type: 'STOP_AUTOMATION' }
-  | { type: 'AUTOMATION_PROGRESS'; runId: string; eventsCompleted: number; status: RunHistory['status']; error?: string }
-  | { type: 'AUTOMATION_COMPLETE'; runId: string; status: RunHistory['status']; error?: string }
-  | { type: 'GET_RECORDING_STATE' }
-  | { type: 'RECORDING_STATE'; state: RecordingState }
-  | { type: 'INJECT_PANEL' }
-  | { type: 'REMOVE_PANEL' }
-  | { type: 'OPEN_POPUP' }
-  | { type: 'CHECK_RECORDING_SESSION'; sessionId: string }
-  | { type: 'RECORDING_SESSION_ACTIVE'; isActive: boolean; state?: RecordingState };
+  | { type: "START_RECORDING"; tabId: number }
+  | { type: "PAUSE_RECORDING" }
+  | { type: "RESUME_RECORDING" }
+  | { type: "STOP_RECORDING" }
+  | { type: "RECORDING_STARTED"; sessionId: string }
+  | { type: "RECORDING_PAUSED" }
+  | { type: "RECORDING_RESUMED" }
+  | {
+      type: "RECORDING_STOPPED";
+      events: RecordedEvent[];
+      mouseMovements: MousePosition[];
+      startUrl: string;
+      duration: number;
+    }
+  | { type: "EVENT_RECORDED"; event: RecordedEvent }
+  | { type: "MOUSE_MOVE"; position: MousePosition }
+  | { type: "RUN_AUTOMATION"; automation: Automation }
+  | { type: "STOP_AUTOMATION" }
+  | {
+      type: "AUTOMATION_PROGRESS";
+      runId: string;
+      eventsCompleted: number;
+      status: RunHistory["status"];
+      error?: string;
+    }
+  | {
+      type: "AUTOMATION_COMPLETE";
+      runId: string;
+      status: RunHistory["status"];
+      error?: string;
+    }
+  | { type: "GET_RECORDING_STATE" }
+  | { type: "RECORDING_STATE"; state: RecordingState }
+  | { type: "INJECT_PANEL" }
+  | { type: "REMOVE_PANEL" }
+  | { type: "OPEN_POPUP" }
+  | { type: "CHECK_RECORDING_SESSION"; sessionId: string }
+  | {
+      type: "RECORDING_SESSION_ACTIVE";
+      isActive: boolean;
+      state?: RecordingState;
+    }
+  // AI-related messages
+  | { type: "CAPTURE_SCREENSHOT" }
+  | {
+      type: "CAPTURE_ELEMENT_CROP";
+      crop: { x: number; y: number; width: number; height: number };
+      viewport: { width: number; height: number };
+    }
+  | { type: "AI_FIND_ELEMENT"; request: AIFindElementRequest }
+  | { type: "AI_DESCRIBE_ACTION"; request: AIDescribeActionRequest }
+  | { type: "AI_TEST_CONNECTION" }
+  | { type: "GET_AI_STATUS" };
 
 export interface CronPreset {
   label: string;
@@ -123,10 +288,86 @@ export interface CronPreset {
 }
 
 export const CRON_PRESETS: CronPreset[] = [
-  { label: 'Every hour', value: '0 * * * *', description: 'At minute 0' },
-  { label: 'Every 6 hours', value: '0 */6 * * *', description: 'At minute 0 past every 6th hour' },
-  { label: 'Daily at 9 AM', value: '0 9 * * *', description: 'Every day at 9:00 AM' },
-  { label: 'Daily at 6 PM', value: '0 18 * * *', description: 'Every day at 6:00 PM' },
-  { label: 'Weekly on Monday', value: '0 9 * * 1', description: 'Every Monday at 9:00 AM' },
-  { label: 'Weekly on Friday', value: '0 17 * * 5', description: 'Every Friday at 5:00 PM' },
+  { label: "Every hour", value: "0 * * * *", description: "At minute 0" },
+  {
+    label: "Every 6 hours",
+    value: "0 */6 * * *",
+    description: "At minute 0 past every 6th hour",
+  },
+  {
+    label: "Daily at 9 AM",
+    value: "0 9 * * *",
+    description: "Every day at 9:00 AM",
+  },
+  {
+    label: "Daily at 6 PM",
+    value: "0 18 * * *",
+    description: "Every day at 6:00 PM",
+  },
+  {
+    label: "Weekly on Monday",
+    value: "0 9 * * 1",
+    description: "Every Monday at 9:00 AM",
+  },
+  {
+    label: "Weekly on Friday",
+    value: "0 17 * * 5",
+    description: "Every Friday at 5:00 PM",
+  },
 ];
+
+// AI Provider types
+export type AIProviderType = "openai" | "anthropic";
+
+export interface AISettings {
+  provider: AIProviderType;
+  openaiApiKey?: string;
+  anthropicApiKey?: string;
+  enabled: boolean;
+}
+
+export interface AIFindElementRequest {
+  currentScreenshot: string; // Base64 of current viewport
+  referenceScreenshot?: string; // Base64 of viewport when action was recorded
+  elementCrop?: string; // Base64 crop of the target element
+  description: string; // AI description or fallback text description
+  elementRect?: { top: number; left: number; width: number; height: number };
+  // Enhanced context for better element finding
+  aiGuidance?: {
+    elementIdentification: string;
+    widgetType?: WidgetType;
+    widgetContainer?: string;
+    preparationSteps?: string[];
+  };
+  interactionContext?: InteractionContext;
+}
+
+export interface AIFindElementResponse {
+  x: number;
+  y: number;
+  confidence: number; // 0-1, how confident the AI is
+  reasoning?: string; // Why the AI chose this location
+  preparationNeeded?: string; // What needs to happen first, if anything
+}
+
+export interface AIDescribeActionRequest {
+  screenshot: string; // Base64 of viewport
+  elementCrop: string; // Base64 crop of the element
+  actionType: string; // click, input, etc.
+  coordinates: { x: number; y: number };
+  value?: string; // For input actions
+  // Enhanced context
+  interactionContext?: InteractionContext;
+}
+
+export interface AIDescribeActionResponse {
+  description: string; // Human-readable description
+  elementType?: string; // button, input, link, etc.
+  elementLabel?: string; // Text or aria-label of element
+  // Enhanced guidance fields
+  elementIdentification?: string;
+  widgetType?: WidgetType;
+  widgetContainer?: string;
+  preparationSteps?: string[];
+  verificationSteps?: string[];
+}

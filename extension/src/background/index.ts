@@ -14,15 +14,20 @@ import {
   setRecordingState,
   clearRecordingState,
   saveAutomation,
+  getAISettings,
+  getActiveAIApiKey,
 } from "@/lib/storage";
 import { API_BASE_URL } from "@/lib/api";
 import { generateId } from "@/lib/utils";
+import { getAIProvider } from "@/lib/ai/provider";
 import type {
   MessageType,
   RecordedEvent,
   MousePosition,
   Automation,
   RecordingState,
+  AIFindElementRequest,
+  AIDescribeActionRequest,
 } from "@/lib/types";
 
 // Current recording session
@@ -312,6 +317,7 @@ async function handleMessage(
 
       try {
         // Get final recording data from content script
+        // The content script has the authoritative events with AI context (screenshots, descriptions)
         const response = (await chrome.tabs.sendMessage(tabId, {
           type: "STOP_RECORDING",
         })) as {
@@ -322,27 +328,27 @@ async function handleMessage(
           duration: number;
         };
 
-        // Merge events from background (navigation events) and content script
+        // Use ONLY content script events - they have the AI context (screenshots, descriptions)
+        // Don't merge with background events to avoid duplication
         recordingData = {
-          events: [
-            ...activeRecordingSession.events,
-            ...(response.events || []),
-          ],
-          mouseMovements: [
-            ...activeRecordingSession.mouseMovements,
-            ...(response.mouseMovements || []),
-          ],
+          events: response.events || [],
+          mouseMovements: response.mouseMovements || [],
           startUrl: activeRecordingSession.startUrl,
           duration: Date.now() - activeRecordingSession.startTime,
         };
+        
+        console.log("[Openmation] Recording stopped with", recordingData.events.length, "events");
+        console.log("[Openmation] Events with AI context:", recordingData.events.filter(e => e.aiDescription).length);
       } catch {
-        // Content script might be gone - use what we have
+        // Content script might be gone - use what we have from background
+        // Note: These won't have AI context (screenshots/descriptions)
         recordingData = {
           events: activeRecordingSession.events,
           mouseMovements: activeRecordingSession.mouseMovements,
           startUrl: activeRecordingSession.startUrl,
           duration: Date.now() - activeRecordingSession.startTime,
         };
+        console.log("[Openmation] Using background events (no AI context):", recordingData.events.length);
       }
 
       // Create and save automation
@@ -462,6 +468,171 @@ async function handleMessage(
       };
       await handleAutomationComplete(runId, status, error);
       return { success: true };
+    }
+
+    // Screenshot capture for AI-powered recording
+    case "CAPTURE_SCREENSHOT": {
+      try {
+        const windowId = sender.tab?.windowId;
+        if (!windowId) {
+          return { error: "No window ID available" };
+        }
+
+        // Capture visible tab as PNG
+        const dataUrl = await chrome.tabs.captureVisibleTab(
+          windowId,
+          { format: "png" }
+        );
+
+        // Return compressed image (compression happens in content script)
+        return { screenshot: dataUrl };
+      } catch (error) {
+        console.error("[Openmation] Screenshot capture failed:", error);
+        return { error: "Failed to capture screenshot" };
+      }
+    }
+
+    case "CAPTURE_ELEMENT_CROP": {
+      try {
+        const windowId = sender.tab?.windowId;
+        if (!windowId) {
+          return { error: "No window ID available" };
+        }
+
+        const { crop, viewport } = message as {
+          crop: { x: number; y: number; width: number; height: number };
+          viewport: { width: number; height: number };
+        };
+
+        // Capture full visible tab
+        const dataUrl = await chrome.tabs.captureVisibleTab(
+          windowId,
+          { format: "png" }
+        );
+
+        // Return with crop parameters - cropping will happen in content script
+        return { screenshot: dataUrl, crop, viewport };
+      } catch (error) {
+        console.error("[Openmation] Element crop capture failed:", error);
+        return { error: "Failed to capture element crop" };
+      }
+    }
+
+    // AI API calls - these run from background to avoid CORS
+    case "AI_FIND_ELEMENT": {
+      try {
+        const settings = await getAISettings();
+        const apiKey = await getActiveAIApiKey();
+
+        if (!settings.enabled || !apiKey) {
+          return { error: "AI is not enabled or API key is not set" };
+        }
+
+        const request = (message as { request: AIFindElementRequest }).request;
+        
+        // Log what we're sending to AI
+        console.log("[Openmation] 🤖 AI_FIND_ELEMENT Request:", {
+          description: request.description,
+          hasCurrentScreenshot: !!request.currentScreenshot,
+          currentScreenshotSize: request.currentScreenshot?.length || 0,
+          hasReferenceScreenshot: !!request.referenceScreenshot,
+          referenceScreenshotSize: request.referenceScreenshot?.length || 0,
+          hasElementCrop: !!request.elementCrop,
+          elementCropSize: request.elementCrop?.length || 0,
+          elementRect: request.elementRect,
+        });
+
+        const provider = getAIProvider(settings.provider, apiKey);
+        const result = await provider.findElement(request);
+
+        // Log what AI returned
+        console.log("[Openmation] 🤖 AI_FIND_ELEMENT Response:", {
+          x: result.x,
+          y: result.y,
+          confidence: result.confidence,
+          reasoning: result.reasoning,
+        });
+
+        return { success: true, result };
+      } catch (error) {
+        console.error("[Openmation] AI find element failed:", error);
+        return { error: error instanceof Error ? error.message : "AI request failed" };
+      }
+    }
+
+    case "AI_DESCRIBE_ACTION": {
+      try {
+        const settings = await getAISettings();
+        const apiKey = await getActiveAIApiKey();
+
+        if (!settings.enabled || !apiKey) {
+          return { error: "AI is not enabled or API key is not set" };
+        }
+
+        const request = (message as { request: AIDescribeActionRequest }).request;
+        
+        // Log what we're sending to AI
+        console.log("[Openmation] 🤖 AI_DESCRIBE_ACTION Request:", {
+          actionType: request.actionType,
+          coordinates: request.coordinates,
+          value: request.value ? `"${request.value.substring(0, 20)}..."` : undefined,
+          hasScreenshot: !!request.screenshot,
+          screenshotSize: request.screenshot?.length || 0,
+          hasElementCrop: !!request.elementCrop,
+          elementCropSize: request.elementCrop?.length || 0,
+        });
+
+        const provider = getAIProvider(settings.provider, apiKey);
+        const result = await provider.describeAction(request);
+
+        // Log what AI returned
+        console.log("[Openmation] 🤖 AI_DESCRIBE_ACTION Response:", {
+          description: result.description,
+          elementType: result.elementType,
+          elementLabel: result.elementLabel,
+        });
+
+        return { success: true, result };
+      } catch (error) {
+        console.error("[Openmation] AI describe action failed:", error);
+        return { error: error instanceof Error ? error.message : "AI request failed" };
+      }
+    }
+
+    case "AI_TEST_CONNECTION": {
+      try {
+        const settings = await getAISettings();
+        console.log("[Openmation] AI settings:", { provider: settings.provider, enabled: settings.enabled, hasOpenAIKey: !!settings.openaiApiKey, hasAnthropicKey: !!settings.anthropicApiKey });
+        
+        const apiKey = await getActiveAIApiKey();
+        console.log("[Openmation] Active API key:", apiKey ? apiKey.substring(0, 10) + '...' : 'none');
+
+        if (!apiKey) {
+          return { success: false, error: "API key is not set" };
+        }
+
+        const provider = getAIProvider(settings.provider, apiKey);
+        console.log("[Openmation] Testing connection with provider:", settings.provider);
+        
+        const isConnected = await provider.testConnection();
+        console.log("[Openmation] Connection test result:", isConnected);
+
+        return { success: isConnected, error: isConnected ? undefined : "Connection test failed" };
+      } catch (error) {
+        console.error("[Openmation] AI connection test failed:", error);
+        return { success: false, error: error instanceof Error ? error.message : "Connection test failed" };
+      }
+    }
+
+    case "GET_AI_STATUS": {
+      try {
+        const settings = await getAISettings();
+        const apiKey = await getActiveAIApiKey();
+        const enabled = settings.enabled && !!apiKey;
+        return { enabled, provider: settings.provider };
+      } catch {
+        return { enabled: false };
+      }
     }
 
     default:

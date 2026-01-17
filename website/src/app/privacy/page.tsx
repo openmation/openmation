@@ -24,7 +24,7 @@ export default function PrivacyPolicy() {
       {/* Content */}
       <article className="max-w-4xl mx-auto px-6 py-16">
         <h1 className="text-4xl font-bold text-foreground mb-4">Privacy Policy</h1>
-        <p className="text-foreground/60 mb-12">Last updated: January 14, 2026</p>
+        <p className="text-foreground/60 mb-12">Last updated: January 17, 2026</p>
 
         <div className="prose prose-lg max-w-none">
           <section className="mb-12">
@@ -34,7 +34,7 @@ export default function PrivacyPolicy() {
               This Privacy Policy explains how our browser extension collects, uses, and protects your information.
             </p>
             <p className="text-foreground/70 leading-relaxed">
-              Openmation is an open-source browser automation tool. We believe in transparency and minimal data collection.
+              Openmation is an open-source, AI-driven browser automation tool. We believe in transparency and minimal data collection.
             </p>
           </section>
 
@@ -50,6 +50,7 @@ export default function PrivacyPolicy() {
               <li>Text input values (which may include form data you enter)</li>
               <li>Page URLs where actions are recorded</li>
               <li>Scroll positions and navigation events</li>
+              <li>Screenshots of the page (to support AI-driven replay, if enabled)</li>
             </ul>
             <p className="text-foreground/70 leading-relaxed mb-4">
               <strong>This data is stored locally on your device</strong> in the browser&apos;s storage. 
@@ -111,10 +112,23 @@ export default function PrivacyPolicy() {
           </section>
 
           <section className="mb-12">
+            <h2 className="text-2xl font-semibold text-foreground mb-4">AI Services</h2>
+            <p className="text-foreground/70 leading-relaxed mb-4">
+              If you enable AI mode and provide an API key, Openmation may send a limited set of data to your chosen
+              AI provider (OpenAI or Anthropic) to identify elements on the page and improve replay accuracy. This can include
+              screenshots and the text descriptions of recorded actions.
+            </p>
+            <p className="text-foreground/70 leading-relaxed">
+              Your API key is stored locally in your browser. You can disable AI mode or remove your key at any time in settings.
+            </p>
+          </section>
+
+          <section className="mb-12">
             <h2 className="text-2xl font-semibold text-foreground mb-4">Third-Party Services</h2>
             <p className="text-foreground/70 leading-relaxed">
               Openmation does not integrate with any third-party analytics, advertising, or tracking services. 
-              We do not sell, trade, or transfer your information to third parties.
+              We do not sell, trade, or transfer your information to third parties. If you enable AI mode, data is sent
+              only to your selected AI provider to fulfill the request.
             </p>
           </section>
 

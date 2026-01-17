@@ -1,4 +1,5 @@
 // API configuration and helpers for sharing automations
+import { getAuthState } from './storage';
 
 // Backend URL - uses production URL, fallback to localhost for development
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
@@ -9,6 +10,8 @@ export interface ShareResponse {
   id?: string;
   shareUrl?: string;
   error?: string;
+  limit?: number;
+  planId?: string;
 }
 
 export interface FetchAutomationResponse {
@@ -22,6 +25,30 @@ export interface FetchAutomationResponse {
     mouseMovements?: unknown[];
   };
   error?: string;
+  limit?: number;
+  planId?: string;
+}
+
+export interface AccountResponse {
+  success: boolean;
+  user?: { id: string; email: string };
+  plan?: {
+    id: string;
+    limits: {
+      includesAIProxy?: boolean;
+    };
+  };
+  error?: string;
+}
+
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const auth = await getAuthState();
+  if (!auth?.token) {
+    return {};
+  }
+  return {
+    Authorization: `Bearer ${auth.token}`,
+  };
 }
 
 /**
@@ -29,10 +56,12 @@ export interface FetchAutomationResponse {
  */
 export async function shareAutomation(automation: unknown): Promise<ShareResponse> {
   try {
+    const authHeaders = await getAuthHeaders();
     const response = await fetch(`${API_BASE_URL}/api/automations`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...authHeaders,
       },
       body: JSON.stringify({ automation }),
     });
@@ -43,6 +72,8 @@ export async function shareAutomation(automation: unknown): Promise<ShareRespons
       return {
         success: false,
         error: data.error || 'Failed to share automation',
+        limit: data.limit,
+        planId: data.planId,
       };
     }
 
@@ -65,13 +96,20 @@ export async function shareAutomation(automation: unknown): Promise<ShareRespons
  */
 export async function fetchSharedAutomation(id: string): Promise<FetchAutomationResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/automations/${id}`);
+    const authHeaders = await getAuthHeaders();
+    const response = await fetch(`${API_BASE_URL}/api/automations/${id}`, {
+      headers: {
+        ...authHeaders,
+      },
+    });
     const data = await response.json();
 
     if (!response.ok) {
       return {
         success: false,
         error: data.error || 'Automation not found',
+        limit: data.limit,
+        planId: data.planId,
       };
     }
 
@@ -124,6 +162,27 @@ export async function checkBackendHealth(): Promise<boolean> {
     return response.ok;
   } catch {
     return false;
+  }
+}
+
+export async function fetchAccount(): Promise<AccountResponse> {
+  try {
+    const authHeaders = await getAuthHeaders();
+    const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+      headers: {
+        ...authHeaders,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      return { success: false, error: data.error || 'Unauthorized' };
+    }
+    return { success: true, ...data };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Network error',
+    };
   }
 }
 

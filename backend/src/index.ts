@@ -4,6 +4,10 @@ import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import automationsRouter from './routes/automations.js';
+import authRouter from './routes/auth.js';
+import usageRouter from './routes/usage.js';
+import billingRouter from './routes/billing.js';
+import aiRouter from './routes/ai.js';
 import { getAutomation } from './db.js';
 import { getShareBaseUrl } from './public-url.js';
 
@@ -39,7 +43,7 @@ if (trustProxyEnabled) {
 const publicReadCors = cors({
   origin: "*",
   methods: ["GET", "OPTIONS"],
-  allowedHeaders: ["Content-Type"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 });
 
 // Allow any origin to GET a shared automation by id
@@ -57,7 +61,7 @@ app.use(
         : []),
     ],
     methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -87,6 +91,10 @@ app.use('/api/automations', createLimiter);
 
 // API routes
 app.use('/api/automations', automationsRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/usage', usageRouter);
+app.use('/api/billing', billingRouter);
+app.use('/api/ai', aiRouter);
 
 // Serve landing page for shared automations
 app.get('/run/:id', (req, res) => {
@@ -290,6 +298,21 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
     .install-note.visible {
       display: block;
     }
+
+    .auth-note {
+      margin-top: 14px;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 12px;
+      font-size: 13px;
+      color: rgba(0, 0, 0, 0.7);
+      display: none;
+    }
+
+    .auth-note.visible {
+      display: block;
+    }
     
     .install-note a {
       color: #3B82F6;
@@ -392,6 +415,13 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
       <div class="install-note" id="installNote">
         <strong>Note:</strong> Make sure the Openmation extension is installed on the target page.
       </div>
+
+      <div class="auth-note" id="authNote">
+        <strong>Sign in required:</strong> Log in to Openmation to run shared automations.
+        <div style="margin-top: 8px;">
+          <a href="https://openmation.dev/account" target="_blank" rel="noopener noreferrer">Go to Login</a>
+        </div>
+      </div>
       
       <div class="success-msg" id="successMsg">
         ✓ Automation started! Check the browser tab.
@@ -405,6 +435,42 @@ function getRunPage(name: string, eventCount: number, startUrl: string, id: stri
   
   <script>
     const AUTOMATION_ID = '${id}';
+    let extensionDetected = false;
+    let authVerified = false;
+
+    function checkExtension() {
+      window.postMessage({ type: "OPENMATION_CHECK_EXTENSION" }, "*");
+      setTimeout(() => {
+        if (!extensionDetected) {
+          document.getElementById('installNote')?.classList.add('visible');
+        }
+      }, 800);
+    }
+
+    function checkAuth() {
+      window.postMessage({ type: "OPENMATION_CHECK_AUTH" }, "*");
+      setTimeout(() => {
+        if (!authVerified) {
+          document.getElementById('authNote')?.classList.add('visible');
+        }
+      }, 800);
+    }
+
+    window.addEventListener("message", (event) => {
+      if (!event.data || !event.data.type) return;
+      if (event.data.type === "OPENMATION_EXTENSION_READY") {
+        extensionDetected = true;
+      }
+      if (event.data.type === "OPENMATION_AUTH_STATUS") {
+        authVerified = !!event.data.authenticated;
+        if (authVerified) {
+          document.getElementById('authNote')?.classList.remove('visible');
+        }
+      }
+    });
+
+    checkExtension();
+    checkAuth();
     
     function runAutomation() {
       const btn = document.getElementById('runBtn');
@@ -486,6 +552,7 @@ function getNotFoundPage(): string {
 </body>
 </html>`;
 }
+
 
 function escapeHtml(text: string): string {
   const map: Record<string, string> = {

@@ -16,11 +16,9 @@ import {
 } from "./panel";
 import type { MessageType, Automation } from "@/lib/types";
 import { API_BASE_URL } from "@/lib/api";
+import { getAuthState } from "@/lib/storage";
 
-console.log(
-  "[Openmation] Content script loaded on:",
-  window.location.href
-);
+console.log("[Openmation] Content script loaded on:", window.location.href);
 
 // Initialize - check for existing recording session
 initRecorder();
@@ -62,6 +60,15 @@ window.addEventListener("message", (event) => {
       // Respond immediately to extension check from run page
       console.log("[Openmation] Extension check received, responding...");
       window.postMessage({ type: "OPENMATION_EXTENSION_READY" }, "*");
+      break;
+
+    case "OPENMATION_CHECK_AUTH":
+      getAuthState().then((state) => {
+        window.postMessage(
+          { type: "OPENMATION_AUTH_STATUS", authenticated: !!state?.token },
+          "*"
+        );
+      });
       break;
 
     case "OPENMATION_RUN_SHARED":
@@ -240,8 +247,12 @@ async function runSharedAutomation(automationId: string): Promise<void> {
       "[Openmation] Fetching from:",
       `${API_BASE_URL}/api/automations/${automationId}`
     );
+    const auth = await getAuthState();
     const response = await fetch(
-      `${API_BASE_URL}/api/automations/${automationId}`
+      `${API_BASE_URL}/api/automations/${automationId}`,
+      {
+        headers: auth?.token ? { Authorization: `Bearer ${auth.token}` } : {},
+      }
     );
     const data = await response.json();
 
@@ -249,7 +260,13 @@ async function runSharedAutomation(automationId: string): Promise<void> {
 
     if (!response.ok || !data.success) {
       console.error("[Openmation] Failed to fetch automation:", data.error);
-      alert("Failed to load automation: " + (data.error || "Unknown error"));
+      if (data.error === "Authentication required") {
+        alert("Please sign in to Openmation to run shared automations.");
+      } else if (data.error?.includes("limit")) {
+        alert("Share view limit reached for this month.");
+      } else {
+        alert("Failed to load automation: " + (data.error || "Unknown error"));
+      }
       return;
     }
 
@@ -345,8 +362,12 @@ async function checkPendingAutomation(): Promise<void> {
     // Fetch and run
     try {
       console.log("[Openmation] Fetching automation from API...");
+      const auth = await getAuthState();
       const response = await fetch(
-        `${API_BASE_URL}/api/automations/${automationId}`
+        `${API_BASE_URL}/api/automations/${automationId}`,
+        {
+          headers: auth?.token ? { Authorization: `Bearer ${auth.token}` } : {},
+        }
       );
       const data = await response.json();
 
@@ -360,7 +381,13 @@ async function checkPendingAutomation(): Promise<void> {
         }, 1500);
       } else {
         console.error("[Openmation] Failed to fetch automation:", data.error);
-        alert("Failed to load automation. It may have expired.");
+        if (data.error === "Authentication required") {
+          alert("Please sign in to Openmation to run shared automations.");
+        } else if (data.error?.includes("limit")) {
+          alert("Share view limit reached for this month.");
+        } else {
+          alert("Failed to load automation. It may have expired.");
+        }
       }
     } catch (error) {
       console.error("[Openmation] Error fetching automation:", error);

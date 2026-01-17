@@ -12,7 +12,14 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Badge } from "./ui/badge";
-import { getAISettings, setAISettings } from "@/lib/storage";
+import {
+  getAISettings,
+  setAISettings,
+  getAuthState,
+  setAuthState,
+  clearAuthState,
+} from "@/lib/storage";
+import { API_BASE_URL } from "@/lib/api";
 import type { AISettings as AISettingsType, AIProviderType } from "@/lib/types";
 import {
   Loader2,
@@ -28,6 +35,11 @@ export function AISettings() {
     provider: "openai",
     enabled: false,
   });
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [authToken, setAuthToken] = useState<string | null>(null);
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [showApiKey, setShowApiKey] = useState(false);
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<"success" | "error" | null>(
@@ -38,6 +50,12 @@ export function AISettings() {
   // Load settings on mount
   useEffect(() => {
     getAISettings().then(setSettings);
+    getAuthState().then((state) => {
+      if (state?.token) {
+        setAuthToken(state.token);
+        setAuthEmail(state.email || "");
+      }
+    });
   }, []);
 
   // Get the current API key based on provider
@@ -99,8 +117,112 @@ export function AISettings() {
 
   const hasApiKey = !!currentApiKey;
 
+  const handleLogin = async () => {
+    setAuthLoading(true);
+    setAuthError(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: authEmail, password: authPassword }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setAuthError(data.error || "Login failed");
+        return;
+      }
+      await setAuthState({
+        token: data.token,
+        userId: data.user?.id,
+        email: data.user?.email,
+      });
+      setAuthToken(data.token);
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : "Login failed");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    if (!authToken) return;
+    await fetch(`${API_BASE_URL}/api/auth/logout`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    }).catch(() => undefined);
+    await clearAuthState();
+    setAuthToken(null);
+    setAuthPassword("");
+  };
+
   return (
     <div className="p-3 pb-6 space-y-3">
+      <Card>
+        <CardHeader className="pb-2 pt-3 px-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm">Account</CardTitle>
+            {authToken && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className="h-7 text-xs"
+              >
+                Log out
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3 px-3 pb-3">
+          {authToken ? (
+            <p className="text-xs text-muted-foreground">
+              Signed in as <span className="text-foreground">{authEmail}</span>
+            </p>
+          ) : (
+            <>
+              <div className="space-y-1.5">
+                <Label htmlFor="auth-email" className="text-xs">
+                  Email
+                </Label>
+                <Input
+                  id="auth-email"
+                  value={authEmail}
+                  onChange={(e) => setAuthEmail(e.target.value)}
+                  className="h-9"
+                  placeholder="you@company.com"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="auth-password" className="text-xs">
+                  Password
+                </Label>
+                <Input
+                  id="auth-password"
+                  type="password"
+                  value={authPassword}
+                  onChange={(e) => setAuthPassword(e.target.value)}
+                  className="h-9"
+                  placeholder="••••••••"
+                />
+              </div>
+              {authError && <p className="text-xs text-red-500">{authError}</p>}
+              <Button
+                size="sm"
+                onClick={handleLogin}
+                disabled={authLoading}
+                className="h-8 text-xs"
+              >
+                {authLoading ? "Signing in..." : "Sign in"}
+              </Button>
+              <p className="text-[11px] text-muted-foreground">
+                New here? Create an account on openmation.dev/account.
+              </p>
+            </>
+          )}
+        </CardContent>
+      </Card>
       <Card>
         <CardHeader className="pb-2 pt-3 px-3">
           <div className="flex items-center justify-between">

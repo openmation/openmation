@@ -16,8 +16,9 @@ import {
   saveAutomation,
   getAISettings,
   getActiveAIApiKey,
+  getAuthState,
 } from "@/lib/storage";
-import { API_BASE_URL } from "@/lib/api";
+import { API_BASE_URL, fetchAccount } from "@/lib/api";
 import { generateId } from "@/lib/utils";
 import { getAIProvider } from "@/lib/ai/provider";
 import type {
@@ -28,6 +29,8 @@ import type {
   RecordingState,
   AIFindElementRequest,
   AIDescribeActionRequest,
+  AIFindElementResponse,
+  AIDescribeActionResponse,
 } from "@/lib/types";
 
 // Current recording session
@@ -134,7 +137,8 @@ async function handleMessage(
       ) {
         return {
           success: false,
-          error: "Cannot record on this page. Please navigate to a regular website.",
+          error:
+            "Cannot record on this page. Please navigate to a regular website.",
         };
       }
 
@@ -336,9 +340,16 @@ async function handleMessage(
           startUrl: activeRecordingSession.startUrl,
           duration: Date.now() - activeRecordingSession.startTime,
         };
-        
-        console.log("[Openmation] Recording stopped with", recordingData.events.length, "events");
-        console.log("[Openmation] Events with AI context:", recordingData.events.filter(e => e.aiDescription).length);
+
+        console.log(
+          "[Openmation] Recording stopped with",
+          recordingData.events.length,
+          "events"
+        );
+        console.log(
+          "[Openmation] Events with AI context:",
+          recordingData.events.filter((e) => e.aiDescription).length
+        );
       } catch {
         // Content script might be gone - use what we have from background
         // Note: These won't have AI context (screenshots/descriptions)
@@ -348,7 +359,10 @@ async function handleMessage(
           startUrl: activeRecordingSession.startUrl,
           duration: Date.now() - activeRecordingSession.startTime,
         };
-        console.log("[Openmation] Using background events (no AI context):", recordingData.events.length);
+        console.log(
+          "[Openmation] Using background events (no AI context):",
+          recordingData.events.length
+        );
       }
 
       // Create and save automation
@@ -374,19 +388,19 @@ async function handleMessage(
       let shareUrl: string | undefined;
       try {
         const shareResponse = await fetch(`${API_BASE_URL}/api/automations`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ automation }),
         });
-        
+
         const shareData = await shareResponse.json();
         if (shareData.success && shareData.shareUrl) {
           shareUrl = shareData.shareUrl;
         }
       } catch (error) {
-        console.error('[Openmation] Failed to auto-share automation:', error);
+        console.error("[Openmation] Failed to auto-share automation:", error);
       }
 
       return { success: true, automation, shareUrl };
@@ -479,10 +493,9 @@ async function handleMessage(
         }
 
         // Capture visible tab as PNG
-        const dataUrl = await chrome.tabs.captureVisibleTab(
-          windowId,
-          { format: "png" }
-        );
+        const dataUrl = await chrome.tabs.captureVisibleTab(windowId, {
+          format: "png",
+        });
 
         // Return compressed image (compression happens in content script)
         return { screenshot: dataUrl };
@@ -505,10 +518,9 @@ async function handleMessage(
         };
 
         // Capture full visible tab
-        const dataUrl = await chrome.tabs.captureVisibleTab(
-          windowId,
-          { format: "png" }
-        );
+        const dataUrl = await chrome.tabs.captureVisibleTab(windowId, {
+          format: "png",
+        });
 
         // Return with crop parameters - cropping will happen in content script
         return { screenshot: dataUrl, crop, viewport };
@@ -524,12 +536,12 @@ async function handleMessage(
         const settings = await getAISettings();
         const apiKey = await getActiveAIApiKey();
 
-        if (!settings.enabled || !apiKey) {
-          return { error: "AI is not enabled or API key is not set" };
+        if (!settings.enabled) {
+          return { error: "AI is not enabled" };
         }
 
         const request = (message as { request: AIFindElementRequest }).request;
-        
+
         // Log what we're sending to AI
         console.log("[Openmation] 🤖 AI_FIND_ELEMENT Request:", {
           description: request.description,
@@ -542,8 +554,37 @@ async function handleMessage(
           elementRect: request.elementRect,
         });
 
-        const provider = getAIProvider(settings.provider, apiKey);
-        const result = await provider.findElement(request);
+        let result: AIFindElementResponse;
+
+        if (apiKey) {
+          const provider = getAIProvider(settings.provider, apiKey);
+          result = await provider.findElement(request);
+        } else {
+          const auth = await getAuthState();
+          if (!auth?.token) {
+            return { error: "AI proxy requires authentication" };
+          }
+          const account = await fetchAccount();
+          if (!account.success || !account.plan?.limits?.includesAIProxy) {
+            return { error: "AI proxy not available on this plan" };
+          }
+          const response = await fetch(`${API_BASE_URL}/api/ai/find-element`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${auth.token}`,
+            },
+            body: JSON.stringify({
+              provider: settings.provider,
+              request,
+            }),
+          });
+          const data = await response.json();
+          if (!response.ok || !data.success) {
+            return { error: data.error || "AI request failed" };
+          }
+          result = data.result;
+        }
 
         // Log what AI returned
         console.log("[Openmation] 🤖 AI_FIND_ELEMENT Response:", {
@@ -556,7 +597,9 @@ async function handleMessage(
         return { success: true, result };
       } catch (error) {
         console.error("[Openmation] AI find element failed:", error);
-        return { error: error instanceof Error ? error.message : "AI request failed" };
+        return {
+          error: error instanceof Error ? error.message : "AI request failed",
+        };
       }
     }
 
@@ -565,25 +608,60 @@ async function handleMessage(
         const settings = await getAISettings();
         const apiKey = await getActiveAIApiKey();
 
-        if (!settings.enabled || !apiKey) {
-          return { error: "AI is not enabled or API key is not set" };
+        if (!settings.enabled) {
+          return { error: "AI is not enabled" };
         }
 
-        const request = (message as { request: AIDescribeActionRequest }).request;
-        
+        const request = (message as { request: AIDescribeActionRequest })
+          .request;
+
         // Log what we're sending to AI
         console.log("[Openmation] 🤖 AI_DESCRIBE_ACTION Request:", {
           actionType: request.actionType,
           coordinates: request.coordinates,
-          value: request.value ? `"${request.value.substring(0, 20)}..."` : undefined,
+          value: request.value
+            ? `"${request.value.substring(0, 20)}..."`
+            : undefined,
           hasScreenshot: !!request.screenshot,
           screenshotSize: request.screenshot?.length || 0,
           hasElementCrop: !!request.elementCrop,
           elementCropSize: request.elementCrop?.length || 0,
         });
 
-        const provider = getAIProvider(settings.provider, apiKey);
-        const result = await provider.describeAction(request);
+        let result: AIDescribeActionResponse;
+
+        if (apiKey) {
+          const provider = getAIProvider(settings.provider, apiKey);
+          result = await provider.describeAction(request);
+        } else {
+          const auth = await getAuthState();
+          if (!auth?.token) {
+            return { error: "AI proxy requires authentication" };
+          }
+          const account = await fetchAccount();
+          if (!account.success || !account.plan?.limits?.includesAIProxy) {
+            return { error: "AI proxy not available on this plan" };
+          }
+          const response = await fetch(
+            `${API_BASE_URL}/api/ai/describe-action`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${auth.token}`,
+              },
+              body: JSON.stringify({
+                provider: settings.provider,
+                request,
+              }),
+            }
+          );
+          const data = await response.json();
+          if (!response.ok || !data.success) {
+            return { error: data.error || "AI request failed" };
+          }
+          result = data.result;
+        }
 
         // Log what AI returned
         console.log("[Openmation] 🤖 AI_DESCRIBE_ACTION Response:", {
@@ -595,32 +673,68 @@ async function handleMessage(
         return { success: true, result };
       } catch (error) {
         console.error("[Openmation] AI describe action failed:", error);
-        return { error: error instanceof Error ? error.message : "AI request failed" };
+        return {
+          error: error instanceof Error ? error.message : "AI request failed",
+        };
       }
     }
 
     case "AI_TEST_CONNECTION": {
       try {
         const settings = await getAISettings();
-        console.log("[Openmation] AI settings:", { provider: settings.provider, enabled: settings.enabled, hasOpenAIKey: !!settings.openaiApiKey, hasAnthropicKey: !!settings.anthropicApiKey });
-        
+        console.log("[Openmation] AI settings:", {
+          provider: settings.provider,
+          enabled: settings.enabled,
+          hasOpenAIKey: !!settings.openaiApiKey,
+          hasAnthropicKey: !!settings.anthropicApiKey,
+        });
+
         const apiKey = await getActiveAIApiKey();
-        console.log("[Openmation] Active API key:", apiKey ? apiKey.substring(0, 10) + '...' : 'none');
+        console.log(
+          "[Openmation] Active API key:",
+          apiKey ? apiKey.substring(0, 10) + "..." : "none"
+        );
 
         if (!apiKey) {
-          return { success: false, error: "API key is not set" };
+          const auth = await getAuthState();
+          if (!auth?.token) {
+            return { success: false, error: "API key is not set" };
+          }
+          const response = await fetch(`${API_BASE_URL}/api/ai/status`, {
+            headers: {
+              Authorization: `Bearer ${auth.token}`,
+            },
+          });
+          const data = await response.json();
+          if (!response.ok || !data.success || !data.includesAIProxy) {
+            return {
+              success: false,
+              error: "AI proxy not available on this plan",
+            };
+          }
+          return { success: true };
         }
 
         const provider = getAIProvider(settings.provider, apiKey);
-        console.log("[Openmation] Testing connection with provider:", settings.provider);
-        
+        console.log(
+          "[Openmation] Testing connection with provider:",
+          settings.provider
+        );
+
         const isConnected = await provider.testConnection();
         console.log("[Openmation] Connection test result:", isConnected);
 
-        return { success: isConnected, error: isConnected ? undefined : "Connection test failed" };
+        return {
+          success: isConnected,
+          error: isConnected ? undefined : "Connection test failed",
+        };
       } catch (error) {
         console.error("[Openmation] AI connection test failed:", error);
-        return { success: false, error: error instanceof Error ? error.message : "Connection test failed" };
+        return {
+          success: false,
+          error:
+            error instanceof Error ? error.message : "Connection test failed",
+        };
       }
     }
 

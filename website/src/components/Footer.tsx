@@ -10,6 +10,7 @@ const links = {
     { name: "Features", href: "#features" },
     { name: "How It Works", href: "#how-it-works" },
     { name: "Use Cases", href: "#use-cases" },
+    { name: "Pricing", href: "#pricing" },
   ],
   resources: [
     { name: "Get Started", href: "#get-started" },
@@ -17,6 +18,7 @@ const links = {
     { name: "Open Source", href: "https://github.com/openmation" },
   ],
   company: [
+    { name: "Account", href: "/account" },
     { name: "Privacy", href: "/privacy" },
     { name: "Terms", href: "/terms" },
   ],
@@ -158,6 +160,9 @@ export function Footer() {
               </Link>
               <Link href="#use-cases" className="hover:text-foreground transition-colors">
                 Use Cases
+              </Link>
+              <Link href="#pricing" className="hover:text-foreground transition-colors">
+                Pricing
               </Link>
             </div>
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">

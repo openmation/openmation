@@ -12,6 +12,7 @@ const navItems = [
   { name: "Features", href: "#features" },
   { name: "How it Works", href: "#how-it-works" },
   { name: "Use Cases", href: "#use-cases" },
+  { name: "Pricing", href: "#pricing" },
   { name: "Get Started", href: "#get-started" },
 ];
 
@@ -77,6 +78,12 @@ export function Navbar() {
               {/* CTA Buttons */}
               <div className="hidden md:flex items-center gap-1.5 pl-2">
                 <Link
+                  href="/account"
+                  className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-black/[0.03]"
+                >
+                  Account
+                </Link>
+                <Link
                   href="#get-started"
                   className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-foreground hover:bg-foreground/90 transition-colors rounded-full"
                 >
@@ -123,6 +130,13 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="pt-4 mt-4 border-t border-black/[0.06] space-y-2">
+                <Link
+                  href="/account"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-center text-base font-medium text-muted-foreground hover:text-foreground hover:bg-black/[0.03] rounded-xl transition-colors"
+                >
+                  Account
+                </Link>
                 <Link
                   href="#get-started"
                   onClick={() => setIsMobileMenuOpen(false)}

@@ -66,3 +66,84 @@ export interface AutomationRow {
   created_at: number;
   run_count: number;
 }
+
+export interface UserRow {
+  id: string;
+  email: string;
+  password_hash: string;
+  password_salt: string;
+  created_at: number;
+  updated_at: number;
+}
+
+export interface SessionRow {
+  id: string;
+  user_id: string;
+  token_hash: string;
+  created_at: number;
+  expires_at: number;
+}
+
+export interface SubscriptionRow {
+  id: string;
+  user_id: string;
+  provider: string;
+  plan_id: string;
+  status: string;
+  current_period_end?: number | null;
+  cancel_at_period_end?: number;
+  created_at: number;
+  updated_at: number;
+}
+
+export interface UsageRow {
+  id: string;
+  user_id: string;
+  period: string;
+  shares_created: number;
+  share_views: number;
+  scheduled_runs: number;
+  updated_at: number;
+}
+
+export type PlanId = "free" | "starter" | "pro" | "starter_annual" | "pro_annual";
+
+export interface PlanLimits {
+  shareLimit: number;
+  shareViewLimit: number;
+  scheduledRunLimit: number;
+  includesAIProxy: boolean;
+}
+
+export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
+  free: {
+    shareLimit: 100,
+    shareViewLimit: 10,
+    scheduledRunLimit: 30,
+    includesAIProxy: false,
+  },
+  starter: {
+    shareLimit: 1000,
+    shareViewLimit: 500,
+    scheduledRunLimit: 500,
+    includesAIProxy: false,
+  },
+  pro: {
+    shareLimit: Number.POSITIVE_INFINITY,
+    shareViewLimit: Number.POSITIVE_INFINITY,
+    scheduledRunLimit: Number.POSITIVE_INFINITY,
+    includesAIProxy: false,
+  },
+  starter_annual: {
+    shareLimit: 1000,
+    shareViewLimit: 500,
+    scheduledRunLimit: 500,
+    includesAIProxy: true,
+  },
+  pro_annual: {
+    shareLimit: Number.POSITIVE_INFINITY,
+    shareViewLimit: Number.POSITIVE_INFINITY,
+    scheduledRunLimit: Number.POSITIVE_INFINITY,
+    includesAIProxy: true,
+  },
+};

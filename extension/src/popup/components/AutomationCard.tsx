@@ -71,7 +71,13 @@ export function AutomationCard({
           setShareSuccess(false);
         }, 3000);
       } else {
-        setShareError(result.error || 'Failed to share');
+        if (result.error === 'Authentication required') {
+          setShareError('Sign in required to share');
+        } else if (result.error?.includes('Share limit')) {
+          setShareError('Monthly share limit reached');
+        } else {
+          setShareError(result.error || 'Failed to share');
+        }
         setTimeout(() => setShareError(null), 3000);
       }
     } catch (error) {

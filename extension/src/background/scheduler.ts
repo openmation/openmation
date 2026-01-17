@@ -1,5 +1,6 @@
-import { getAutomations, getAutomation } from '@/lib/storage';
+import { getAutomations, getAutomation, getAuthState } from '@/lib/storage';
 import type { Automation } from '@/lib/types';
+import { API_BASE_URL } from '@/lib/api';
 
 const ALARM_PREFIX = 'automation_';
 
@@ -148,6 +149,26 @@ export async function handleAlarm(alarm: chrome.alarms.Alarm): Promise<void> {
 
 async function runScheduledAutomation(automation: Automation): Promise<void> {
   try {
+    const auth = await getAuthState();
+    if (!auth?.token) {
+      console.warn('[Openmation] Scheduled run blocked: authentication required');
+      return;
+    }
+
+    const quotaResponse = await fetch(`${API_BASE_URL}/api/usage/schedule/run`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${auth.token}`,
+      },
+    });
+
+    if (!quotaResponse.ok) {
+      const data = await quotaResponse.json().catch(() => ({}));
+      console.warn('[Openmation] Scheduled run blocked:', data.error || quotaResponse.statusText);
+      return;
+    }
+
     const startUrl = automation.startUrl || 'about:blank';
     const tab = await chrome.tabs.create({ url: startUrl, active: false });
     

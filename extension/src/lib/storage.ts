@@ -6,6 +6,7 @@ const STORAGE_KEYS = {
   RECORDING_STATE: 'recordingState',
   THEME: 'theme',
   AI_SETTINGS: 'aiSettings',
+  AUTH: 'auth',
 } as const;
 
 // Default AI settings
@@ -194,6 +195,25 @@ export async function isAIEnabled(): Promise<boolean> {
   const settings = await getAISettings();
   const apiKey = settings.provider === 'openai' ? settings.openaiApiKey : settings.anthropicApiKey;
   return settings.enabled && !!apiKey;
+}
+
+// Auth
+export interface AuthState {
+  token: string;
+  userId?: string;
+  email?: string;
+}
+
+export async function getAuthState(): Promise<AuthState | null> {
+  return getFromStorage<AuthState | null>(STORAGE_KEYS.AUTH, null);
+}
+
+export async function setAuthState(state: AuthState): Promise<void> {
+  await setToStorage(STORAGE_KEYS.AUTH, state);
+}
+
+export async function clearAuthState(): Promise<void> {
+  await setToStorage<AuthState | null>(STORAGE_KEYS.AUTH, null);
 }
 
 // Listen for storage changes

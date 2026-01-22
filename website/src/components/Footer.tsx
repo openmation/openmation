@@ -12,8 +12,8 @@ const links = {
     { name: "Use Cases", href: "#use-cases" },
   ],
   resources: [
-    { name: "Get Started", href: "#get-started" },
-    { name: "Download", href: "#get-started" },
+    { name: "Get Started", href: "https://chromewebstore.google.com/detail/openmation/gmiikkpeciepbhjajboingdlhbbefhcn" },
+    { name: "Download", href: "https://chromewebstore.google.com/detail/openmation/gmiikkpeciepbhjajboingdlhbbefhcn" },
     { name: "Open Source", href: "https://github.com/openmation" },
   ],
   company: [

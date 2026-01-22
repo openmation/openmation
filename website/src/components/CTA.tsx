@@ -1,16 +1,9 @@
 "use client";
 
-import { Chrome, Star, Github } from "lucide-react";
+import { Chrome, Github } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-
-const stats = [
-  { value: "10K+", label: "Active Users" },
-  { value: "4.9", label: "Chrome Rating", icon: Star },
-  { value: "100%", label: "Open Source" },
-  { value: "<1min", label: "Setup Time" },
-];
 
 export function CTA() {
   return (
@@ -56,8 +49,9 @@ export function CTA() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Link
-              href="https://chrome.google.com/webstore"
+              href="https://chromewebstore.google.com/detail/openmation/gmiikkpeciepbhjajboingdlhbbefhcn"
               target="_blank"
+              rel="noopener noreferrer"
               className="btn-primary text-base px-8 py-4"
             >
               <Chrome className="w-5 h-5" />
@@ -73,27 +67,6 @@ export function CTA() {
             </Link>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {stats.map((stat, index) => (
-              <div
-                key={index}
-                className="p-5 rounded-2xl bg-secondary/50 border border-border/50"
-              >
-                <div className="flex items-center justify-center gap-1.5">
-                  <p className="text-2xl font-semibold logo-gradient-text">
-                    {stat.value}
-                  </p>
-                  {stat.icon && (
-                    <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                  )}
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </section>

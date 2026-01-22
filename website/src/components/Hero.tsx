@@ -454,7 +454,9 @@ export function Hero() {
           {/* CTA Buttons - Antigravity style */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <Link
-              href="#get-started"
+              href="https://chromewebstore.google.com/detail/openmation/gmiikkpeciepbhjajboingdlhbbefhcn"
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn-primary text-base px-8 py-4"
             >
               <Chrome className="w-5 h-5" />
